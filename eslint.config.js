@@ -8,6 +8,8 @@ import prettier from 'eslint-plugin-prettier'
 import react from 'eslint-plugin-react';
 import typescriptEslint from '@typescript-eslint/eslint-plugin';
 import typescriptParser from '@typescript-eslint/parser';
+import jsxA11y from 'eslint-plugin-jsx-a11y'
+import betterTailwindcss from 'eslint-plugin-better-tailwindcss';
 
 export default tseslint.config([
   globalIgnores(['dist']),
@@ -17,8 +19,15 @@ export default tseslint.config([
       '@typescript-eslint': typescriptEslint,
       prettier,
       react,
+      'better-tailwindcss': betterTailwindcss,
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
+      'jsx-a11y': jsxA11y,
+    },
+    settings: {
+    "better-tailwindcss": {
+      "entryPoint": "src/global.css",
+      }
     },
     rules: {
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
@@ -64,6 +73,12 @@ export default tseslint.config([
       "no-return-assign": "warn",
       "@typescript-eslint/no-explicit-any": "warn", // any 허용
       "@typescript-eslint/no-unused-vars": ["off", { varsIgnorePattern: "^React$" }], // 'React' 사용 안해도 경고하지 않도록 설정
+      "better-tailwindcss/enforce-consistent-class-order": "warn",
+      "better-tailwindcss/enforce-consistent-line-wrapping": "warn",
+      "better-tailwindcss/no-duplicate-classes": "warn",
+      "better-tailwindcss/no-unnecessary-whitespace": "warn",
+      "better-tailwindcss/no-unregistered-classes": "warn",
+      ...jsxA11y.configs.recommended.rules,
     },
     languageOptions: {
       sourceType: "module",
