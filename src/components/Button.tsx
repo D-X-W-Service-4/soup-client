@@ -29,7 +29,7 @@ export default function Button({
   return (
     <button
       onClick={onClick}
-      className={`h-fit w-fit text-white ${SIZE_MAP[size]} ${VARIANT_MAP[variant]}`}
+      className={`inline-flex h-fit w-fit items-center justify-center gap-2 text-white ${SIZE_MAP[size]} ${VARIANT_MAP[variant]}`}
       {...rest}
     >
       {children}
