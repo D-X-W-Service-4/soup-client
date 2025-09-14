@@ -1,17 +1,20 @@
 import type { ButtonHTMLAttributes, MouseEventHandler, ReactNode } from 'react';
 
+type ButtonSize = 'small' | 'medium' | 'large';
+type ButtonVariant = 'primary' | 'secondary' | 'success' | 'warning' | 'danger';
+
 interface DefaultButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size: 'small' | 'medium' | 'large';
   variant: 'primary' | 'secondary' | 'success' | 'warning' | 'danger';
   children?: ReactNode;
   onClick?: MouseEventHandler<HTMLButtonElement>;
 }
-const SIZE_MAP: { [k in DefaultButtonProps['size']]: string } = {
+const SIZE_MAP: Record<ButtonSize, String> = {
   small: 'rounded-lg py-2 px-3 font-medium text-xs',
   medium: 'rounded-lg py-2.5 px-4 font-medium text-sm',
   large: 'rounded-lg py-3 px-5 font-medium text-lg',
 };
-const VARIANT_MAP: { [k in DefaultButtonProps['variant']]: string } = {
+const VARIANT_MAP: Record<ButtonVariant, String> = {
   primary: 'bg-primary disabled:bg-rose-300 hover:bg-rose-500',
   secondary: 'bg-secondary disabled:bg-neutral-300 hover:bg-neutral-700',
   success: 'bg-success disabled:bg-lime-200 hover:bg-lime-600',
