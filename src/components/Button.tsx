@@ -1,14 +1,14 @@
 import type { ButtonHTMLAttributes, MouseEventHandler, ReactNode } from 'react';
 
 interface DefaultButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  size: 'small' | 'default' | 'large';
+  size: 'small' | 'medium' | 'large';
   variant: 'primary' | 'secondary' | 'success' | 'warning' | 'danger';
   children?: ReactNode;
   onClick?: MouseEventHandler<HTMLButtonElement>;
 }
 const SIZE_MAP: { [k in DefaultButtonProps['size']]: string } = {
   small: 'rounded-lg py-2 px-3 font-medium text-xs',
-  default: 'rounded-lg py-2.5 px-4 font-medium text-sm',
+  medium: 'rounded-lg py-2.5 px-4 font-medium text-sm',
   large: 'rounded-lg py-3 px-5 font-medium text-lg',
 };
 const VARIANT_MAP: { [k in DefaultButtonProps['variant']]: string } = {

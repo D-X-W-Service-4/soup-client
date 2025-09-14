@@ -14,7 +14,7 @@ const ButtonTestPage = () => {
             >
               테스트
             </Button>
-            <Button size="default" variant="primary">
+            <Button size="medium" variant="primary">
               테스트
             </Button>
             <Button size="small" variant="primary">
@@ -30,7 +30,7 @@ const ButtonTestPage = () => {
             >
               테스트
             </Button>
-            <Button size="default" variant="primary" disabled>
+            <Button size="medium" variant="primary" disabled>
               테스트
             </Button>
             <Button size="small" variant="primary" disabled>
@@ -47,7 +47,7 @@ const ButtonTestPage = () => {
             >
               테스트
             </Button>
-            <Button size="default" variant="secondary">
+            <Button size="medium" variant="secondary">
               테스트
             </Button>
             <Button size="small" variant="secondary">
@@ -63,7 +63,7 @@ const ButtonTestPage = () => {
             >
               테스트
             </Button>
-            <Button size="default" variant="secondary" disabled>
+            <Button size="medium" variant="secondary" disabled>
               테스트
             </Button>
             <Button size="small" variant="secondary" disabled>
@@ -81,7 +81,7 @@ const ButtonTestPage = () => {
             >
               테스트
             </Button>
-            <Button size="default" variant="success">
+            <Button size="medium" variant="success">
               테스트
             </Button>
             <Button size="small" variant="success">
@@ -97,7 +97,7 @@ const ButtonTestPage = () => {
             >
               테스트
             </Button>
-            <Button size="default" variant="success" disabled>
+            <Button size="medium" variant="success" disabled>
               테스트
             </Button>
             <Button size="small" variant="success" disabled>
@@ -114,7 +114,7 @@ const ButtonTestPage = () => {
             >
               테스트
             </Button>
-            <Button size="default" variant="warning">
+            <Button size="medium" variant="warning">
               테스트
             </Button>
             <Button size="small" variant="warning">
@@ -130,7 +130,7 @@ const ButtonTestPage = () => {
             >
               테스트
             </Button>
-            <Button size="default" variant="warning" disabled>
+            <Button size="medium" variant="warning" disabled>
               테스트
             </Button>
             <Button size="small" variant="warning" disabled>
@@ -147,7 +147,7 @@ const ButtonTestPage = () => {
             >
               테스트
             </Button>
-            <Button size="default" variant="danger">
+            <Button size="medium" variant="danger">
               테스트
             </Button>
             <Button size="small" variant="danger">
@@ -182,7 +182,7 @@ const ButtonTestPage = () => {
             >
               테스트
             </Button>
-            <Button size="default" variant="danger" disabled>
+            <Button size="medium" variant="danger" disabled>
               테스트
             </Button>
             <Button size="small" variant="danger" disabled>
