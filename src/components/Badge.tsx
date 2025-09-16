@@ -33,14 +33,12 @@ const VARIANT_MAP: Record<BadgeVariant, string> = {
   danger: 'bg-danger text-white',
 };
 
-// 3. 컴포넌트 구현
 export default function Badge({
   size,
   variant,
   children,
   className,
 }: BadgeProps) {
-  // DefaultBadgeProps 대신 BadgeProps 사용
   const baseClasses =
     'inline-flex items-center justify-center gap-2.5 px-2.5 py-1 rounded-[20px]';
 
