@@ -37,7 +37,7 @@ export default function Badge({
   size,
   variant,
   children,
-  className,
+  className = '',
 }: BadgeProps) {
   const baseClasses =
     'inline-flex items-center justify-center gap-2.5 px-2.5 py-1 rounded-[20px]';
@@ -46,7 +46,7 @@ export default function Badge({
   const variantClass = VARIANT_MAP[variant];
 
   const combinedClasses =
-    `${baseClasses} ${sizeClass} ${variantClass} ${className || ''}`.trim();
+    `${baseClasses} ${sizeClass} ${variantClass} ${className}`.trim();
 
   return <span className={combinedClasses}>{children}</span>;
 }
