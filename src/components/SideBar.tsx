@@ -58,28 +58,21 @@ export default function SideBar({ isOpen = true, onToggle }: sideBarProps) {
     transition-[width] duration-200 ${isOpen ? 'w-52' : 'w-16'}`}
     >
       <div className="flex w-full flex-col gap-16">
-        {isOpen ? (
-          <button
-            type="button"
-            onClick={onToggle}
-            aria-label="사이드바 접기"
-            className="flex justify-start px-2"
-          >
+        <button
+          type="button"
+          onClick={onToggle}
+          aria-label={`사이드바 ${isOpen ? '펼치기' : '접기'}`}
+          className="flex cursor-pointer justify-start px-2"
+        >
+          {isOpen ? (
             <img src={Logotype} alt="App Logo" className="h-6 w-14" />
-          </button>
-        ) : (
-          <button
-            type="button"
-            onClick={onToggle}
-            aria-label="사이드바 펼치기"
-            className="flex items-center justify-center px-2"
-          >
+          ) : (
             <Icon
               icon="ic:round-keyboard-arrow-right"
               className="shrink-0 text-2xl text-neutral-500"
             />
-          </button>
-        )}
+          )}
+        </button>
       </div>
 
       {/* 내비게이션 */}
@@ -104,7 +97,7 @@ export default function SideBar({ isOpen = true, onToggle }: sideBarProps) {
                   height={18}
                 />
                 <span
-                  className={`text-sm font-medium ${isOpen ? 'w-auto opacity-100' : 'ml-0 w-0 opacity-0'}`}
+                  className={`overflow-hidden text-sm font-medium whitespace-nowrap ${isOpen ? 'w-auto opacity-100' : 'ml-0 w-0 opacity-0'}`}
                 >
                   {item.label}
                 </span>
@@ -119,7 +112,7 @@ export default function SideBar({ isOpen = true, onToggle }: sideBarProps) {
                         <Link
                           key={child.key}
                           to={child.path}
-                          className={`text-sm font-medium transition-colors
+                          className={`overflow-hidden text-sm font-medium whitespace-nowrap transition-colors
                               ${childActive ? 'text-primary' : 'text-neutral-400 hover:text-secondary'}`}
                         >
                           {child.label}
