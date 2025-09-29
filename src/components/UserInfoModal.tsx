@@ -1,8 +1,8 @@
-import { useModalStore } from '../../hooks/UserModal.hooks.ts';
+import { useModalStore } from '../stores/modalStore.ts';
 import { useState } from 'react';
-import { ChevronDownIcon } from '@heroicons/react/16/solid';
+import IconChevronDown from '../assets/svgs/IconChevronDown.tsx';
 
-const UserModal = () => {
+const UserInfoModal = () => {
   const { isUserModalOpen, toggleUserModal } = useModalStore();
 
   const [nickname, setNickname] = useState('');
@@ -68,7 +68,7 @@ const UserModal = () => {
             </div>
             <div className="inline-flex items-center self-stretch rounded-lg bg-neutral-100 px-3 py-3.5">
               <input
-                className="h-[1em] w-full text-xs font-normal text-neutral-600 placeholder:text-zinc-500 focus:outline-none"
+                className="h-4 w-full text-xs font-normal text-neutral-600 placeholder:text-zinc-500 focus:outline-none"
                 placeholder="사용하실 닉네임을 입력해주세요!"
                 value={nickname}
                 onChange={handleNicknameChange}
@@ -110,7 +110,7 @@ const UserModal = () => {
                   <div className="text-xs leading-none font-normal text-zinc-500">
                     {grade === '' ? '현재 학년을 선택해주세요!' : grade}
                   </div>
-                  <ChevronDownIcon className="h-4 w-4 text-neutral-600" />
+                  <IconChevronDown />
                 </div>
               )}
             </div>
@@ -145,7 +145,7 @@ const UserModal = () => {
                   <div className="text-xs leading-none font-normal text-zinc-500">
                     {semester === '' ? '현재 학기를 선택해주세요!' : semester}
                   </div>
-                  <ChevronDownIcon className="h-4 w-4 text-neutral-600" />
+                  <IconChevronDown />
                 </div>
               )}
             </div>
@@ -158,7 +158,7 @@ const UserModal = () => {
             </div>
             <div className="inline-flex items-center self-stretch rounded-lg bg-neutral-100 px-3 py-3.5">
               <input
-                className="h-[1em] w-full text-xs font-normal text-neutral-600 placeholder:text-zinc-500 focus:outline-none"
+                className="h-4 w-full text-xs font-normal text-neutral-600 placeholder:text-zinc-500 focus:outline-none"
                 placeholder="하루에 공부 가능한 시간을 입력해주세요!"
                 value={studyTime}
                 onChange={handleTimeChange}
@@ -187,4 +187,4 @@ const UserModal = () => {
   );
 };
 
-export default UserModal;
+export default UserInfoModal;

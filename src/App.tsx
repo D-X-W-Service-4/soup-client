@@ -1,11 +1,15 @@
-import MyComponents from './components/MyComponents.tsx';
-import UserModal from './components/modals/UserModal.tsx';
+import UserInfoModal from './components/UserInfoModal.tsx';
+import { RouterProvider } from 'react-router-dom';
+import router from './routes/Router.tsx';
 
 export default function App() {
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-center gap-4 bg-primary-bg text-secondary">
-      <MyComponents />
-      <UserModal />
-    </div>
+    <>
+      <RouterProvider router={router} />(
+      <div className="flex h-screen w-full flex-col items-center justify-center gap-4 bg-primary-bg text-secondary">
+        <UserInfoModal />
+      </div>
+      )
+    </>
   );
 }

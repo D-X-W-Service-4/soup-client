@@ -1,5 +1,9 @@
 import { create } from 'zustand/react';
-import type ModalState from '../types/UserModal.types.ts';
+
+export default interface ModalState {
+  isUserModalOpen: boolean;
+  toggleUserModal: () => void;
+}
 
 export const useModalStore = create<ModalState>((set) => ({
   isUserModalOpen: false,
