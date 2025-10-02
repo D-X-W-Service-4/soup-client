@@ -1,4 +1,7 @@
 import StudyInfoPage from './pages/onboarding/StudyInfoPage.tsx';
+import StudyGuidePage from './pages/onboarding/StudyGuidePage.tsx';
+import LoginSuccessPage from './pages/onboarding/LoginSuccessPage.tsx';
+import NicknamePage from './pages/onboarding/NicknamePage.tsx';
 
 export default function App() {
   // const [isOpen, setIsOpen] = useState(true);
@@ -13,6 +16,9 @@ export default function App() {
     //     </main>
     //   </div>
     // </div>
-    <StudyInfoPage />
+    // <StudyGuidePage />
+    // <LoginSuccessPage />
+    // <StudyInfoPage />
+    <NicknamePage />
   );
 }
