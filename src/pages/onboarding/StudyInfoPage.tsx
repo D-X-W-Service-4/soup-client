@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
 const StudyInfoPage = () => {
@@ -17,7 +18,12 @@ const StudyInfoPage = () => {
         </div>
         <div className="flex w-199.25 flex-col items-center justify-start gap-16">
           <div className="flex flex-col items-center justify-start gap-4">
-            <div className="inline-flex items-center justify-center gap-4">
+            <motion.div
+              className="inline-flex items-center justify-center gap-4"
+              initial={{ y: 40, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.6, ease: 'easeOut' }}
+            >
               <div className="flex items-center justify-start">
                 <div className="justify-start text-4xl leading-10 font-semibold text-primary">
                   OOO
@@ -26,10 +32,16 @@ const StudyInfoPage = () => {
                   님의 학습 정보에 대해 알고 싶어요!
                 </div>
               </div>
-            </div>
-            <div className="justify-start self-stretch text-center text-lg font-normal text-secondary">
+            </motion.div>
+
+            <motion.div
+              className="justify-start self-stretch text-center text-lg font-normal text-secondary"
+              initial={{ y: 40, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 1, ease: 'easeOut', delay: 0.7 }}
+            >
               학년, 학기, 단원, 공부시간 등 학습에 관련된 정보를 알려주세요.
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
@@ -117,7 +129,7 @@ const StudyInfoPage = () => {
             </div>
             <button
               className="w-full rounded-lg bg-primary px-5 py-3 text-base font-medium text-white active:bg-rose-500"
-              onClick={() => navigate('/onboard/books')}
+              onClick={() => navigate('/onboarding/studyGuide')}
             >
               다음
             </button>

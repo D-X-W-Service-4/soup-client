@@ -33,8 +33,12 @@ const NicknamePage = () => {
           </motion.p>
         </div>
       </div>
-
-      <div className="flex w-full max-w-198.5 flex-col gap-8 rounded-[20px] bg-white px-10 py-12 shadow-lg">
+      <motion.div
+        className="flex w-full max-w-198.5 flex-col gap-8 rounded-[20px] bg-white px-10 py-12 shadow-lg"
+        initial={{ y: 40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 1, ease: 'easeOut', delay: 1.5 }}
+      >
         <div className="flex w-full flex-col gap-10">
           <div className="flex w-full items-center gap-7 rounded-2xl bg-warning-bg px-7 py-5">
             <div className="relative h-7 w-7">
@@ -67,11 +71,11 @@ const NicknamePage = () => {
 
         <button
           className="w-full rounded-lg bg-primary px-5 py-3 text-base font-medium text-white active:bg-rose-500"
-          onClick={() => navigate('/onboard/nickname')}
+          onClick={() => navigate('/onboarding/studyInfo')}
         >
           다음
         </button>
-      </div>
+      </motion.div>
     </div>
   );
 };
