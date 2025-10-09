@@ -1,12 +1,26 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import DropdownSelect from '../../components/DropdownSelect.tsx';
+import StudyTimeInput from '../../components/inputs/StudyTimeInput.tsx';
+import { useUserStore } from '../../stores/userStore.ts';
 
 const StudyInfoPage = () => {
   const [isStudyInfoOpen, setIsStudyInfoOpen] = useState(false);
   const toggleStudyInfo = () => {
     setIsStudyInfoOpen(!isStudyInfoOpen);
   };
+  const nickname = useUserStore((state) => state.nickname);
+
+  const grade = useUserStore((state) => state.grade);
+  const setGrade = useUserStore((state) => state.setGrade);
+
+  const semester = useUserStore((state) => state.semester);
+  const setSemester = useUserStore((state) => state.setSemester);
+
+  const studyTime = useUserStore((state) => state.studyTime);
+  const setStudyTime = useUserStore((state) => state.setStudyTime);
+
   const navigate = useNavigate();
   return (
     <div className="inline-flex h-208.5 w-298.5 flex-col items-center justify-start gap-14 bg-primary-bg px-48 pt-4 pb-44">
@@ -26,7 +40,7 @@ const StudyInfoPage = () => {
             >
               <div className="flex items-center justify-start">
                 <div className="justify-start text-4xl leading-10 font-semibold text-primary">
-                  OOO
+                  {nickname}
                 </div>
                 <div className="justify-start text-4xl leading-10 font-semibold text-black">
                   님의 학습 정보에 대해 알고 싶어요!
@@ -62,31 +76,28 @@ const StudyInfoPage = () => {
               </div>
               <div className="flex flex-col items-start justify-start gap-6 self-stretch">
                 <div className="flex flex-col items-start justify-start gap-4 self-stretch">
-                  <div className="justify-start text-base leading-normal font-medium text-black">
-                    현재 학년은 몇 학년인가요?
-                  </div>
-                  <div className="inline-flex items-center justify-between self-stretch rounded-lg bg-secondary-bg px-3 py-3.5">
-                    <div className="justify-start text-xs leading-none font-normal text-neutral-500">
-                      학년을 선택해주세요.
-                    </div>
-                    <div className="h-1 w-2 outline outline-1 outline-offset-[-0.50px] outline-neutral-600"></div>
-                  </div>
+                  <DropdownSelect
+                    label={'현재 학년은 몇 학년인가요?'}
+                    options={['1학년', '2학년', '3학년']}
+                    value={grade}
+                    onChange={setGrade}
+                    placeholder="학년을 선택해주세요!"
+                  />
                 </div>
                 <div className="flex flex-col items-start justify-start gap-4 self-stretch">
-                  <div className="justify-start text-base leading-normal font-medium text-black">
-                    현재 몇 학기인가요?
-                  </div>
-                  <div className="inline-flex items-center justify-between self-stretch rounded-lg bg-neutral-100 px-3 py-3.5">
-                    <div className="justify-start text-xs leading-none font-normal text-neutral-500">
-                      학기를 선택해주세요.
-                    </div>
-                    <div className="h-1 w-2 outline outline-1 outline-offset-[-0.50px] outline-neutral-600"></div>
-                  </div>
+                  <DropdownSelect
+                    label={'현재 몇 학기인가요?'}
+                    options={['1학기', '2학기']}
+                    value={semester}
+                    onChange={setSemester}
+                    placeholder="학기를 선택해주세요!"
+                  />
                 </div>
               </div>
             </div>
             <button
-              className="w-full rounded-lg bg-primary px-5 py-3 text-base font-medium text-white active:bg-rose-500"
+              className="w-full rounded-lg bg-primary px-5 py-3 text-base font-medium text-white active:bg-rose-500 disabled:bg-rose-300"
+              disabled={!semester || !grade}
               onClick={() => toggleStudyInfo()}
             >
               다음
@@ -118,12 +129,8 @@ const StudyInfoPage = () => {
                   <div className="justify-start text-base leading-normal font-medium text-black">
                     하루에 공부 가능한 시간은 얼마나 되나요?
                   </div>
-                  <div className="inline-flex items-center justify-between self-stretch rounded-lg bg-neutral-100 px-3 py-3.5">
-                    <div className="justify-start text-xs leading-none font-normal text-neutral-500">
-                      하루에 공부 가능한 시간을 선택해주세요.
-                    </div>
-                    <div className="h-1 w-2 outline outline-1 outline-offset-[-0.50px] outline-neutral-600"></div>
-                  </div>
+
+                  <StudyTimeInput value={studyTime} onChange={setStudyTime} />
                 </div>
               </div>
             </div>

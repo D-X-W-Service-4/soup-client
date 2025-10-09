@@ -1,3 +1,4 @@
+import CharacterLogo from '../../assets/Character.svg';
 const LoginSuccessPage = () => {
   return (
     <div className="inline-flex h-[834px] w-[1194px] flex-col items-center justify-between bg-neutral-50 px-96 py-36">
@@ -19,11 +20,7 @@ const LoginSuccessPage = () => {
       </div>
       <div className="inline-flex items-center justify-start gap-2.5">
         <div className="flex items-center justify-center gap-2.5">
-          <img
-            className="h-80 w-80"
-            src="src/assets/Character.svg"
-            alt="Character Logo"
-          />
+          <img className="h-80 w-80" src={CharacterLogo} alt="Character Logo" />
         </div>
       </div>
       <div className="inline-flex items-center justify-center gap-2.5 self-stretch rounded-lg bg-red-400 px-24 py-3">

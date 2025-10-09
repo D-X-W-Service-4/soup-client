@@ -1,9 +1,14 @@
 import IconInformationCircle from '../../assets/svgs/IconInformationCircle.tsx';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import NicknameInput from '../../components/inputs/NicknameInput.tsx';
+import { useUserStore } from '../../stores/userStore.ts';
 
 const NicknamePage = () => {
   const navigate = useNavigate();
+  const nickname = useUserStore((state) => state.nickname);
+  const setNickname = useUserStore((state) => state.setNickname);
+
   return (
     <div className="mx-auto flex h-auto w-full max-w-298.5 flex-col items-center gap-12 bg-primary-bg px-36 pt-4 pb-44">
       <div className="flex w-full flex-col items-center gap-16">
@@ -58,19 +63,18 @@ const NicknamePage = () => {
             <label className="mb-2 text-xl font-medium text-black">
               닉네임 입력
             </label>
-            <input
-              type="text"
-              placeholder="플레이스홀더색깔이지롱"
-              className="w-full rounded-lg bg-secondary-bg px-5 py-4 text-lg text-secondary focus:ring-2 focus:ring-warning focus:outline-none"
+            <NicknameInput
+              value={nickname}
+              onChange={setNickname}
+              inputClassName="!h-7 !text-lg" // input 높이 + 폰트 크기 커스텀
+              containerClassName="px-5 py-4" // wrapper padding 커스텀
             />
-            <p className="mt-1 text-sm text-danger">
-              이미 존재하는 닉네임입니다.
-            </p>
           </div>
         </div>
 
         <button
-          className="w-full rounded-lg bg-primary px-5 py-3 text-base font-medium text-white active:bg-rose-500"
+          className="w-full rounded-lg bg-primary px-5 py-3 text-base font-medium text-white active:bg-rose-500 disabled:bg-rose-300"
+          disabled={!nickname}
           onClick={() => navigate('/onboarding/studyInfo')}
         >
           다음
