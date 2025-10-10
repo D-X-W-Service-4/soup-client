@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import SideBar from './components/SideBar';
+import RankingCard from './pages/home/components/RankingCard';
 
 export default function App() {
   const [isOpen, setIsOpen] = useState(true);
@@ -10,7 +11,7 @@ export default function App() {
         <SideBar isOpen={isOpen} onToggle={() => setIsOpen((v) => !v)} />
 
         <main className="flex h-full flex-1 flex-col rounded-[20px] bg-white p-9 shadow-base">
-          <span className="text-xl font-semibold">메인</span>
+          <RankingCard soup="CORN" flameRunDateCount={5} />
         </main>
       </div>
     </div>

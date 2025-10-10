@@ -1,4 +1,4 @@
-import Logotype from '../assets/Logotype.png';
+import Logotype from '../assets/logo/Logotype.png';
 import { Icon } from '@iconify/react';
 import { Link, useLocation } from 'react-router-dom';
 
