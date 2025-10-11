@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import SideBar from '../../components/SideBar.tsx';
+import UserInfoCard from './components/UserInfoCard.tsx';
 import RankingCard from './components/RankingCard.tsx';
 import RunDateCard from './components/RunDateCard.tsx';
 import type { SoupLevel } from '../../types/soupType.ts';
@@ -53,12 +54,21 @@ export default function HomePage() {
 
         <main className="flex h-full flex-1 flex-col rounded-[20px] bg-white p-9 shadow-base">
           {data && (
-            <div>
-              <RunDateCard flameRunDateCount={data.flameRunDateCount} />
+            <div className="flex flex-col gap-[50px]">
+              <UserInfoCard
+                email={data.email}
+                nickname={data.nickname}
+                grade={data.grade}
+                term={data.term}
+                solvedQuestionCount={data.solvedQuestionCount}
+                starredQuestionCount={data.starredQuestionCount}
+                plannerAchievementRate={data.plannerAchievementRate}
+              />
               <RankingCard
                 soup={data.soup}
                 solvedQuestionCount={data.solvedQuestionCount}
               />
+              <RunDateCard flameRunDateCount={data.flameRunDateCount} />
             </div>
           )}
         </main>
