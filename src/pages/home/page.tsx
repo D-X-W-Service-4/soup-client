@@ -3,6 +3,7 @@ import SideBar from '../../components/SideBar.tsx';
 import UserInfoCard from './components/UserInfoCard.tsx';
 import RankingCard from './components/RankingCard.tsx';
 import RunDateCard from './components/RunDateCard.tsx';
+import Planner from './components/Planner.tsx';
 import PlannerFlameCard, {
   mockFlameData,
 } from './components/PlannerFlameCard.tsx';
@@ -85,8 +86,9 @@ export default function HomePage() {
             </div>
           )}
 
-          <div className="flex h-full min-w-[602px] flex-col">
+          <div className="flex h-full min-w-[602px] flex-col gap-5">
             <PlannerFlameCard flames={flames} />
+            <Planner />
           </div>
         </main>
       </div>
