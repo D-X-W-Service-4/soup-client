@@ -55,16 +55,15 @@ export default function RankingCard({
   const soupTextColor = SOUP_TEXT_COLOR[displaySoup];
 
   return (
-    <div className="flex h-80 w-76 flex-col items-center justify-start gap-3 rounded-[20px] px-5 py-3 shadow-base">
+    <div className="flex w-76 flex-col items-center justify-start gap-3 rounded-[20px] px-5 py-1 shadow-base">
       <div className="flex flex-col items-center justify-center">
-        <span className="font-semibold">현재 레벨</span>
         <img src={BadgeSrc} alt={`${LabelKo} 수프`} className="h-48 w-48" />
         <div className="flex text-3xl font-semibold">
           <span className={soupTextColor}>{LabelKo}</span>
           <span className="ml-2 text-secondary">수프</span>
         </div>
       </div>
-      <div className="flex flex-col items-start justify-start gap-1 self-stretch">
+      <div className="flex flex-col items-start justify-start gap-1 self-stretch pb-5">
         <span className="text-xs font-normal text-neutral-600">
           다음 수프까지 {remain}문제
         </span>

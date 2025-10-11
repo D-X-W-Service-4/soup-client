@@ -52,9 +52,9 @@ export default function HomePage() {
       <div className="flex h-full w-full gap-6">
         <SideBar isOpen={isOpen} onToggle={() => setIsOpen((v) => !v)} />
 
-        <main className="flex h-full flex-1 flex-col rounded-[20px] bg-white p-9 shadow-base">
+        <main className="flex h-full flex-1 flex-col rounded-[20px] bg-white p-5 shadow-base">
           {data && (
-            <div className="flex flex-col gap-[50px]">
+            <div className="flex flex-col gap-2.5">
               <UserInfoCard
                 email={data.email}
                 nickname={data.nickname}
