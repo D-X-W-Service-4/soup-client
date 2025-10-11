@@ -8,7 +8,6 @@ interface DropdownSelectProps {
   onChange: (value: string) => void;
   placeholder?: string;
 }
-
 const DropdownSelect = ({
   label,
   options,
@@ -17,7 +16,13 @@ const DropdownSelect = ({
   placeholder,
 }: DropdownSelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
-
+  const handleClickOption = (item: string) => {
+    onChange(item);
+    setIsOpen(false);
+  };
+  const toggleOpen = () => {
+    setIsOpen(!isOpen);
+  };
   return (
     <div className="flex flex-col items-start justify-center gap-2 self-stretch">
       <div className="text-base leading-normal font-medium text-black">
@@ -30,10 +35,7 @@ const DropdownSelect = ({
             <div
               key={item}
               className="cursor-pointer px-3 py-3.5 text-sm hover:bg-neutral-200"
-              onClick={() => {
-                onChange(item);
-                setIsOpen(false);
-              }}
+              onClick={() => handleClickOption(item)}
             >
               {item}
             </div>
@@ -42,7 +44,7 @@ const DropdownSelect = ({
       ) : (
         <div
           className="inline-flex w-full cursor-pointer items-center justify-between rounded-lg bg-secondary-bg px-3 py-3.5"
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={toggleOpen}
         >
           <div className="text-xs leading-none font-normal text-zinc-500">
             {value === '' ? placeholder || '선택해주세요!' : value}
