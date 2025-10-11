@@ -3,7 +3,11 @@ import SideBar from '../../components/SideBar.tsx';
 import UserInfoCard from './components/UserInfoCard.tsx';
 import RankingCard from './components/RankingCard.tsx';
 import RunDateCard from './components/RunDateCard.tsx';
-import type { SoupLevel } from '../../types/soupType.ts';
+import PlannerFlameCard, {
+  mockFlameData,
+} from './components/PlannerFlameCard.tsx';
+import type { SoupLevel } from '../../types/soup.ts';
+import type { plannerFlameItem } from '../../types/planner.ts';
 
 type UserInfoResponse = {
   email: string;
@@ -17,7 +21,7 @@ type UserInfoResponse = {
   soup: SoupLevel;
 };
 
-async function mockUser(): Promise<UserInfoResponse> {
+async function mockUserData(): Promise<UserInfoResponse> {
   return {
     email: 'test@example.com',
     nickname: '황수민',
@@ -34,12 +38,13 @@ async function mockUser(): Promise<UserInfoResponse> {
 export default function HomePage() {
   const [isOpen, setIsOpen] = useState(true);
   const [data, setData] = useState<UserInfoResponse | null>(null);
+  const [flames, setFlames] = useState<plannerFlameItem[]>([]);
   const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
       try {
-        const json = await mockUser();
+        const json = await mockUserData();
         setData(json);
       } catch (e: any) {
         setErr(e?.message ?? 'Error');
@@ -47,14 +52,25 @@ export default function HomePage() {
     })();
   }, []);
 
+  useEffect(() => {
+    (async () => {
+      try {
+        const json = await mockFlameData();
+        setFlames(json);
+      } catch (e: any) {
+        setErr(e?.message ?? 'failed');
+      }
+    })();
+  }, []);
+
   return (
     <div className="flex h-dvh w-full bg-primary-bg p-5">
-      <div className="flex h-full w-full gap-6">
+      <div className="flex h-full w-full gap-5">
         <SideBar isOpen={isOpen} onToggle={() => setIsOpen((v) => !v)} />
 
-        <main className="flex h-full flex-1 flex-col rounded-[20px] bg-white p-5 shadow-base">
+        <main className="flex h-full flex-1 gap-5">
           {data && (
-            <div className="flex flex-col gap-2.5">
+            <div className="flex h-full min-w-[304px] flex-col justify-between">
               <UserInfoCard
                 email={data.email}
                 nickname={data.nickname}
@@ -71,6 +87,10 @@ export default function HomePage() {
               <RunDateCard flameRunDateCount={data.flameRunDateCount} />
             </div>
           )}
+
+          <div className="flex h-full min-w-[602px] flex-col">
+            <PlannerFlameCard flames={flames} />
+          </div>
         </main>
       </div>
     </div>

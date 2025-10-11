@@ -1,5 +1,5 @@
-import { SOUP } from '../../../types/soupType.ts';
-import type { SoupLevel } from '../../../types/soupType.ts';
+import { SOUP } from '../../../types/soup.ts';
+import type { SoupLevel } from '../../../types/soup.ts';
 
 const BADGE: Record<SoupLevel, string> = {
   TOMATO: 'src/assets/badge/tomato.png',
@@ -55,7 +55,7 @@ export default function RankingCard({
   const soupTextColor = SOUP_TEXT_COLOR[displaySoup];
 
   return (
-    <div className="flex w-76 flex-col items-center justify-start gap-3 rounded-[20px] px-5 py-1 shadow-base">
+    <div className="flex flex-col items-center justify-start gap-3 rounded-[20px] bg-white px-5 py-1 shadow-base">
       <div className="flex flex-col items-center justify-center">
         <img src={BadgeSrc} alt={`${LabelKo} 수프`} className="h-48 w-48" />
         <div className="flex text-3xl font-semibold">

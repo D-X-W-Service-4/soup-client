@@ -18,7 +18,7 @@ export default function UserInfoCard({
   plannerAchievementRate,
 }: UserInfoCardProps) {
   return (
-    <div className="flex w-76 flex-col rounded-[20px] shadow-base">
+    <div className="flex flex-col rounded-[20px] shadow-base">
       <div className="flex items-center justify-start gap-5 bg-primary-bg px-5 py-3">
         <img
           src="src/assets/logo/SoupLogo.png"
@@ -30,7 +30,7 @@ export default function UserInfoCard({
             {nickname}
           </span>
           <span className="text-sm font-medium text-gray-400">
-            {grade}학년 {term}학기
+            {Number(grade.replace('M', ''))}학년 {term}학기
           </span>
           <span className="text-xs font-medium text-gray-400">{email}</span>
         </div>
