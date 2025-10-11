@@ -18,7 +18,7 @@ export default function UserInfoCard({
   plannerAchievementRate,
 }: UserInfoCardProps) {
   return (
-    <div className="flex flex-col rounded-[20px] shadow-base">
+    <div className="flex flex-col overflow-hidden rounded-[20px] shadow-base">
       <div className="flex items-center justify-start gap-5 bg-primary-bg px-5 py-3">
         <img
           src="/assets/logo/SoupLogo.png"
@@ -35,28 +35,28 @@ export default function UserInfoCard({
           <span className="text-xs font-medium text-gray-400">{email}</span>
         </div>
       </div>
-      <div className="flex justify-center px-7 py-7.5">
+      <div className="flex justify-center bg-white px-7 py-7.5">
         <div className="flex gap-4">
           <div className="flex flex-col items-center gap-1">
-            <span className="text-2xl font-semibold text-success">
+            <span className="text-2xl font-medium text-success">
               {solvedQuestionCount}
             </span>
             <span className="text-xs font-normal text-secondary">
               해결한 문제
             </span>
           </div>
-          <div className="h-12 w-px bg-neutral-200" />
+          <div className="h-12 w-px bg-secondary-bg" />
           <div className="flex flex-col items-center gap-1">
-            <span className="text-2xl font-semibold text-warning">
+            <span className="text-2xl font-medium text-warning">
               {starredQuestionCount}
             </span>
             <span className="text-xs font-normal text-secondary">
               표시한 문제
             </span>
           </div>
-          <div className="h-12 w-px bg-neutral-200" />
+          <div className="h-12 w-px bg-secondary-bg" />
           <div className="flex flex-col items-center gap-1">
-            <span className="text-2xl font-semibold text-primary">
+            <span className="text-2xl font-medium text-primary">
               {plannerAchievementRate * 100}%
             </span>
             <span className="text-xs font-normal text-secondary">
