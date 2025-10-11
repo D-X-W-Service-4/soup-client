@@ -1,5 +1,5 @@
-const SOUP = ['TOMATO', 'CORN', 'MUSHROOM', 'PUMPKIN', 'SWEETPOTATO'] as const;
-export type SoupLevel = (typeof SOUP)[number];
+import { SOUP } from '../../../types/soupType.ts';
+import type { SoupLevel } from '../../../types/soupType.ts';
 
 const BADGE: Record<SoupLevel, string> = {
   TOMATO: 'src/assets/badge/tomato.png',
@@ -25,40 +25,40 @@ const SOUP_TEXT_COLOR: Record<SoupLevel, string> = {
   SWEETPOTATO: 'text-purple-700',
 };
 
-function soupLevelIndex(soup: SoupLevel) {
-  const i = SOUP.indexOf(soup);
-  return i >= 0 ? i + 1 : 1;
-}
-
 type RankingCardProps = {
   soup: SoupLevel;
-  flameRunDateCount: number;
+  solvedQuestionCount: number;
   perLevel?: number;
 };
 
+function nextSoup(current: SoupLevel, steps: number): SoupLevel {
+  const idx = SOUP.indexOf(current);
+  const nextIdx = Math.min(idx + Math.max(0, steps), SOUP.length - 1);
+  return SOUP[nextIdx];
+}
+
 export default function RankingCard({
   soup,
-  flameRunDateCount,
+  solvedQuestionCount,
   perLevel = 10,
 }: RankingCardProps) {
-  const level = soupLevelIndex(soup);
-  const BadgeSrc = BADGE[soup];
-  const LabelKo = SOUP_LABEL_KO[soup];
+  const safePer = Math.max(1, perLevel);
+  const total = Math.max(0, Math.floor(Number(solvedQuestionCount) || 0));
+  const levelUps = Math.floor(total / safePer);
+  const displaySoup = nextSoup(soup, levelUps);
+  let within = total % safePer;
+  const remain = safePer - within;
+  const progressPct = Math.round((within / safePer) * 100);
 
-  const within = Math.max(
-    0,
-    Math.min(perLevel, Math.floor(Number(flameRunDateCount) || 0))
-  );
-  const progressPct = Math.round((within / perLevel) * 100);
-  const remain = Math.max(0, perLevel - within);
-
-  const soupTextColor = SOUP_TEXT_COLOR[soup];
+  const BadgeSrc = BADGE[displaySoup];
+  const LabelKo = SOUP_LABEL_KO[displaySoup];
+  const soupTextColor = SOUP_TEXT_COLOR[displaySoup];
 
   return (
     <div className="flex h-80 w-72 flex-col items-center justify-start gap-3 rounded-[20px] px-5 py-3 shadow-base">
       <div className="flex flex-col items-center justify-center">
         <span className="font-semibold">현재 레벨</span>
-        <img src={BadgeSrc} className="h-48 w-48" />
+        <img src={BadgeSrc} alt={`${LabelKo} 수프`} className="h-48 w-48" />
         <div className="flex text-3xl font-semibold">
           <span className={soupTextColor}>{LabelKo}</span>
           <span className="ml-2 text-secondary">수프</span>
@@ -66,7 +66,7 @@ export default function RankingCard({
       </div>
       <div className="flex flex-col items-start justify-start gap-1 self-stretch">
         <span className="text-xs font-normal text-neutral-600">
-          다음 수프까지 {remain}일
+          다음 수프까지 {remain}문제
         </span>
         <div className="w-full" aria-label="레벨 진행도">
           <div
