@@ -44,24 +44,21 @@ export default function HomePage() {
   useEffect(() => {
     (async () => {
       try {
-        const json = await mockUserData();
-        setData(json);
-      } catch (e: any) {
-        setErr(e?.message ?? 'Error');
+        const [user, flame] = await Promise.all([
+          mockUserData(),
+          mockFlameData(),
+        ]);
+        setData(user);
+        setFlames(flame);
+      } catch (err) {
+        setErr(err instanceof Error ? err.message : String(err));
       }
     })();
   }, []);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const json = await mockFlameData();
-        setFlames(json);
-      } catch (e: any) {
-        setErr(e?.message ?? 'failed');
-      }
-    })();
-  }, []);
+  if (err) {
+    return <div className="p-6 text-warning">오류가 발생했습니다: {err}</div>;
+  }
 
   return (
     <div className="flex h-dvh w-full bg-primary-bg p-5">
