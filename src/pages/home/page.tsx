@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import SideBar from '../../components/SideBar.tsx';
 import RankingCard from './components/RankingCard.tsx';
+import RunDateCard from './components/RunDateCard.tsx';
 import type { SoupLevel } from '../../types/soupType.ts';
 
 type UserInfoResponse = {
@@ -52,10 +53,13 @@ export default function HomePage() {
 
         <main className="flex h-full flex-1 flex-col rounded-[20px] bg-white p-9 shadow-base">
           {data && (
-            <RankingCard
-              soup={data.soup}
-              solvedQuestionCount={data.solvedQuestionCount}
-            />
+            <div>
+              <RunDateCard flameRunDateCount={data.flameRunDateCount} />
+              <RankingCard
+                soup={data.soup}
+                solvedQuestionCount={data.solvedQuestionCount}
+              />
+            </div>
           )}
         </main>
       </div>
