@@ -1,11 +1,23 @@
 import type { ButtonHTMLAttributes, MouseEventHandler, ReactNode } from 'react';
 
 type ButtonSize = 'small' | 'medium' | 'large';
-type ButtonVariant = 'primary' | 'secondary' | 'success' | 'warning' | 'danger';
+type ButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'warning'
+  | 'danger'
+  | 'primary_bg';
 
 interface DefaultButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size: 'small' | 'medium' | 'large';
-  variant: 'primary' | 'secondary' | 'success' | 'warning' | 'danger';
+  variant:
+    | 'primary'
+    | 'secondary'
+    | 'success'
+    | 'warning'
+    | 'danger'
+    | 'primary_bg';
   children?: ReactNode;
   onClick?: MouseEventHandler<HTMLButtonElement>;
 }
@@ -20,6 +32,7 @@ const VARIANT_MAP: Record<ButtonVariant, String> = {
   success: 'bg-success disabled:bg-lime-200 hover:bg-lime-600',
   warning: 'bg-warning disabled:bg-orange-300 hover:bg-orange-400',
   danger: 'bg-danger disabled:bg-red-300 hover:bg-red-700',
+  primary_bg: 'bg-white disabled:bg-white hover: bg-rose-500',
 };
 
 export default function Button({
