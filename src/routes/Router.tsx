@@ -3,13 +3,20 @@ import NicknamePage from '../pages/onboarding/NicknamePage.tsx';
 import StudyInfoPage from '../pages/onboarding/StudyInfoPage.tsx';
 import StudyGuidePage from '../pages/onboarding/StudyGuidePage.tsx';
 import LoginSuccessPage from '../pages/onboarding/LoginSuccessPage.tsx';
+import Layout from '../components/Layout.tsx';
 
 const router = createBrowserRouter([
-  { path: '/', element: <Navigate to="/onboarding/nickname" replace /> },
-  { path: '/onboarding/nickname', element: <NicknamePage /> },
-  { path: '/onboarding/studyInfo', element: <StudyInfoPage /> },
-  { path: '/onboarding/studyGuide', element: <StudyGuidePage /> },
-  { path: '/onboarding/loginSuccess', element: <LoginSuccessPage /> },
+  {
+    element: <Layout />,
+
+    children: [
+      { path: '/', element: <Navigate to="/onboarding/nickname" replace /> },
+      { path: '/onboarding/nickname', element: <NicknamePage /> },
+      { path: '/onboarding/studyInfo', element: <StudyInfoPage /> },
+      { path: '/onboarding/studyGuide', element: <StudyGuidePage /> },
+      { path: '/onboarding/loginSuccess', element: <LoginSuccessPage /> },
+    ],
+  },
 ]);
 
 export default router;

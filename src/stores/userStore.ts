@@ -3,21 +3,21 @@ import { create } from 'zustand/react';
 interface UserStoreState {
   nickname: string;
   grade: string;
-  semester: string;
+  term: string;
   studyTime: string;
   setNickname: (nickname: string) => void;
   setGrade: (grade: string) => void;
-  setSemester: (semester: string) => void;
+  setTerm: (term: string) => void;
   setStudyTime: (studyTime: string) => void;
 }
 
 export const useUserStore = create<UserStoreState>((set) => ({
   nickname: '',
   grade: '',
-  semester: '',
+  term: '',
   studyTime: '',
   setNickname: (nickname) => set({ nickname }),
   setGrade: (grade) => set({ grade }),
-  setSemester: (semester) => set({ semester }),
+  setTerm: (term) => set({ term }),
   setStudyTime: (studyTime) => set({ studyTime }),
 }));

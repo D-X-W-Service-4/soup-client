@@ -15,8 +15,8 @@ const StudyInfoPage = () => {
   const grade = useUserStore((state) => state.grade);
   const setGrade = useUserStore((state) => state.setGrade);
 
-  const semester = useUserStore((state) => state.semester);
-  const setSemester = useUserStore((state) => state.setSemester);
+  const term = useUserStore((state) => state.term);
+  const setTerm = useUserStore((state) => state.setTerm);
 
   const studyTime = useUserStore((state) => state.studyTime);
   const setStudyTime = useUserStore((state) => state.setStudyTime);
@@ -88,8 +88,8 @@ const StudyInfoPage = () => {
                   <DropdownSelect
                     label={'현재 몇 학기인가요?'}
                     options={['1학기', '2학기']}
-                    value={semester}
-                    onChange={setSemester}
+                    value={term}
+                    onChange={setTerm}
                     placeholder="학기를 선택해주세요!"
                   />
                 </div>
@@ -97,7 +97,7 @@ const StudyInfoPage = () => {
             </div>
             <button
               className="w-full rounded-lg bg-primary px-5 py-3 text-base font-medium text-white active:bg-rose-500 disabled:bg-rose-300"
-              disabled={!semester || !grade}
+              disabled={!term || !grade}
               onClick={() => toggleStudyInfo()}
             >
               다음

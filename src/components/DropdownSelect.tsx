@@ -29,7 +29,7 @@ const DropdownSelect = ({
           {options.map((item) => (
             <div
               key={item}
-              className="cursor-pointer px-3 py-3.5 text-sm hover:bg-neutral-200"
+              className="cursor-pointer px-3 py-3.5 text-xs text-zinc-500 hover:bg-neutral-200"
               onClick={() => {
                 onChange(item);
                 setIsOpen(false);

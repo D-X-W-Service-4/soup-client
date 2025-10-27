@@ -3,12 +3,13 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import NicknameInput from '../../components/inputs/NicknameInput.tsx';
 import { useUserStore } from '../../stores/userStore.ts';
+import { useState } from 'react';
 
 const NicknamePage = () => {
   const navigate = useNavigate();
   const nickname = useUserStore((state) => state.nickname);
   const setNickname = useUserStore((state) => state.setNickname);
-
+  const [error, setError] = useState(false);
   return (
     <div className="mx-auto flex h-auto w-full max-w-298.5 flex-col items-center gap-12 bg-primary-bg px-36 pt-4 pb-44">
       <div className="flex w-full flex-col items-center gap-16">
@@ -68,13 +69,14 @@ const NicknamePage = () => {
               onChange={setNickname}
               inputClassName="!h-7 !text-lg" // input 높이 + 폰트 크기 커스텀
               containerClassName="px-5 py-4" // wrapper padding 커스텀
+              onErrorChange={setError}
             />
           </div>
         </div>
 
         <button
           className="w-full rounded-lg bg-primary px-5 py-3 text-base font-medium text-white active:bg-rose-500 disabled:bg-rose-300"
-          disabled={!nickname}
+          disabled={!nickname || error}
           onClick={() => navigate('/onboarding/studyInfo')}
         >
           다음

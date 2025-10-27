@@ -1,10 +1,11 @@
-import { type ChangeEvent, useState } from 'react';
+import { type ChangeEvent, useEffect, useState } from 'react';
 
 interface NicknameInputProps {
   value: string;
   onChange: (value: string) => void;
   inputClassName?: string;
   containerClassName?: string;
+  onErrorChange?: (error: boolean) => void;
 }
 
 const NicknameInput = ({
@@ -12,6 +13,7 @@ const NicknameInput = ({
   onChange,
   inputClassName = '',
   containerClassName = '',
+  onErrorChange,
 }: NicknameInputProps) => {
   const [error, setError] = useState(false);
 
@@ -19,8 +21,19 @@ const NicknameInput = ({
     const value = e.target.value;
     onChange(value);
     const regex = /^[A-Za-z가-힣0-9]+$/;
+    const hasError = value && !regex.test(value) ? true : false;
+    setError(hasError);
+    onErrorChange?.(hasError);
+
     setError(value && !regex.test(value) ? true : false);
   };
+  useEffect(() => {
+    if (!value) {
+      setError(false);
+      onErrorChange?.(false);
+    }
+  }, [value, onErrorChange]);
+
   return (
     <>
       <div
@@ -33,10 +46,12 @@ const NicknameInput = ({
           onChange={handleNicknameChange}
         />
       </div>
-      {error && (
+      {error ? (
         <div className="text-xs leading-none font-normal text-danger">
           올바르지 않은 닉네임입니다.
         </div>
+      ) : (
+        <div className="text-xs leading-none font-normal">&nbsp;</div> // 빈 공간 유지용
       )}
     </>
   );
