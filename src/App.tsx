@@ -16,7 +16,7 @@ const App = () => {
   const [isHintModalOpen, setIsHintModalOpen] = useState(false);
   const [questionType, setQuestionType] = useState<'essay' | 'objective'>(
     'objective'
-  ); // 기본은 객관식
+  );
 
   const handleHintModal = () => {
     setIsHintModalOpen((prev) => !prev);
@@ -36,7 +36,6 @@ const App = () => {
   return (
     <div className="relative flex h-screen w-full flex-col items-center justify-start bg-primary-bg">
       <QuestionBar />
-
       {/* 메인 컨테이너 */}
       <div className="relative flex h-[calc(100vh-80px)] w-full flex-1 flex-row items-start justify-start gap-5 p-10">
         {/* 힌트 바 (절대 위치) */}
@@ -56,7 +55,6 @@ const App = () => {
 
         {/* 문제 + 답 영역 */}
         <div className="ml-20 flex h-full flex-1 flex-col items-center justify-start gap-6">
-          {/* 문제 표시 영역 */}
           <div className="w-full flex-[0.4]">
             <QuestionDisplay
               imageUrl={mockQuestion.imageUrl}
@@ -65,7 +63,6 @@ const App = () => {
             />
           </div>
 
-          {/* 답안 영역 */}
           <div className="h-full w-full flex-1">
             {questionType === 'essay' ? (
               <EssayAnswerBox />
@@ -94,7 +91,6 @@ const App = () => {
             />
           )}
 
-          {/* mt-auto를 줘서 버튼과 경고박스를 아래로 밀기 */}
           <div className="mt-auto flex w-full flex-col items-end gap-10">
             {questionType === 'essay' && (
               <>
