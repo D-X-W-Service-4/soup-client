@@ -32,7 +32,7 @@ const WorkBookPage = () => {
           <div className="h-1 w-72 rounded-sm bg-primary"></div>
           <div className="h-1 w-72 rounded-sm bg-primary"></div>
         </div>
-        <div className="flex w-[797px] flex-col items-center justify-start gap-16">
+        <div className="flex w-200 flex-col items-center justify-start gap-16">
           <div className="flex flex-col items-center justify-start gap-4">
             <motion.div
               className="inline-flex items-center justify-center gap-4 self-stretch"
@@ -55,7 +55,7 @@ const WorkBookPage = () => {
           </div>
         </div>
       </div>
-      <div className="flex flex-col items-start justify-start gap-5 self-stretch rounded-[20px] bg-white px-10 py-12 shadow-[0px_2px_10px_0px_rgba(0,0,0,0.05)]">
+      <div className="flex flex-col items-start justify-start gap-5 self-stretch rounded-2xl bg-white px-10 py-12 shadow-[0px_2px_10px_0px_rgba(0,0,0,0.05)]">
         <div className="flex flex-col items-start justify-start gap-10 self-stretch">
           <div
             className="inline-flex items-center justify-between self-stretch rounded-2xl bg-secondary-bg px-5 py-3.5 active:bg-neutral-300"
