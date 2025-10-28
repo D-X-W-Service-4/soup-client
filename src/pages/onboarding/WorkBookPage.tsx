@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import WorkBook from '../../components/WorkBook.tsx';
 import { useState } from 'react';
+import WorkbooksModal from '../../components/WorkbooksModal.tsx';
 
 const WorkBookPage = () => {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ const WorkBookPage = () => {
     { id: 6, title: '쎈 중등 수학 1 - 2' },
   ]);
   const count = workbooks.length;
-
+  const [isWorkBookOpen, setIsWorkBookOpen] = useState(false);
   const handleRemove = (id: number) => {
     setWorkbooks((prev) => prev.filter((workbook) => workbook.id !== id));
   };
@@ -56,11 +57,14 @@ const WorkBookPage = () => {
       </div>
       <div className="flex flex-col items-start justify-start gap-5 self-stretch rounded-[20px] bg-white px-10 py-12 shadow-[0px_2px_10px_0px_rgba(0,0,0,0.05)]">
         <div className="flex flex-col items-start justify-start gap-10 self-stretch">
-          <div className="inline-flex items-center justify-between self-stretch rounded-2xl bg-secondary-bg px-5 py-3.5 active:bg-neutral-300">
-            <div
-              className="justify-start text-xl leading-7 font-normal text-secondary"
-              onClick={() => console.log('누름')}
-            >
+          <div
+            className="inline-flex items-center justify-between self-stretch rounded-2xl bg-secondary-bg px-5 py-3.5 active:bg-neutral-300"
+            onClick={() => {
+              setIsWorkBookOpen(true);
+              document.body.style.overflow = 'hidden';
+            }}
+          >
+            <div className="justify-start text-xl leading-7 font-normal text-secondary">
               원하는 문제집을 검색해 보세요
             </div>
             <IconMagnifingGlass />
@@ -83,7 +87,7 @@ const WorkBookPage = () => {
                 전체 삭제
               </Button>
             </div>
-            <div className="flex h-50 flex-col items-start justify-start gap-2.5 self-stretch overflow-y-scroll p-1">
+            <div className="flex h-50 flex-col items-start justify-start gap-2.5 self-stretch overflow-scroll p-1">
               {workbooks.map((workbook) => (
                 <WorkBook
                   key={workbook.id}
@@ -105,6 +109,23 @@ const WorkBookPage = () => {
           </div>
         </div>
       </div>
+      {isWorkBookOpen && (
+        <WorkbooksModal
+          onClose={() => {
+            setIsWorkBookOpen(false);
+            document.body.style.overflow = 'auto';
+          }}
+          onSelectWorkbooks={(selected) => {
+            setWorkbooks((prev) => {
+              const existingIds = prev.map((w) => w.id);
+              const newOnes = selected.filter(
+                (w) => !existingIds.includes(w.id)
+              );
+              return [...prev, ...newOnes];
+            });
+          }}
+        />
+      )}
     </div>
   );
 };
