@@ -1,10 +1,11 @@
 import IconBookOpen from '../assets/svgs/IconBookOpen.tsx';
 import IconXMark from '../assets/svgs/IconXMark.tsx';
 
-interface StudyGuideProps {
+interface WorkBookProps {
   title: string;
+  onRemove: () => void;
 }
-const StudyGuide = ({ title }: StudyGuideProps) => {
+const WorkBook = ({ title, onRemove }: WorkBookProps) => {
   return (
     <div className="inline-flex items-center justify-between self-stretch rounded-2xl bg-primary-bg px-6 py-4 outline outline-offset-1 outline-primary">
       <div className="flex items-center justify-start gap-3.5">
@@ -13,9 +14,9 @@ const StudyGuide = ({ title }: StudyGuideProps) => {
           {title}
         </div>
       </div>
-      <IconXMark />
+      <IconXMark onClick={onRemove} />
     </div>
   );
 };
 
-export default StudyGuide;
+export default WorkBook;

@@ -19,17 +19,27 @@ const DropdownSelect = ({
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="flex flex-col items-start justify-center gap-2 self-stretch">
+    <div className="relative flex flex-col items-start justify-center gap-2 self-stretch">
       <div className="text-base leading-normal font-medium text-black">
         {label}
       </div>
 
-      {isOpen ? (
-        <div className="mt-1 flex w-full flex-col overflow-hidden rounded-lg bg-secondary-bg">
+      <div
+        className="relative z-10 inline-flex w-full cursor-pointer items-center justify-between rounded-lg bg-secondary-bg px-3 py-3.5"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <div className="text-xs leading-none font-normal text-zinc-500">
+          {value === '' ? placeholder || '선택해주세요!' : value}
+        </div>
+        <IconChevronDown />
+      </div>
+
+      {isOpen && (
+        <div className="absolute top-8 left-0 z-20 w-full rounded-lg bg-secondary-bg shadow-sm">
           {options.map((item) => (
             <div
               key={item}
-              className="cursor-pointer px-3 py-3.5 text-xs text-zinc-500 hover:bg-neutral-200"
+              className="cursor-pointer px-3 py-3.5 text-xs text-secondary hover:bg-neutral-100"
               onClick={() => {
                 onChange(item);
                 setIsOpen(false);
@@ -38,16 +48,6 @@ const DropdownSelect = ({
               {item}
             </div>
           ))}
-        </div>
-      ) : (
-        <div
-          className="inline-flex w-full cursor-pointer items-center justify-between rounded-lg bg-secondary-bg px-3 py-3.5"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          <div className="text-xs leading-none font-normal text-zinc-500">
-            {value === '' ? placeholder || '선택해주세요!' : value}
-          </div>
-          <IconChevronDown />
         </div>
       )}
     </div>

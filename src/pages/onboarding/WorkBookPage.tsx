@@ -2,10 +2,27 @@ import Button from '../../components/Button.tsx';
 import IconMagnifingGlass from '../../assets/svgs/IconMagnifingGlass.tsx';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import StudyGuide from '../../components/StudyGuide.tsx';
+import WorkBook from '../../components/WorkBook.tsx';
+import { useState } from 'react';
 
-const StudyGuidePage = () => {
+const WorkBookPage = () => {
   const navigate = useNavigate();
+  const [workbooks, setWorkbooks] = useState([
+    { id: 1, title: '쎈 중등 수학 1 - 1' },
+    { id: 2, title: '쎈 중등 수학 1 - 2' },
+    { id: 3, title: '쎈 중등 수학 1 - 2' },
+    { id: 4, title: '쎈 중등 수학 1 - 2' },
+    { id: 5, title: '쎈 중등 수학 1 - 2' },
+    { id: 6, title: '쎈 중등 수학 1 - 2' },
+  ]);
+  const count = workbooks.length;
+
+  const handleRemove = (id: number) => {
+    setWorkbooks((prev) => prev.filter((workbook) => workbook.id !== id));
+  };
+  const handleRemoveAll = () => {
+    setWorkbooks([]);
+  };
   return (
     <div className="inline-flex h-[834px] w-[1194px] flex-col items-center justify-start gap-12 bg-primary-bg px-36 py-4">
       <div className="flex flex-col items-center justify-start gap-16">
@@ -37,7 +54,7 @@ const StudyGuidePage = () => {
           </div>
         </div>
       </div>
-      <div className="flex flex-col items-start justify-start gap-20 self-stretch rounded-[20px] bg-white px-10 py-12 shadow-[0px_2px_10px_0px_rgba(0,0,0,0.05)]">
+      <div className="flex flex-col items-start justify-start gap-5 self-stretch rounded-[20px] bg-white px-10 py-12 shadow-[0px_2px_10px_0px_rgba(0,0,0,0.05)]">
         <div className="flex flex-col items-start justify-start gap-10 self-stretch">
           <div className="inline-flex items-center justify-between self-stretch rounded-2xl bg-secondary-bg px-5 py-3.5 active:bg-neutral-300">
             <div
@@ -55,16 +72,25 @@ const StudyGuidePage = () => {
                   내 문제집
                 </div>
                 <div className="justify-start text-xl leading-7 font-semibold text-primary">
-                  2
+                  {count}
                 </div>
               </div>
-              <Button size={'medium'} variant={'white'}>
+              <Button
+                size={'medium'}
+                variant={'white'}
+                onClick={() => handleRemoveAll()}
+              >
                 전체 삭제
               </Button>
             </div>
-            <div className="flex flex-col items-start justify-start gap-2.5 self-stretch">
-              <StudyGuide title={'쎈 중등 수학 1 - 1'} />
-              <StudyGuide title={'쎈 중등 수학 1 - 2'} />
+            <div className="flex h-50 flex-col items-start justify-start gap-2.5 self-stretch overflow-y-scroll p-1">
+              {workbooks.map((workbook) => (
+                <WorkBook
+                  key={workbook.id}
+                  title={workbook.title}
+                  onRemove={() => handleRemove(workbook.id)}
+                />
+              ))}
             </div>
           </div>
         </div>
@@ -82,4 +108,4 @@ const StudyGuidePage = () => {
     </div>
   );
 };
-export default StudyGuidePage;
+export default WorkBookPage;
