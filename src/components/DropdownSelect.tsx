@@ -14,22 +14,20 @@ const DropdownSelect = ({
   options,
   value,
   onChange,
-  placeholder,
+  placeholder = '선택해주세요!',
 }: DropdownSelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
-
   return (
     <div className="relative flex flex-col items-start justify-center gap-2 self-stretch">
       <div className="text-base leading-normal font-medium text-black">
         {label}
       </div>
-
       <div
         className="relative z-10 inline-flex w-full cursor-pointer items-center justify-between rounded-lg bg-secondary-bg px-3 py-3.5"
         onClick={() => setIsOpen(!isOpen)}
       >
         <div className="text-xs leading-none font-normal text-zinc-500">
-          {value === '' ? placeholder || '선택해주세요!' : value}
+          {value === '' ? placeholder : value}{' '}
         </div>
         <IconChevronDown />
       </div>

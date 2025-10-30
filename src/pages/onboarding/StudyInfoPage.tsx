@@ -122,7 +122,7 @@ const StudyInfoPage = () => {
                     <div className="justify-start text-xs leading-none font-normal text-neutral-500">
                       단원을 선택해주세요.
                     </div>
-                    <div className="h-1 w-2 outline outline-1 outline-offset-[-0.50px] outline-neutral-600"></div>
+                    <div className="h-1 w-2 outline-1 outline-offset-[-0.50px] outline-neutral-600"></div>
                   </div>
                 </div>
                 <div className="flex flex-col items-start justify-start gap-4 self-stretch">
