@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { Icon } from '@iconify/react';
 import dayjs from 'dayjs';
 import type {
@@ -31,10 +30,7 @@ export async function mockFlameData(): Promise<plannerFlameItem[]> {
 
 export default function PlannerFlameCard({ flames }: flameDateCardProps) {
   const week = getThisWeek();
-  const map = useMemo(
-    () => new Map(flames.map((f) => [f.date, f.flame])),
-    [flames]
-  );
+  const map = new Map(flames.map((f) => [f.date, f.flame]));
   const items = week.map((d, i) => ({
     date: d,
     day: DAY[i],
