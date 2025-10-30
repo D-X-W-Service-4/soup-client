@@ -4,6 +4,8 @@ export default function Planner() {
       <img
         src="/assets/logo/Logo.png"
         alt="로고"
+        width={157}
+        height={157}
         className="h-[157px] w-[157px]"
       />
 

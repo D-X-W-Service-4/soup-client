@@ -1,4 +1,4 @@
-type UserInfoCardProps = {
+interface UserInfoCardProps {
   email: string;
   nickname: string;
   grade: string;
@@ -6,7 +6,7 @@ type UserInfoCardProps = {
   solvedQuestionCount: number;
   starredQuestionCount: number;
   plannerAchievementRate: number;
-};
+}
 
 export default function UserInfoCard({
   email,

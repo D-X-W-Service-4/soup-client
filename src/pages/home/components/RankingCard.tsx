@@ -25,11 +25,11 @@ const SOUP_TEXT_COLOR: Record<SoupLevel, string> = {
   SWEETPOTATO: 'text-purple-700',
 };
 
-type RankingCardProps = {
+interface RankingCardProps {
   soup: SoupLevel;
   solvedQuestionCount: number;
   perLevel?: number;
-};
+}
 
 function nextSoup(current: SoupLevel, steps: number): SoupLevel {
   const idx = SOUP.indexOf(current);

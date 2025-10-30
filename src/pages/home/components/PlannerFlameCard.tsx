@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { Icon } from '@iconify/react';
+import dayjs from 'dayjs';
 import type {
   plannerFlameItem,
   flameDateCardProps,
@@ -7,18 +8,11 @@ import type {
 
 const DAY = ['일', '월', '화', '수', '목', '금', '토'] as const;
 
-const fmtYMD = (d: Date) =>
-  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-
-function getThisWeek(): string[] {
-  const today = new Date();
-  const sunday = new Date(today);
-  sunday.setDate(today.getDate() - today.getDay());
-  return Array.from({ length: 7 }, (_, i) => {
-    const week = new Date(sunday);
-    week.setDate(sunday.getDate() + i);
-    return fmtYMD(week);
-  });
+export function getThisWeek(): string[] {
+  const sunday = dayjs().day(0);
+  return Array.from({ length: 7 }, (_, i) =>
+    sunday.add(i, 'day').format('YYYY-MM-DD')
+  );
 }
 
 export async function mockFlameData(): Promise<plannerFlameItem[]> {
@@ -52,9 +46,15 @@ export default function PlannerFlameCard({ flames }: flameDateCardProps) {
       <div className="flex w-full justify-between">
         {items.map(({ date, day, flame }) => (
           <div className="flex flex-col items-center gap-1">
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-400 text-xl font-normal text-white">
-              {date.slice(8)}
-            </span>
+            {flame ? (
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-xl font-normal text-white">
+                {date.slice(8)}
+              </span>
+            ) : (
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-400 text-xl font-normal text-white">
+                {date.slice(8)}
+              </span>
+            )}
             <span className="text-xs font-normal text-secondary">{day}</span>
             {flame ? (
               <Icon icon="fluent-emoji-flat:fire" className="h-5 w-5" />

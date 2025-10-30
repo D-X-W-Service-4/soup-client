@@ -10,7 +10,7 @@ import PlannerFlameCard, {
 import type { SoupLevel } from '../../types/soup.ts';
 import type { plannerFlameItem } from '../../types/planner.ts';
 
-type UserInfoResponse = {
+interface UserInfoResponse {
   email: string;
   nickname: string;
   grade: string;
@@ -20,7 +20,7 @@ type UserInfoResponse = {
   plannerAchievementRate: number;
   flameRunDateCount: number;
   soup: SoupLevel;
-};
+}
 
 async function mockUserData(): Promise<UserInfoResponse> {
   return {

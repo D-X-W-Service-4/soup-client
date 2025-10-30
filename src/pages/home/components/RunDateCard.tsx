@@ -1,6 +1,6 @@
-type RunDateCardProps = {
+interface RunDateCardProps {
   flameRunDateCount: number;
-};
+}
 
 export default function RunDateCard({ flameRunDateCount }: RunDateCardProps) {
   return (
