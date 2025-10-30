@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import IconTimer from '../../../assets/IconTimer.tsx';
+import IconTimer from '../../../assets/svgs/IconTimer.tsx';
 
 interface TimerProps {
   initialMinutes: number;

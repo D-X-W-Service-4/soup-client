@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import IconChevronLeft from '../../../assets/IconChevronLeft.tsx';
-import IconChevronRight from '../../../assets/IconChevronRight.tsx';
+import IconChevronLeft from '../../../assets/svgs/IconChevronLeft.tsx';
+import IconChevronRight from '../../../assets/svgs/IconChevronRight.tsx';
 
 type QuestionState = 'default' | 'current' | 'solved' | 'disabled';
 
@@ -11,7 +11,7 @@ interface QuestionSelectProps {
   onSelect: (q: number) => void;
 }
 
-function QuestionSelect({
+export default function QuestionSelect({
   totalQuestions,
   current,
   solved,
@@ -22,17 +22,18 @@ function QuestionSelect({
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth <= 768)
-        setPageSize(5); // 아이패드 미니 사이즈
-      else if (window.innerWidth <= 1024)
-        setPageSize(7); // 아이패드 미니 사이즈
+      if (window.innerWidth <= 768) setPageSize(5);
+      else if (window.innerWidth <= 1024) setPageSize(7);
       else setPageSize(10);
     };
-
     window.addEventListener('resize', handleResize);
     handleResize();
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  useEffect(() => {
+    setCurrentPage(Math.floor((current - 1) / pageSize));
+  }, [current, pageSize]);
 
   const totalPages = Math.ceil(totalQuestions / pageSize);
   const start = currentPage * pageSize;
@@ -43,17 +44,17 @@ function QuestionSelect({
   );
 
   const getState = (qNum: number): QuestionState => {
+    if (qNum > totalQuestions) return 'disabled';
     if (qNum === current) return 'current';
     if (solved.includes(qNum)) return 'solved';
-    if (qNum > current) return 'disabled';
     return 'default';
   };
 
   return (
-    <div className="inline-flex items-center justify-start gap-4 rounded-[30px] bg-white px-2 py-1 shadow-[0px_4px_4px_0px_rgba(0,0,0,0.05)] sm:px-4 md:gap-8 lg:gap-16">
+    <div className="inline-flex items-center justify-start gap-4 rounded-[30px] bg-white px-2 py-1 shadow sm:px-4 md:gap-8 lg:gap-16">
       <button
         disabled={currentPage === 0}
-        onClick={() => setCurrentPage((p) => Math.max(p - 1, 0))}
+        onClick={() => onSelect(Math.max(current - pageSize, 1))}
       >
         <IconChevronLeft
           className={`h-5 w-5 ${currentPage === 0 ? 'text-neutral-300' : 'text-neutral-500'}`}
@@ -64,7 +65,7 @@ function QuestionSelect({
         <div className="visibility-hidden flex items-center justify-center gap-2 md:gap-5">
           {Array.from({ length: pageSize }).map((_, index) => (
             <div
-              key={`sizer-${index}`}
+              key={index}
               className="h-9 w-9 md:h-11 md:w-11"
               aria-hidden="true"
             />
@@ -79,11 +80,11 @@ function QuestionSelect({
               let textClass = 'text-red-400';
 
               if (state === 'current') {
-                bgClass = 'bg-red-400';
+                bgClass = 'bg-primary';
                 textClass = 'text-white';
               } else if (state === 'solved') {
-                bgClass = 'bg-green-400';
-                textClass = 'text-white';
+                bgClass = 'bg-green-100';
+                textClass = 'text-success';
               } else if (state === 'disabled') {
                 bgClass = 'bg-neutral-50';
                 textClass = 'text-neutral-300';
@@ -92,7 +93,6 @@ function QuestionSelect({
               return (
                 <div
                   key={qNum}
-                  data-state={state}
                   className={`inline-flex h-9 w-9 cursor-pointer flex-col items-center justify-center rounded-3xl md:h-11 md:w-11 ${bgClass}`}
                   onClick={() => onSelect(qNum)}
                 >
@@ -110,7 +110,7 @@ function QuestionSelect({
 
       <button
         disabled={currentPage >= totalPages - 1}
-        onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages - 1))}
+        onClick={() => onSelect(Math.min(current + pageSize, totalQuestions))}
       >
         <IconChevronRight
           className={`h-5 w-5 ${currentPage >= totalPages - 1 ? 'text-neutral-300' : 'text-neutral-500'}`}
@@ -119,5 +119,3 @@ function QuestionSelect({
     </div>
   );
 }
-
-export default QuestionSelect;

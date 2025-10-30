@@ -1,49 +1,40 @@
-import { useState, useEffect, useRef } from 'react';
+import { useRef } from 'react';
 
-const EssayAnswerBox = () => {
+interface EssayAnswerBoxProps {
+  value: string;
+  onChange: (val: string) => void;
+}
+
+const EssayAnswerBox = ({ value, onChange }: EssayAnswerBoxProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [rows, setRows] = useState(7); // 초기 줄 개수
-  const [answer, setAnswer] = useState('');
 
-  useEffect(() => {
-    const resizeHandler = () => {
-      if (containerRef.current) {
-        const containerHeight = containerRef.current.clientHeight;
-        const lineHeight = 36; // 한 줄 높이
-        const numRows = Math.floor(containerHeight / lineHeight);
-        setRows(numRows > 3 ? numRows : 3); // 최소 3줄
-      }
-    };
-
-    resizeHandler();
-    window.addEventListener('resize', resizeHandler);
-    return () => window.removeEventListener('resize', resizeHandler);
-  }, []);
-
-  // 줄 배경용 div 생성
-  const lineArray = Array.from({ length: rows });
+  const lineHeight = 36;
+  const totalRows = 100; //일단 넉넉하게 잡아서 하는 방법으로 했습니다..
+  const lineArray = Array.from({ length: totalRows });
 
   return (
     <div
       ref={containerRef}
-      className="relative h-full w-full max-w-3xl rounded-xl bg-white p-4 shadow-md"
+      className="relative flex h-full w-full flex-col overflow-auto rounded-xl bg-white p-8 shadow-md"
     >
-      {/* 줄 표시 */}
       {lineArray.map((_, i) => (
         <div
           key={i}
           className="pointer-events-none absolute left-0 w-full border-b-[0.5px] border-gray-300"
-          style={{ top: `${i * 36}px`, height: '36px' }}
+          style={{ top: `${i * lineHeight}px`, height: `${lineHeight}px` }}
         />
       ))}
 
       <textarea
-        value={answer}
-        onChange={(e) => setAnswer(e.target.value)}
-        placeholder="여기에 답안을 작성해 주세요."
-        rows={rows}
-        className="h-full w-full resize-none bg-transparent p-2 font-['Pretendard_Variable'] text-base leading-normal outline-none"
-        style={{ lineHeight: '36px' }}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder="여기에 자유롭게 풀이를 작성해 주세요."
+        rows={totalRows}
+        className="absolute top-0 left-0 w-full resize-none bg-transparent p-2 font-['Pretendard_Variable'] text-base leading-normal outline-none"
+        style={{
+          lineHeight: `${lineHeight}px`,
+          minHeight: `${lineHeight * totalRows}px`,
+        }}
       />
     </div>
   );

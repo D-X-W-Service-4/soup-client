@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
-import IconEssay from '../../../assets/IconEssay.tsx';
-import IconStar from '../../../assets/IconStar.tsx';
-import IconHint from '../../../assets/IconHint.tsx';
-import IconX from '../../../assets/IconX.tsx';
-import IconHamburger from '../../../assets/IconHamburger.tsx';
+import IconEssay from '../../../assets/svgs/IconEssay.tsx';
+import IconStar from '../../../assets/svgs/IconStar.tsx';
+import IconHint from '../../../assets/svgs/IconHint.tsx';
+import IconX from '../../../assets/svgs/IconX.tsx';
+import IconHamburger from '../../../assets/svgs/IconHamburger.tsx';
 
 type HintBarProps = {
   hints: string[];
   isHintModalOpen: boolean;
-  isEssaySelected?: boolean; // 서술형 강조용
+  isEssaySelected?: boolean;
+  isStarred?: boolean;
   onOpenHintModal?: () => void;
   onSwitchEssay?: () => void;
+  onToggleStar?: () => void;
 };
 
 type MenuItem = {
@@ -32,7 +34,9 @@ const HintBar = ({
   onOpenHintModal,
   isHintModalOpen,
   isEssaySelected = false,
+  isStarred = false,
   onSwitchEssay,
+  onToggleStar,
 }: HintBarProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
@@ -43,15 +47,9 @@ const HintBar = ({
       return;
     }
 
-    if (id === 'hint' && onOpenHintModal) {
-      onOpenHintModal();
-    }
-
-    if (id === 'essay' && onSwitchEssay) {
-      onSwitchEssay(); // 서술형 상태 토글
-    }
-
-    // 힌트 제외한 버튼 선택 표시
+    if (id === 'hint' && onOpenHintModal) onOpenHintModal();
+    if (id === 'essay' && onSwitchEssay) onSwitchEssay();
+    if (id === 'star' && onToggleStar) onToggleStar();
     if (id !== 'hint') {
       setSelectedItemId((prev) => (prev === id ? null : id));
     }
@@ -63,10 +61,10 @@ const HintBar = ({
     <div className="flex flex-col items-start gap-4">
       {isOpen ? (
         menuItems.map((item, index) => {
-          // 선택 상태 계산
           let isSelected = item.id === selectedItemId;
           if (item.id === 'hint') isSelected = isHintModalOpen;
           if (item.id === 'essay') isSelected = isEssaySelected;
+          if (item.id === 'star') isSelected = isStarred; // ⭐ 추가
 
           const iconBgColor = isSelected
             ? 'bg-white'

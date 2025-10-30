@@ -1,10 +1,11 @@
-// OptionItem.tsx
+import { useState, useEffect } from 'react';
+
 type OptionItemProps = {
   id: number;
   text: string;
   isSelected: boolean;
-  onSelect: (id: number) => void;
-  isHintOpen?: boolean; // 힌트 열림 여부
+  onSelect: (id: number | null) => void;
+  isHintOpen?: boolean;
 };
 
 const OptionItem = ({
@@ -14,33 +15,61 @@ const OptionItem = ({
   onSelect,
   isHintOpen = false,
 }: OptionItemProps) => {
-  const containerClasses = `
-  w-72 rounded-xl flex items-center gap-7 cursor-pointer transition-all
-  ${isSelected ? 'bg-primary' : 'bg-white'}
-  ${isHintOpen ? 'p-2' : 'p-5'}
-`;
+  const [scale, setScale] = useState(1);
 
-  const circleClasses = `
-  p-2 rounded-[20px] flex justify-center items-center
-  ${isHintOpen ? 'w-7 h-3' : 'w-7 h-7'}
-  ${isSelected ? 'bg-primary-bg' : 'bg-neutral-50'}
-`;
+  useEffect(() => {
+    const handleResize = () => {
+      const baseWidth = 1180; // 기준 화면 너비
+      const screenWidth = window.innerWidth;
+      const newScale = screenWidth / baseWidth;
+      setScale(newScale > 1 ? 1 : newScale); // 화면이 기준보다 클 때 확대 방지
+    };
 
-  const numberClasses = `text-center text-base font-medium font-['Pretendard_Variable'] leading-normal text-primary`;
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-  const textClasses = `text-xl font-medium font-['Pretendard_Variable'] leading-7
-        ${isSelected ? 'text-white' : 'text-black'}`;
+  const handleClick = () => {
+    if (isSelected) {
+      onSelect(null);
+    } else {
+      onSelect(id);
+    }
+  };
 
   return (
     <div
-      className={containerClasses}
-      onClick={() => onSelect(id)}
+      className={`flex cursor-pointer items-center gap-4 rounded-xl transition-all
+          ${isSelected ? 'bg-primary' : 'bg-white'}
+          ${isHintOpen ? 'p-4' : 'p-4'}`}
+      onClick={handleClick}
       data-select={isSelected}
+      style={{
+        transform: `scale(${scale})`,
+        transformOrigin: 'top left',
+        width: `${scale * 288}px`, // 원래 w-72
+        height: `${scale * 56}px`, // 원래 h-14
+      }}
     >
-      <div className={circleClasses}>
-        <div className={numberClasses}>{id}</div>
+      <div
+        className={`flex items-center justify-center rounded-full
+            ${isSelected ? 'bg-primary-bg' : 'bg-neutral-50'}`}
+        style={{
+          width: `${scale * 28}px`,
+          height: `${scale * 28}px`,
+        }}
+      >
+        <div className="text-center text-base font-medium text-primary">
+          {id}
+        </div>
       </div>
-      <div className={textClasses}>{text}</div>
+      <div
+        className={`font-medium ${isSelected ? 'text-white' : 'text-black'}`}
+        style={{ fontSize: `${scale * 18}px`, lineHeight: `${scale * 28}px` }}
+      >
+        {text}
+      </div>
     </div>
   );
 };

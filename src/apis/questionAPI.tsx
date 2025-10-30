@@ -1,5 +1,5 @@
-// 📌 백엔드 명세 기반 타입 정의
-export interface Question {
+import MockupQuestion from '../assets/MockupQuestion.png';
+export interface QuestionData {
   questionId: string;
   grade: string;
   term: number;
@@ -12,13 +12,12 @@ export interface Question {
   sector1: string;
   sector2: string;
   difficulty: number;
-  contents: string | null; // 문제 내용 (텍스트 or 이미지 URL)
+  contents: string | null;
   answerFileUrl: string | null;
   answerText: string | null;
 }
 
-// 📌 임시 mock 데이터
-const mockQuestions: Question[] = [
+export const mockQuestions: QuestionData[] = [
   {
     questionId: '00044_44888',
     grade: 'M3',
@@ -32,7 +31,7 @@ const mockQuestions: Question[] = [
     sector1: '계산',
     sector2: '수와 연산',
     difficulty: 1,
-    contents: 'https://via.placeholder.com/800x1200.png?text=문제+1',
+    contents: MockupQuestion,
     answerFileUrl: null,
     answerText: null,
   },
@@ -55,10 +54,9 @@ const mockQuestions: Question[] = [
   },
 ];
 
-// 📌 API 함수 (나중에 실제 서버 연결 시 이 부분만 수정)
 export const fetchQuestionById = async (
   id: number
-): Promise<Question | null> => {
+): Promise<QuestionData | null> => {
   // 서버 없을 때는 mock 데이터에서 반환
   return mockQuestions[id - 1] || null;
 
