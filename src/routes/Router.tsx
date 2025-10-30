@@ -16,7 +16,7 @@ const router = createBrowserRouter([
       { path: '/onboarding/studyInfo', element: <StudyInfoPage /> },
       { path: '/onboarding/workBook', element: <WorkBookPage /> },
       { path: '/onboarding/loginSuccess', element: <LoginSuccessPage /> },
-      { path: '/', element: <HomePage /> },
+      { path: '/home', element: <HomePage /> },
     ],
   },
 ]);
