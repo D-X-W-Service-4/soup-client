@@ -1,10 +1,12 @@
+import type { ChangeEvent } from 'react';
+
 interface StudyTimeInputProps {
   value: string;
   onChange: (value: string) => void;
 }
 
 const StudyTimeInput = ({ value, onChange }: StudyTimeInputProps) => {
-  const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTimeChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     const onlyNumber = value.replace(/\D/g, ''); // 숫자만 추출
     onChange(onlyNumber);

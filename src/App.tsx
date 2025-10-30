@@ -1,12 +1,8 @@
-import { RouterProvider } from 'react-router-dom';
-import router from './routes/Router.tsx';
-
-import { useState } from 'react';
 import SideBar from './components/SideBar';
 import LevelTestStartPage from './pages/levelTest/LevelTestStartPage.tsx';
 
 export default function App() {
-  const [isOpen, setIsOpen] = useState(true);
+  // const [isOpen, setIsOpen] = useState(true);
 
   return (
     // <>
