@@ -17,6 +17,7 @@ const router = createBrowserRouter([
       { path: '/onboarding/workBook', element: <WorkBookPage /> },
       { path: '/onboarding/loginSuccess', element: <LoginSuccessPage /> },
       { path: '/levelTest/levelTestStart', element: <LevelTestStartPage /> },
+      { path: '/levelTest/levelTest', element: <LevelTestStartPage /> },
     ],
   },
 ]);

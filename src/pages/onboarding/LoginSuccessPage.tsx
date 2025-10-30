@@ -40,7 +40,7 @@ const LoginSuccessPage = () => {
       </div>
       <div
         className="inline-flex items-center justify-center gap-2.5 self-stretch rounded-lg bg-primary px-24 py-3"
-        onClick={() => navigate('../levelTest/LevelTestStart')}
+        onClick={() => navigate('../levelTest/levelTestStart')}
       >
         <div className="justify-start text-base leading-normal font-medium text-white">
           시작하기

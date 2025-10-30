@@ -1,5 +1,7 @@
 import SideBar from './components/SideBar';
-import LevelTestStartPage from './pages/levelTest/LevelTestStartPage.tsx';
+import { useState } from 'react';
+import { RouterProvider } from 'react-router-dom';
+import router from './routes/Router.tsx';
 
 export default function App() {
   // const [isOpen, setIsOpen] = useState(true);
@@ -17,6 +19,6 @@ export default function App() {
     //     </div>
     //   </div>
     // </>
-    <LevelTestStartPage />
+    <></>
   );
 }
