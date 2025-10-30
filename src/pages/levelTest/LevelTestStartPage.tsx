@@ -3,14 +3,30 @@ import IconBookOpenBlank from '../../assets/svgs/IconBookOpenBlank.tsx';
 import IconClock from '../../assets/svgs/IconClock.tsx';
 import IconBookOpenFill from '../../assets/svgs/IconBookOpenFill.tsx';
 import IconSpeechBubble from '../../assets/svgs/IconSpeechBubble.tsx';
+import { useUserStore } from '../../stores/userStore.ts';
 
 const LevelTestStartPage = () => {
+  const grade = useUserStore((state) => state.grade);
+  const term = useUserStore((state) => state.term);
+
   const totalQuestionCount = 30;
   const timeLimit = 30;
+  const badges = [
+    '유리수의 근삿값',
+    '식의 계산',
+    '유리수의 근삿값',
+    '식의 계산',
+    '식의 계산',
+    '유리수의 근삿값',
+    '유리수의 근삿값',
+    '유리수의 근삿값',
+    '유리수의 근삿값',
+  ];
+
   return (
-    <div className="inline-flex h-[834px] w-[1194px] flex-col items-center justify-center gap-9 bg-secondary-bg">
+    <div className="inline-flex h-full w-full flex-col items-center justify-center gap-9 bg-primary-bg">
       <div className="inline-flex items-center justify-start">
-        <div className="inline-flex w-265 flex-col items-center justify-center self-stretch bg-secondary-bg">
+        <div className="inline-flex w-265 flex-col items-center justify-center self-stretch bg-primary-bg">
           <div className="flex w-188 flex-col items-center justify-center gap-9">
             <div className="flex flex-col items-center justify-start gap-4">
               <div className="inline-flex items-center justify-center gap-4 self-stretch">
@@ -67,73 +83,20 @@ const LevelTestStartPage = () => {
                       </div>
                     </div>
                     <div className="justify-center text-sm leading-5 font-normal text-secondary">
-                      2학년 1학기
+                      {grade} {term}
                     </div>
                   </div>
                   <div className="flex items-center justify-start gap-3.5 overflow-x-scroll">
-                    <Badge
-                      size={'small'}
-                      variant={'levelTest'}
-                      className="flex-shrink-0"
-                    >
-                      유리수의 근삿값
-                    </Badge>
-                    <Badge
-                      size={'small'}
-                      variant={'levelTest'}
-                      className="flex-shrink-0"
-                    >
-                      식의 계산
-                    </Badge>
-                    <Badge
-                      size={'small'}
-                      variant={'levelTest'}
-                      className="flex-shrink-0"
-                    >
-                      유리수의 근삿값
-                    </Badge>
-                    <Badge
-                      size={'small'}
-                      variant={'levelTest'}
-                      className="flex-shrink-0"
-                    >
-                      식의 계산
-                    </Badge>
-                    <Badge
-                      size={'small'}
-                      variant={'levelTest'}
-                      className="flex-shrink-0"
-                    >
-                      식의 계산
-                    </Badge>
-                    <Badge
-                      size={'small'}
-                      variant={'levelTest'}
-                      className="flex-shrink-0"
-                    >
-                      유리수의 근삿값
-                    </Badge>
-                    <Badge
-                      size={'small'}
-                      variant={'levelTest'}
-                      className="flex-shrink-0"
-                    >
-                      유리수의 근삿값
-                    </Badge>
-                    <Badge
-                      size={'small'}
-                      variant={'levelTest'}
-                      className="flex-shrink-0"
-                    >
-                      유리수의 근삿값
-                    </Badge>
-                    <Badge
-                      size={'small'}
-                      variant={'levelTest'}
-                      className="flex-shrink-0"
-                    >
-                      유리수의 근삿값
-                    </Badge>
+                    {badges.map((badge, index) => (
+                      <Badge
+                        key={index}
+                        size={'small'}
+                        variant={'levelTest'}
+                        className={'flex-shrink-0'}
+                      >
+                        {badge}
+                      </Badge>
+                    ))}
                   </div>
                 </div>
               </div>
