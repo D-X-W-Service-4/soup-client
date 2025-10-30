@@ -5,6 +5,8 @@ import WorkBookPage from '../pages/onboarding/WorkBookPage.tsx';
 import LoginSuccessPage from '../pages/onboarding/LoginSuccessPage.tsx';
 import Layout from '../components/Layout.tsx';
 import HomePage from '../pages/home/page.tsx';
+import QuestionPage from '../pages/Question/QuestionPage.tsx';
+import LoginPage from '../pages/Login/LoginPage.tsx';
 
 const router = createBrowserRouter([
   {
@@ -17,6 +19,8 @@ const router = createBrowserRouter([
       { path: '/onboarding/workBook', element: <WorkBookPage /> },
       { path: '/onboarding/loginSuccess', element: <LoginSuccessPage /> },
       { path: '/', element: <HomePage /> },
+      { path: '/question', element: <QuestionPage /> },
+      { path: '/Login', element: <LoginPage /> },
     ],
   },
 ]);
