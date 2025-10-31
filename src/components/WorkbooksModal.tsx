@@ -1,4 +1,4 @@
-import IconMagnifingGlass from '../assets/svgs/IconMagnifingGlass.tsx';
+import IconMagnifingGlass from '../../public/assets/svgs/IconMagnifingGlass.tsx';
 import { useState } from 'react';
 import WorkBookSearch from './WorkBookSearch.tsx';
 
