@@ -11,7 +11,7 @@ const NAV = [
     key: 'home',
     label: '홈',
     icon: 'heroicons-outline:home',
-    path: '/',
+    path: '/home',
   },
   {
     key: 'review',
@@ -46,10 +46,10 @@ export default function SideBar({ isOpen = true, onToggle }: sideBarProps) {
   const { pathname } = useLocation();
 
   const isActive = (base: string) =>
-    base === '/' ? pathname === '/' : pathname.startsWith(base);
+    base === '/home' ? pathname === '/home' : pathname.startsWith(base);
 
   const isChildActive = (childPath: string) =>
-    pathname === childPath || pathname.startsWith(childPath + '/');
+    pathname === childPath || pathname.startsWith(childPath + '/home');
 
   return (
     <aside
