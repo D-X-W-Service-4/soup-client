@@ -1,6 +1,6 @@
 import QuestionSelect from './QuestionSelect.tsx';
 import Timer from './Timer.tsx';
-import Logotype from '../../../assets/Logotype.png';
+import Logotype from '/assets/logo/Logotype.png';
 
 interface QuestionBarProps {
   totalQuestions: number;

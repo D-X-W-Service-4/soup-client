@@ -1,5 +1,5 @@
 import { Icon } from '@iconify/react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useMatch } from 'react-router-dom';
 
 type sideBarProps = {
   isOpen: boolean;
@@ -11,7 +11,7 @@ const NAV = [
     key: 'home',
     label: '홈',
     icon: 'heroicons-outline:home',
-    path: '/home',
+    path: '/',
   },
   {
     key: 'review',
@@ -43,13 +43,17 @@ const NAV = [
 ];
 
 export default function SideBar({ isOpen = true, onToggle }: sideBarProps) {
-  const { pathname } = useLocation();
-
   const isActive = (base: string) =>
-    base === '/home' ? pathname === '/home' : pathname.startsWith(base);
+    !!(
+      useMatch({ path: base, end: true }) ||
+      useMatch({ path: base + '/*', end: false })
+    );
 
   const isChildActive = (childPath: string) =>
-    pathname === childPath || pathname.startsWith(childPath + '/home');
+    !!(
+      useMatch({ path: childPath, end: true }) ||
+      useMatch({ path: childPath + '/*', end: false })
+    );
 
   return (
     <aside

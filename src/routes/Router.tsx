@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import NicknamePage from '../pages/onboarding/NicknamePage.tsx';
 import StudyInfoPage from '../pages/onboarding/StudyInfoPage.tsx';
 import WorkBookPage from '../pages/onboarding/WorkBookPage.tsx';
@@ -7,20 +7,38 @@ import Layout from '../components/Layout.tsx';
 import HomePage from '../pages/home/page.tsx';
 import QuestionPage from '../pages/Question/QuestionPage.tsx';
 import LoginPage from '../pages/Login/LoginPage.tsx';
+import TestResultPage from '../pages/test/result/page.tsx';
 
 const router = createBrowserRouter([
   {
     element: <Layout />,
 
     children: [
-      { path: '/', element: <Navigate to="/onboarding/nickname" replace /> },
+      // { path: '/', element: <Navigate to="/onboarding/nickname" replace /> },
       { path: '/onboarding/nickname', element: <NicknamePage /> },
       { path: '/onboarding/studyInfo', element: <StudyInfoPage /> },
       { path: '/onboarding/workBook', element: <WorkBookPage /> },
       { path: '/onboarding/loginSuccess', element: <LoginSuccessPage /> },
-      { path: '/', element: <HomePage /> },
-      { path: '/question', element: <QuestionPage /> },
       { path: '/Login', element: <LoginPage /> },
+      { path: '/', element: <HomePage /> },
+      {
+        path: '/test',
+        element: <Outlet />,
+        children: [
+          { path: 'go', element: <QuestionPage /> },
+          { path: 'result', element: <TestResultPage /> },
+          { path: 'hist', element: <div>기록 조회하기</div> },
+        ],
+      },
+      {
+        path: '/my',
+        element: <Outlet />,
+        children: [
+          { path: 'learning', element: <div>학습 정보 변경</div> },
+          { path: 'info', element: <div>내 정보 수정</div> },
+          { path: 'logout', element: <div>로그아웃</div> },
+        ],
+      },
     ],
   },
 ]);
