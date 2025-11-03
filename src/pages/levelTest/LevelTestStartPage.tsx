@@ -4,9 +4,10 @@ import IconClock from '../../assets/svgs/IconClock.tsx';
 import IconBookOpenFill from '../../assets/svgs/IconBookOpenFill.tsx';
 import IconSpeechBubble from '../../assets/svgs/IconSpeechBubble.tsx';
 import { useUserStore } from '../../stores/userStore.ts';
-import SideBar from '../../components/SideBar.tsx'; // ✅ 필요 시 import
+import SideBar from '../../components/SideBar.tsx';
 import { useLocation } from 'react-router-dom';
 import { useState } from 'react';
+import subjectUnits from './SubjectUnits.ts';
 
 const LevelTestStartPage = () => {
   const { pathname } = useLocation();
@@ -20,17 +21,11 @@ const LevelTestStartPage = () => {
 
   const totalQuestionCount = 30;
   const timeLimit = 30;
-  const badges = [
-    '유리수의 근삿값',
-    '식의 계산',
-    '유리수의 근삿값',
-    '식의 계산',
-    '식의 계산',
-    '유리수의 근삿값',
-    '유리수의 근삿값',
-    '유리수의 근삿값',
-    '유리수의 근삿값',
-  ];
+
+  const gradeKey = grade as keyof typeof subjectUnits;
+  const displayGrade = grade ? grade.replace('M', '') : '';
+
+  const currentUnits = subjectUnits[gradeKey] || [];
 
   return (
     <div
@@ -98,20 +93,22 @@ const LevelTestStartPage = () => {
                         </div>
                       </div>
                       <div className="justify-center text-sm leading-5 font-normal text-secondary">
-                        {grade} {term}
+                        {displayGrade}학년 {term}
                       </div>
                     </div>
                     <div className="flex items-center justify-start gap-3.5 overflow-x-scroll">
-                      {badges.map((badge, index) => (
-                        <Badge
-                          key={index}
-                          size={'small'}
-                          variant={'levelTest'}
-                          className={'flex-shrink-0'}
-                        >
-                          {badge}
-                        </Badge>
-                      ))}
+                      {currentUnits.map((subjectData) =>
+                        subjectData.units.map((unitName) => (
+                          <Badge
+                            key={`${subjectData.subject}-${unitName}`}
+                            size={'small'}
+                            variant={'levelTest'}
+                            className={'flex-shrink-0'}
+                          >
+                            {`${subjectData.subject} - ${unitName}`}
+                          </Badge>
+                        ))
+                      )}
                     </div>
                   </div>
                 </div>

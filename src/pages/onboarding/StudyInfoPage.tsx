@@ -1,9 +1,22 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import DropdownSelect from '../../components/DropdownSelect.tsx';
 import StudyTimeInput from '../../components/inputs/StudyTimeInput.tsx';
 import { useUserStore } from '../../stores/userStore.ts';
+import subjectUnits from '../levelTest/SubjectUnits.ts';
+
+const gradeDisplayToStore = {
+  '1학년': 'M1',
+  '2학년': 'M2',
+  '3학년': 'M3',
+};
+// 저장값 -> 표시값
+const gradeStoreToDisplay = {
+  M1: '1학년',
+  M2: '2학년',
+  M3: '3학년',
+};
 
 const StudyInfoPage = () => {
   const [isStudyInfoOpen, setIsStudyInfoOpen] = useState(false);
@@ -12,16 +25,44 @@ const StudyInfoPage = () => {
   };
   const nickname = useUserStore((state) => state.nickname);
 
+  // store에서 가져온 grade는 "M1", "M2" 등의 값입니다.
   const grade = useUserStore((state) => state.grade);
   const setGrade = useUserStore((state) => state.setGrade);
 
   const term = useUserStore((state) => state.term);
   const setTerm = useUserStore((state) => state.setTerm);
 
+  const lastStudiedUnit = useUserStore((state) => state.lastStudiedUnit);
+  const setLastStudiedUnit = useUserStore((state) => state.setLastStudiedUnit);
+
   const studyTime = useUserStore((state) => state.studyTime);
   const setStudyTime = useUserStore((state) => state.setStudyTime);
 
   const navigate = useNavigate();
+
+  const handleGradeChange = (displayValue: string) => {
+    const storeValue =
+      gradeDisplayToStore[displayValue as keyof typeof gradeDisplayToStore];
+    setGrade(storeValue);
+  };
+
+  const displayGrade =
+    gradeStoreToDisplay[grade as keyof typeof gradeStoreToDisplay];
+
+  const unitOptions = useMemo(() => {
+    const currentUnitsData =
+      subjectUnits[grade as keyof typeof subjectUnits] || [];
+
+    const options: string[] = [];
+    currentUnitsData.map((subjectData) => {
+      subjectData.units.map((unitName) => {
+        options.push(`${subjectData.subject} - ${unitName}`);
+      });
+    });
+
+    return options;
+  }, [grade]);
+
   return (
     <div className="inline-flex h-208.5 w-298.5 flex-col items-center justify-start gap-14 bg-primary-bg px-48 pt-4 pb-44">
       <div className="flex w-[908px] flex-col items-center justify-start gap-16">
@@ -76,11 +117,12 @@ const StudyInfoPage = () => {
               </div>
               <div className="flex flex-col items-start justify-start gap-6 self-stretch">
                 <div className="flex flex-col items-start justify-start gap-4 self-stretch">
+                  {/* [수정 4] value와 onChange에 변환된 값/핸들러를 연결합니다. */}
                   <DropdownSelect
                     label={'현재 학년은 몇 학년인가요?'}
                     options={['1학년', '2학년', '3학년']}
-                    value={grade}
-                    onChange={setGrade}
+                    value={displayGrade}
+                    onChange={handleGradeChange}
                     placeholder="학년을 선택해주세요!"
                   />
                 </div>
@@ -97,7 +139,7 @@ const StudyInfoPage = () => {
             </div>
             <button
               className="w-full rounded-lg bg-primary px-5 py-3 text-base font-medium text-white active:bg-rose-500 disabled:bg-rose-300"
-              disabled={!term || !grade}
+              disabled={!term || !grade} // !grade는 "M1"이 있는지 확인
               onClick={() => toggleStudyInfo()}
             >
               다음
@@ -113,18 +155,14 @@ const StudyInfoPage = () => {
               <div className="justify-start text-xl leading-7 font-semibold text-black">
                 단원, 공부시간 입력
               </div>
+              <DropdownSelect
+                label={'마지막으로 공부한 단원은 무엇인가요?'}
+                options={unitOptions}
+                value={lastStudiedUnit}
+                onChange={setLastStudiedUnit}
+                placeholder="단원을 선택해주세요."
+              />
               <div className="flex flex-col items-start justify-start gap-6 self-stretch">
-                <div className="flex flex-col items-start justify-start gap-4 self-stretch">
-                  <div className="justify-start text-base leading-normal font-medium text-black">
-                    마지막으로 공부한 단원은 무엇인가요?
-                  </div>
-                  <div className="inline-flex items-center justify-between self-stretch rounded-lg bg-neutral-100 px-3 py-3.5">
-                    <div className="justify-start text-xs leading-none font-normal text-neutral-500">
-                      단원을 선택해주세요.
-                    </div>
-                    <div className="h-1 w-2 outline-1 outline-offset-[-0.50px] outline-neutral-600"></div>
-                  </div>
-                </div>
                 <div className="flex flex-col items-start justify-start gap-4 self-stretch">
                   <div className="justify-start text-base leading-normal font-medium text-black">
                     하루에 공부 가능한 시간은 얼마나 되나요?
