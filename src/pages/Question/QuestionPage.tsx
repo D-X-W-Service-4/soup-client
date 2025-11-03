@@ -18,9 +18,6 @@ export default function QuestionPage() {
   const [current, setCurrent] = useState(1);
   const [question, setQuestion] = useState<QuestionData | null>(null);
   const [solved, setSolved] = useState<number[]>([]);
-  const [questionType, setQuestionType] = useState<'essay' | 'objective'>(
-    'objective'
-  );
   const [isHintModalOpen, setIsHintModalOpen] = useState(false);
 
   const [essays, setEssays] = useState<Record<number, string>>({});
@@ -102,12 +99,6 @@ export default function QuestionPage() {
             hints={hints}
             onOpenHintModal={handleHintModal}
             isHintModalOpen={isHintModalOpen}
-            onSwitchEssay={() =>
-              setQuestionType((prev) =>
-                prev === 'essay' ? 'objective' : 'essay'
-              )
-            }
-            isEssaySelected={questionType === 'essay'}
             isStarred={!!starred[current]}
             onToggleStar={handleToggleStar}
           />
@@ -134,7 +125,7 @@ export default function QuestionPage() {
           </div>
 
           <div className="h-full w-full flex-1">
-            {questionType === 'essay' ? (
+            {question?.type === '단답형' ? (
               <EssayAnswerBox
                 value={essayValue}
                 onChange={(val) =>
@@ -147,7 +138,7 @@ export default function QuestionPage() {
                 onChange={(val) =>
                   setObjectiveInputs((prev) => ({ ...prev, [current]: val }))
                 }
-                options={[]}
+                options={['보기 1', '보기 2', '보기 3', '보기 4', '보기 5']}
               />
             )}
           </div>
@@ -164,7 +155,7 @@ export default function QuestionPage() {
             </div>
           )}
 
-          {questionType === 'objective' && (
+          {question?.type === '객관식' && (
             <OptionList
               options={['보기 1', '보기 2', '보기 3', '보기 4', '보기 5']}
               selectedId={selectedId}
@@ -174,7 +165,7 @@ export default function QuestionPage() {
           )}
 
           <div className="mt-auto flex w-full flex-col items-end gap-10">
-            {questionType === 'essay' && (
+            {question?.type === '단답형' && (
               <>
                 <WarningBox>
                   원활한 채점을 위해 답안을 <br /> 정확히 작성해 주세요.

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import IconEssay from '../../../assets/svgs/IconEssay.tsx';
 import IconStar from '../../../assets/svgs/IconStar.tsx';
 import IconHint from '../../../assets/svgs/IconHint.tsx';
 import IconX from '../../../assets/svgs/IconX.tsx';
@@ -8,7 +7,6 @@ import IconHamburger from '../../../assets/svgs/IconHamburger.tsx';
 type HintBarProps = {
   hints: string[];
   isHintModalOpen: boolean;
-  isEssaySelected?: boolean;
   isStarred?: boolean;
   onOpenHintModal?: () => void;
   onSwitchEssay?: () => void;
@@ -22,7 +20,6 @@ type MenuItem = {
 };
 
 const menuItems: MenuItem[] = [
-  { id: 'essay', icon: IconEssay, text: '서술형 대비하기' },
   { id: 'star', icon: IconStar, text: '별표 표시하기' },
   { id: 'hint', icon: IconHint, text: '힌트 보기' },
   { id: 'close', icon: IconX, text: '' },
@@ -33,9 +30,7 @@ const animationDelays = ['delay-75', 'delay-150', 'delay-200', 'delay-300'];
 const HintBar = ({
   onOpenHintModal,
   isHintModalOpen,
-  isEssaySelected = false,
   isStarred = false,
-  onSwitchEssay,
   onToggleStar,
 }: HintBarProps) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -48,7 +43,6 @@ const HintBar = ({
     }
 
     if (id === 'hint' && onOpenHintModal) onOpenHintModal();
-    if (id === 'essay' && onSwitchEssay) onSwitchEssay();
     if (id === 'star' && onToggleStar) onToggleStar();
     if (id !== 'hint') {
       setSelectedItemId((prev) => (prev === id ? null : id));
@@ -63,8 +57,7 @@ const HintBar = ({
         menuItems.map((item, index) => {
           let isSelected = item.id === selectedItemId;
           if (item.id === 'hint') isSelected = isHintModalOpen;
-          if (item.id === 'essay') isSelected = isEssaySelected;
-          if (item.id === 'star') isSelected = isStarred; // ⭐ 추가
+          if (item.id === 'star') isSelected = isStarred;
 
           const iconBgColor = isSelected
             ? 'bg-white'
