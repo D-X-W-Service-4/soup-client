@@ -19,6 +19,15 @@ const router = createBrowserRouter([
       { path: '/onboarding/loginSuccess', element: <LoginSuccessPage /> },
       { path: '/levelTest/levelTestStart', element: <LevelTestStartPage /> },
       { path: '/levelTest/levelTest', element: <LevelTestStartPage /> },
+      {
+        path: 'levelTest/subjectUnits',
+        element: (
+          <SubjectUnitsModal
+            onClose={() => {}}
+            onSelectSubjectUnits={() => {}}
+          />
+        ),
+      },
     ],
   },
 ]);
