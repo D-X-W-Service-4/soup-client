@@ -14,7 +14,7 @@ export default function Progress({
   const p = Number.isNaN(progress) ? 0 : Math.max(0, Math.min(1, progress));
   const angle = p * 360;
   return (
-    <div className="flex items-center justify-between gap-10 text-primary">
+    <div className="flex items-center justify-center gap-10 text-primary">
       <div className="text-base font-semibold text-neutral-500">{label}</div>
 
       <div
@@ -32,8 +32,8 @@ export default function Progress({
           style={{
             background: `conic-gradient(from 0deg, currentColor 0deg ${angle}deg, transparent ${angle}deg 360deg)`,
             WebkitMask:
-              'radial-gradient(farthest-side, transparent calc(100% - 12px), #000 0)',
-            mask: 'radial-gradient(farthest-side, transparent calc(100% - 12px), #000 0)',
+              'radial-gradient(farthest-side, transparent calc(100% - 10px), #000 0)',
+            mask: 'radial-gradient(farthest-side, transparent calc(100% - 10px), #000 0)',
           }}
         />
 

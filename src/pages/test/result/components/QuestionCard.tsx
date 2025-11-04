@@ -24,11 +24,11 @@ export default function QuestionCard({
   const statusColor = isCorrect ? 'text-lime-500' : 'text-danger';
 
   return (
-    <div className="flex items-center justify-between rounded-md px-6 py-5 outline outline-1 outline-offset-[-1px] outline-neutral-100">
+    <div className="flex items-center justify-between rounded-md bg-white px-6 py-5 outline outline-1 outline-offset-[-1px] outline-neutral-100">
       <div className="flex items-center justify-start gap-5">
         <Icon icon={statusIcon} className={`h-5 w-5 ${statusColor}`} />
         <div className="flex flex-col">
-          <div className="flex gap-5">
+          <div className="flex items-center gap-5">
             <span className="text-base font-semibold">{question}</span>
             {isStarred && (
               <Icon
