@@ -138,7 +138,6 @@ export default function QuestionPage() {
                 onChange={(val) =>
                   setObjectiveInputs((prev) => ({ ...prev, [current]: val }))
                 }
-                options={['보기 1', '보기 2', '보기 3', '보기 4', '보기 5']}
               />
             )}
           </div>
