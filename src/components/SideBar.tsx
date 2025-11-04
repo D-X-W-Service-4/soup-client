@@ -29,7 +29,7 @@ const NAV = [
       {
         key: 'go',
         label: '수준테스트 보러가기',
-        path: '/levelTest/levelTestStart',
+        path: '/levelTest/levelTest',
       },
       { key: 'hist', label: '기록 조회하기', path: '/levelTest/levelTest' },
     ],

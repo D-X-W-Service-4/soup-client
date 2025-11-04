@@ -5,6 +5,7 @@ import WorkBookPage from '../pages/onboarding/WorkBookPage.tsx';
 import LoginSuccessPage from '../pages/onboarding/LoginSuccessPage.tsx';
 import Layout from '../components/Layout.tsx';
 import LevelTestStartPage from '../pages/levelTest/LevelTestStartPage.tsx';
+import SubjectUnitsModal from '../components/SubjectUnitsModal.tsx';
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,15 @@ const router = createBrowserRouter([
       { path: '/onboarding/loginSuccess', element: <LoginSuccessPage /> },
       { path: '/levelTest/levelTestStart', element: <LevelTestStartPage /> },
       { path: '/levelTest/levelTest', element: <LevelTestStartPage /> },
+      {
+        path: 'levelTest/subjectUnits',
+        element: (
+          <SubjectUnitsModal
+            onClose={() => {}}
+            onSelectSubjectUnits={() => {}}
+          />
+        ),
+      },
     ],
   },
 ]);

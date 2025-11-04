@@ -1,4 +1,11 @@
-const subjectUnits = {
+interface Chapter {
+  subject: string;
+  units: string[];
+}
+
+type Grade = 'M1' | 'M2' | 'M3';
+
+const subjectUnits: Record<Grade, Chapter[]> = {
   M1: [
     {
       subject: '1단원 소인수분해',
@@ -29,32 +36,18 @@ const subjectUnits = {
       subject: '5단원 기본 도형',
       units: ['기본 도형', '위치 관계', '평행선', '작도와 합동'],
     },
-    {
-      subject: '6단원 평면도형',
-      units: ['다각형', '원과 부채꼴'],
-    },
+    { subject: '6단원 평면도형', units: ['다각형', '원과 부채꼴'] },
     {
       subject: '7단원 입체도형',
       units: ['다면체와 회전체', '입체도형의 겉넓이와 부피'],
     },
-    {
-      subject: '8단원 통계',
-      units: ['도수분포표', '상대도수'],
-    },
+    { subject: '8단원 통계', units: ['도수분포표', '상대도수'] },
   ],
+
   M2: [
-    {
-      subject: '1단원 수와 연산',
-      units: ['유리수와 소수', '순환소수'],
-    },
-    {
-      subject: '2단원 식의 계산',
-      units: ['단항식의 계산', '다항식의 계산'],
-    },
-    {
-      subject: '3단원 부등식',
-      units: ['일차부등식', '일차부등식의 활용'],
-    },
+    { subject: '1단원 수와 연산', units: ['유리수와 소수', '순환소수'] },
+    { subject: '2단원 식의 계산', units: ['단항식의 계산', '다항식의 계산'] },
+    { subject: '3단원 부등식', units: ['일차부등식', '일차부등식의 활용'] },
     {
       subject: '4단원 방정식',
       units: [
@@ -67,23 +60,15 @@ const subjectUnits = {
       subject: '5단원 함수',
       units: ['일차함수와 그래프', '일차함수와 일차방정식의 관계'],
     },
-    {
-      subject: '6단원 도형의 성질',
-      units: ['삼각형의 성질', '사각형의 성질'],
-    },
+    { subject: '6단원 도형의 성질', units: ['삼각형의 성질', '사각형의 성질'] },
     {
       subject: '7단원 도형의 닮음',
       units: ['도형의 닮음', '평행선 사이의 선분의 길이 비', '닮음의 활용'],
     },
-    {
-      subject: '8단원 피타고라스 정리',
-      units: ['피타고라스 정리'],
-    },
-    {
-      subject: '9단원 확률',
-      units: ['경우의 수', '확률'],
-    },
+    { subject: '8단원 피타고라스 정리', units: ['피타고라스 정리'] },
+    { subject: '9단원 확률', units: ['경우의 수', '확률'] },
   ],
+
   M3: [
     {
       subject: '1단원 수와 연산',
@@ -97,22 +82,11 @@ const subjectUnits = {
       subject: '3단원 이차방정식',
       units: ['이차방정식의 풀이', '이차방정식의 활용'],
     },
-    {
-      subject: '4단원 이차함수',
-      units: ['이차함수와 그래프'],
-    },
-    {
-      subject: '5단원 삼각비',
-      units: ['삼각비', '삼각비의 활용'],
-    },
-    {
-      subject: '6단원 원의 성질',
-      units: ['원과 직선', '원주각'],
-    },
-    {
-      subject: '7단원 통계',
-      units: ['대푯값', '산포도'],
-    },
+    { subject: '4단원 이차함수', units: ['이차함수와 그래프'] },
+    { subject: '5단원 삼각비', units: ['삼각비', '삼각비의 활용'] },
+    { subject: '6단원 원의 성질', units: ['원과 직선', '원주각'] },
+    { subject: '7단원 통계', units: ['대푯값', '산포도'] },
   ],
 };
+
 export default subjectUnits;
