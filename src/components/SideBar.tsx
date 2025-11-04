@@ -1,4 +1,3 @@
-import Logotype from '../assets/Logotype.png';
 import { Icon } from '@iconify/react';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -69,7 +68,11 @@ export default function SideBar({ isOpen = true, onToggle }: sideBarProps) {
           className="flex cursor-pointer justify-start px-2"
         >
           {isOpen ? (
-            <img src={Logotype} alt="App Logo" className="h-6 w-14" />
+            <img
+              src="/assets/logo/Logotype.png"
+              alt="App Logo"
+              className="h-6 w-14"
+            />
           ) : (
             <Icon
               icon="ic:round-keyboard-arrow-right"
