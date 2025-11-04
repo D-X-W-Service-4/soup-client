@@ -28,7 +28,6 @@ const SubjectUnitsModal = ({
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [searchText, setSearchText] = useState('');
 
-  // 1️⃣ subjectUnits를 평탄화해서 ID 부여
   const allUnits = (
     Object.entries(subjectUnits) as [Grade, Chapter[]][]
   ).flatMap(([grade, chapters]) =>
@@ -89,7 +88,7 @@ const SubjectUnitsModal = ({
             <div className="h-0 self-stretch outline-1 outline-primary"></div>
           </div>
         </div>
-        {/* 목록 */}
+
         <div className="flex-1 space-y-2 overflow-y-scroll">
           {filtered.map((item) => (
             <div

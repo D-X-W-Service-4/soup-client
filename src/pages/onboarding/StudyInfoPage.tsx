@@ -11,7 +11,7 @@ const gradeDisplayToStore = {
   '2학년': 'M2',
   '3학년': 'M3',
 };
-// 저장값 -> 표시값
+
 const gradeStoreToDisplay = {
   M1: '1학년',
   M2: '2학년',
@@ -25,7 +25,6 @@ const StudyInfoPage = () => {
   };
   const nickname = useUserStore((state) => state.nickname);
 
-  // store에서 가져온 grade는 "M1", "M2" 등의 값입니다.
   const grade = useUserStore((state) => state.grade);
   const setGrade = useUserStore((state) => state.setGrade);
 
@@ -117,7 +116,6 @@ const StudyInfoPage = () => {
               </div>
               <div className="flex flex-col items-start justify-start gap-6 self-stretch">
                 <div className="flex flex-col items-start justify-start gap-4 self-stretch">
-                  {/* [수정 4] value와 onChange에 변환된 값/핸들러를 연결합니다. */}
                   <DropdownSelect
                     label={'현재 학년은 몇 학년인가요?'}
                     options={['1학년', '2학년', '3학년']}
@@ -139,7 +137,7 @@ const StudyInfoPage = () => {
             </div>
             <button
               className="w-full rounded-lg bg-primary px-5 py-3 text-base font-medium text-white active:bg-rose-500 disabled:bg-rose-300"
-              disabled={!term || !grade} // !grade는 "M1"이 있는지 확인
+              disabled={!term || !grade}
               onClick={() => toggleStudyInfo()}
             >
               다음
