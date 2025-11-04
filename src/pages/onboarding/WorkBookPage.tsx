@@ -1,5 +1,5 @@
 import Button from '../../components/Button.tsx';
-import IconMagnifingGlass from '../../../public/assets/svgs/IconMagnifingGlass.tsx';
+import IconMagnifingGlass from '../../assets/svgs/IconMagnifingGlass.tsx';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import WorkBook from '../../components/WorkBook.tsx';
