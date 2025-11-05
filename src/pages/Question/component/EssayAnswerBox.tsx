@@ -17,15 +17,24 @@ export default function EssayAnswerBox({ questionId }: EssayAnswerBoxProps) {
   const totalRows = 100;
 
   useEffect(() => {
-    if (answers[questionId]) {
+    const saved = answers[questionId];
+
+    if (saved && saved.trim() !== '' && saved !== '[]') {
       try {
-        const paths = JSON.parse(answers[questionId]);
-        canvasRef.current?.loadPaths(paths);
+        const paths = JSON.parse(saved);
+        if (Array.isArray(paths) && paths.length > 0) {
+          canvasRef.current?.loadPaths(paths);
+        } else {
+          canvasRef.current?.clearCanvas();
+        }
       } catch (e) {
         console.error('경로 복원 실패:', e);
+        canvasRef.current?.clearCanvas();
       }
+    } else {
+      canvasRef.current?.clearCanvas();
     }
-  }, [questionId]);
+  }, [questionId, answers]);
 
   const handleAutoSave = async () => {
     const paths = await canvasRef.current?.exportPaths();
@@ -43,6 +52,7 @@ export default function EssayAnswerBox({ questionId }: EssayAnswerBoxProps) {
 
   return (
     <div className="flex h-full w-full flex-col rounded-xl bg-white p-0 shadow-md">
+      {/* 상단 버튼 */}
       <div className="mb-3 flex w-full justify-end gap-3 pt-4 pr-4">
         <button
           onClick={handleUndo}
@@ -86,6 +96,7 @@ export default function EssayAnswerBox({ questionId }: EssayAnswerBoxProps) {
         </button>
       </div>
 
+      {/* 필기 공간 */}
       <div className="relative min-h-0 flex-1 overflow-hidden rounded-md border border-white">
         <div className="absolute inset-0 overflow-y-auto">
           <div
@@ -102,6 +113,7 @@ export default function EssayAnswerBox({ questionId }: EssayAnswerBoxProps) {
             }}
           >
             <ReactSketchCanvas
+              key={questionId}
               ref={canvasRef}
               className="absolute top-0 left-0"
               strokeWidth={isErasing ? 40 : 3}

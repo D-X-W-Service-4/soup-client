@@ -20,17 +20,12 @@ export default function QuestionPage() {
   const [solved, setSolved] = useState<number[]>([]);
   const [isHintModalOpen, setIsHintModalOpen] = useState(false);
 
-  const [essays, setEssays] = useState<Record<number, string>>({});
   const [answers, setAnswers] = useState<Record<number, string>>({});
-  const [objectiveInputs, setObjectiveInputs] = useState<
-    Record<number, string>
-  >({});
   const [selectedOptions, setSelectedOptions] = useState<
     Record<number, number | null>
   >({});
   const [starred, setStarred] = useState<Record<number, boolean>>({});
 
-  const essayValue = essays[current] ?? '';
   const answerValue = answers[current] ?? '';
   const selectedId = selectedOptions[current] ?? null;
 
@@ -55,15 +50,12 @@ export default function QuestionPage() {
 
   useEffect(() => {
     const newSolved: number[] = [];
-
     for (let q = 1; q <= TOTAL_QUESTIONS; q++) {
       const hasEssay = (answers[q]?.trim().length ?? 0) > 0;
       const hasObjective =
         selectedOptions[q] !== null && selectedOptions[q] !== undefined;
-
       if (hasEssay || hasObjective) newSolved.push(q);
     }
-
     setSolved(newSolved);
   }, [answers, selectedOptions]);
 
@@ -104,7 +96,9 @@ export default function QuestionPage() {
           />
         </div>
 
+        {/* 문제 및 풀이 영역 */}
         <div className="ml-20 flex h-full flex-1 flex-col items-center justify-start gap-6">
+          {/* 문제 표시 */}
           <div className="w-full flex-[0.4]">
             {question ? (
               <QuestionDisplay
@@ -126,24 +120,16 @@ export default function QuestionPage() {
 
           <div className="h-full w-full flex-1">
             {question?.type === '단답형' ? (
-              <EssayAnswerBox
-                value={essayValue}
-                onChange={(val) =>
-                  setEssays((prev) => ({ ...prev, [current]: val }))
-                }
-              />
+              <EssayAnswerBox questionId={current} />
             ) : (
-              <MultipleChoiceBox
-                value={objectiveInputs[current] ?? ''}
-                onChange={(val) =>
-                  setObjectiveInputs((prev) => ({ ...prev, [current]: val }))
-                }
-              />
+              <MultipleChoiceBox questionId={current} />
             )}
           </div>
         </div>
 
+        {/* 우측 사이드 */}
         <div className="relative ml-5 flex h-full flex-col items-center gap-5">
+          {/* 힌트 모달 */}
           {isHintModalOpen && (
             <div className="pointer-events-auto absolute top-0 left-0 z-[9999]">
               <HintModal
@@ -154,6 +140,7 @@ export default function QuestionPage() {
             </div>
           )}
 
+          {/* 객관식 보기 */}
           {question?.type === '객관식' && (
             <OptionList
               options={['보기 1', '보기 2', '보기 3', '보기 4', '보기 5']}
@@ -163,6 +150,7 @@ export default function QuestionPage() {
             />
           )}
 
+          {/* 하단 경고 / 입력 / 이동 버튼 */}
           <div className="mt-auto flex w-full flex-col items-end gap-10">
             {question?.type === '단답형' && (
               <>
@@ -178,6 +166,7 @@ export default function QuestionPage() {
               </>
             )}
 
+            {/* 페이지 이동 버튼 */}
             <div className="flex w-full flex-row items-center gap-7">
               <QuestionPageButton
                 direction="prev"
