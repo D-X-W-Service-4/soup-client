@@ -12,42 +12,52 @@ export default function EssayAnswerBox({ questionId }: EssayAnswerBoxProps) {
   const canvasRef = useRef<ReactSketchCanvasRef | null>(null);
   const { answers, setAnswer } = useAnswerStore();
   const [isErasing, setIsErasing] = useState(false);
+  const [isCanvasLoading, setIsCanvasLoading] = useState(true);
 
   const lineHeight = 47;
   const totalRows = 100;
 
   useEffect(() => {
-    const saved = answers[questionId];
-
-    if (saved && saved.trim() !== '' && saved !== '[]') {
+    const restoreCanvas = async () => {
+      const saved = answers[questionId];
+      setIsCanvasLoading(true);
       try {
-        const paths = JSON.parse(saved);
-        if (Array.isArray(paths) && paths.length > 0) {
-          canvasRef.current?.loadPaths(paths);
-        } else {
-          canvasRef.current?.clearCanvas();
+        canvasRef.current?.clearCanvas();
+        if (saved) {
+          const paths = JSON.parse(saved);
+          await canvasRef.current?.loadPaths(paths);
         }
       } catch (e) {
         console.error('경로 복원 실패:', e);
-        canvasRef.current?.clearCanvas();
+      } finally {
+        setIsCanvasLoading(false);
       }
-    } else {
-      canvasRef.current?.clearCanvas();
-    }
-  }, [questionId, answers]);
+    };
+    restoreCanvas();
+  }, [questionId]);
 
   const handleAutoSave = async () => {
     const paths = await canvasRef.current?.exportPaths();
-    if (paths) setAnswer(questionId, JSON.stringify(paths));
+    if (paths) {
+      const json = JSON.stringify(paths);
+      if (answers[questionId] !== json) setAnswer(questionId, json);
+    }
   };
 
-  const handleClear = () => {
-    canvasRef.current?.clearCanvas();
+  const handleClear = async () => {
+    await canvasRef.current?.clearCanvas();
     setAnswer(questionId, '');
   };
 
-  const handleUndo = () => {
-    canvasRef.current?.undo();
+  const handleUndo = async () => {
+    await canvasRef.current?.undo();
+    handleAutoSave();
+  };
+
+  const toggleEraser = () => {
+    const newState = !isErasing;
+    setIsErasing(newState);
+    canvasRef.current?.eraseMode(newState);
   };
 
   return (
@@ -68,7 +78,7 @@ export default function EssayAnswerBox({ questionId }: EssayAnswerBoxProps) {
         </button>
 
         <button
-          onClick={() => setIsErasing(!isErasing)}
+          onClick={toggleEraser}
           className={`flex items-center justify-center rounded-md p-1 transition ${
             isErasing ? 'bg-gray-400' : 'bg-white hover:bg-gray-100'
           }`}
@@ -96,40 +106,47 @@ export default function EssayAnswerBox({ questionId }: EssayAnswerBoxProps) {
         </button>
       </div>
 
-      {/* 필기 공간 */}
+      {/* 필기 영역 */}
       <div className="relative min-h-0 flex-1 overflow-hidden rounded-md border border-white">
-        <div className="absolute inset-0 overflow-y-auto">
-          <div
-            className="relative w-full"
-            style={{
-              height: `${lineHeight * totalRows}px`,
-              backgroundImage: `repeating-linear-gradient(
-                to bottom,
-                white 0px,
-                white ${lineHeight - 1}px,
-                #e5e7eb ${lineHeight - 1}px,
-                #e5e7eb ${lineHeight}px
-              )`,
-            }}
-          >
-            <ReactSketchCanvas
-              key={questionId}
-              ref={canvasRef}
-              className="absolute top-0 left-0"
-              strokeWidth={isErasing ? 40 : 3}
-              strokeColor={isErasing ? '#ffffff' : 'black'}
-              width="100%"
-              height={`${lineHeight * totalRows}px`}
-              onStroke={handleAutoSave}
-              canvasColor="transparent"
-              style={{
-                border: 'none',
-                outline: 'none',
-                backgroundColor: 'transparent',
-              }}
-            />
+        {isCanvasLoading ? (
+          <div className="absolute inset-0 flex items-center justify-center text-gray-400">
+            불러오는 중...
           </div>
-        </div>
+        ) : (
+          <div className="absolute inset-0 overflow-y-auto">
+            <div
+              className="relative w-full px-15"
+              style={{
+                height: `${lineHeight * totalRows}px`,
+                backgroundImage: `repeating-linear-gradient(
+                  to bottom,
+                  white 0px,
+                  white ${lineHeight - 1}px,
+                  #e5e7eb ${lineHeight - 1}px,
+                  #e5e7eb ${lineHeight}px
+                )`,
+                backgroundClip: 'content-box',
+              }}
+            >
+              <ReactSketchCanvas
+                ref={canvasRef}
+                className="absolute top-0 left-0"
+                strokeWidth={isErasing ? 40 : 3}
+                strokeColor="black"
+                width="100%"
+                eraserWidth={100}
+                height={`${lineHeight * totalRows}px`}
+                onStroke={handleAutoSave}
+                canvasColor="transparent"
+                style={{
+                  border: 'none',
+                  outline: 'none',
+                  backgroundColor: 'transparent',
+                }}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

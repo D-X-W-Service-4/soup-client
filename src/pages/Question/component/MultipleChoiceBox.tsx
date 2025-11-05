@@ -106,6 +106,7 @@ export default function MultipleChoiceBox({
               strokeWidth={isErasing ? 50 : 3}
               strokeColor={isErasing ? '#ffffff' : 'black'}
               width="100%"
+              eraserWidth={100}
               height="1500px"
               onStroke={handleAutoSave}
               style={{ border: 'none', outline: 'none' }}
