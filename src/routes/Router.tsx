@@ -8,6 +8,7 @@ import HomePage from '../pages/home/page.tsx';
 import QuestionPage from '../pages/Question/QuestionPage.tsx';
 import LoginPage from '../pages/Login/LoginPage.tsx';
 import TestResultPage from '../pages/test/result/page.tsx';
+import TestHistoryPage from '../pages/test/hist/page.tsx';
 
 const router = createBrowserRouter([
   {
@@ -26,8 +27,8 @@ const router = createBrowserRouter([
         element: <Outlet />,
         children: [
           { path: 'go', element: <QuestionPage /> },
-          { path: 'result', element: <TestResultPage /> },
-          { path: 'hist', element: <div>기록 조회하기</div> },
+          { path: 'result', element: <TestHistoryPage /> },
+          { path: 'result/:testId', element: <TestResultPage /> },
         ],
       },
       {

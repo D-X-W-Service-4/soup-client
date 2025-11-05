@@ -1,14 +1,6 @@
 import { Icon } from '@iconify/react';
+import type { QuestionItem } from '../../../../types/test.ts';
 import DifficultyBadge from './DifficultyBadge.tsx';
-
-interface QuestionCardProps {
-  question: string;
-  tryCount: number;
-  isCorrect: boolean;
-  isStarred: boolean;
-  createdAt: string;
-  difficulty: 'easy' | 'medium' | 'hard';
-}
 
 export default function QuestionCard({
   question,
@@ -17,7 +9,7 @@ export default function QuestionCard({
   isStarred,
   createdAt,
   difficulty,
-}: QuestionCardProps) {
+}: QuestionItem) {
   const statusIcon = isCorrect
     ? 'lets-icons:check-ring'
     : 'lets-icons:close-ring';

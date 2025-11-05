@@ -26,7 +26,7 @@ const NAV = [
     path: '/test',
     children: [
       { key: 'go', label: '수준테스트 보러가기', path: '/test/go' },
-      { key: 'hist', label: '기록 조회하기', path: '/test/hist' },
+      { key: 'result', label: '기록 조회하기', path: '/test/result' },
     ],
   },
   {
@@ -69,7 +69,7 @@ export default function SideBar({ isOpen = true, onToggle }: sideBarProps) {
         >
           {isOpen ? (
             <img
-              src="/assets/logo/Logotype.png"
+              src="/src/assets/logo/Logotype.png"
               alt="App Logo"
               className="h-6 w-14"
             />
