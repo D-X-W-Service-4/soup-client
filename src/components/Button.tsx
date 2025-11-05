@@ -27,7 +27,7 @@ const VARIANT_MAP: Record<ButtonVariant, String> = {
   success: 'bg-success text-white disabled:bg-lime-200 hover:bg-lime-600',
   warning: 'bg-warning text-white disabled:bg-orange-300 hover:bg-orange-400',
   danger: 'bg-danger text-white disabled:bg-red-300 hover:bg-red-700',
-  white: 'bg-white text-secondary hover:text-neutral-400',
+  white: 'bg-white text-secondary hover:bg-gray-100',
 };
 
 export default function Button({
