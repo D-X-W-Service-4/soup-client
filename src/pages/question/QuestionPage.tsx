@@ -10,6 +10,7 @@ import QuestionDisplay from './component/QuestionDisplay.tsx';
 import EssayAnswerBox from './component/EssayAnswerBox.tsx';
 import MultipleChoiceBox from './component/MultipleChoiceBox.tsx';
 import OptionList from './component/OptionList.tsx';
+import type { Option } from './component/OptionList.tsx';
 import HintModal from './component/HintModal.tsx';
 import { fetchQuestionById } from '../../apis/questionAPI.tsx';
 import type { QuestionData } from '../../apis/questionAPI.tsx';
@@ -26,12 +27,12 @@ export default function QuestionPage() {
 
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [selectedOptions, setSelectedOptions] = useState<
-    Record<number, number | null>
+    Record<number, Option | null>
   >({});
   const [starred, setStarred] = useState<Record<number, boolean>>({});
 
   const answerValue = answers[current] ?? '';
-  const selectedId = selectedOptions[current] ?? null;
+  const selectedOption = selectedOptions[current] ?? null;
 
   const hints = [
     '이 문제는 유리수 단원의 문제입니다. 화이팅!',
@@ -48,7 +49,7 @@ export default function QuestionPage() {
         setTestInfo(res.data);
       } catch (e) {
         console.error('시험 정보 로드 실패:', e);
-        setTestInfo({ timeLimit: 30 }); // 기본값
+        setTestInfo({ timeLimit: 30 });
       }
     };
     loadTestInfo();
@@ -76,8 +77,7 @@ export default function QuestionPage() {
     const newSolved: number[] = [];
     for (let q = 1; q <= TOTAL_QUESTIONS; q++) {
       const hasEssay = (answers[q]?.trim().length ?? 0) > 0;
-      const hasObjective =
-        selectedOptions[q] !== null && selectedOptions[q] !== undefined;
+      const hasObjective = !!selectedOptions[q];
       if (hasEssay || hasObjective) newSolved.push(q);
     }
     setSolved(newSolved);
@@ -87,8 +87,8 @@ export default function QuestionPage() {
     if (qNum >= 1 && qNum <= TOTAL_QUESTIONS) setCurrent(qNum);
   };
 
-  const handleOptionSelect = (id: number | null) => {
-    setSelectedOptions((prev) => ({ ...prev, [current]: id }));
+  const handleOptionSelect = (option: Option | null) => {
+    setSelectedOptions((prev) => ({ ...prev, [current]: option }));
   };
 
   const handleToggleStar = () => {
@@ -98,54 +98,36 @@ export default function QuestionPage() {
   const handleHintModal = () => setIsHintModalOpen((prev) => !prev);
 
   const handleSubmit = () => {
-    console.log('모든 문제 제출:', answers, selectedOptions);
+    const submissionData = [];
+
+    for (let qNum = 1; qNum <= TOTAL_QUESTIONS; qNum++) {
+      const essayAnswer = answers[qNum];
+      const selected = selectedOptions[qNum];
+
+      if (essayAnswer) {
+        submissionData.push({
+          questionId: qNum,
+          type: 'answer',
+          text: essayAnswer,
+        });
+      } else if (selected) {
+        submissionData.push({
+          questionId: qNum,
+          type: 'answer',
+          text: selected.text,
+        });
+      }
+    }
+
+    console.log('제출 데이터:', submissionData);
     alert('모든 문제를 제출했습니다!');
     navigate('/result');
   };
-  {
-    /*}
-  const handleSubmit = async () => {
-    try {
-      const submissionData = [];
-
-      for (let qNum = 1; qNum <= TOTAL_QUESTIONS; qNum++) {
-        // 단답형: 사용자가 입력한 text 값
-        if (answers[qNum]) {
-          submissionData.push({
-            questionId: qNum,
-            type: 'answer',
-            text: answers[qNum], // 단답형 값
-          });
-        }
-        // 객관식: 사용자가 선택한 보기의 텍스트
-        else if (selectedOptions[qNum] !== null && question?.options) {
-          const selectedOptionId = selectedOptions[qNum]!;
-          const selectedText = question.options[selectedOptionId - 1]?.text ?? '';
-          submissionData.push({
-            questionId: qNum,
-            type: 'answer',
-            text: selectedText, // 보기 text 전체를 그대로 넘김 ("②", "⑤ A×B=72" 등)
-          });
-        }
-      }
-      const res = await axios.post('http://your-api.com/api/submit', {
-        answers: submissionData,
-      });
-
-      navigate('/result', { state: { result: res.data } });
-    } catch (error) {
-      console.error('제출 실패:', error);
-      alert('제출 중 오류가 발생했습니다.');
-    }
-  };
-  */
-  }
 
   const isAllSolved = solved.length === TOTAL_QUESTIONS;
 
   return (
     <div className="relative flex h-screen w-full flex-col items-center justify-start bg-primary-bg">
-      {/* 상단 문제 선택 바 */}
       <QuestionBar
         totalQuestions={TOTAL_QUESTIONS}
         current={current}
@@ -216,12 +198,26 @@ export default function QuestionPage() {
           {/* 객관식 보기 */}
           {question?.type === '객관식' && (
             <OptionList
-              options={['보기 1', '보기 2', '보기 3', '보기 4', '보기 5']}
-              selectedId={selectedId}
+              options={[
+                { id: 1, text: '①  4' },
+                { id: 2, text: '②  6' },
+                { id: 3, text: '③  7' },
+                { id: 4, text: '④  8' },
+                { id: 5, text: '⑤  9' },
+              ]}
+              selectedOption={selectedOption}
               onSelect={handleOptionSelect}
               isHintOpen={isHintModalOpen}
             />
           )}
+          {/*
+           <OptionList
+            options={question.options || []} //백엔드 데이터로 교체
+            selectedOption={selectedOptions[current] ?? null}
+            onSelect={handleOptionSelect}
+            isHintOpen={isHintModalOpen}
+          />
+           */}
 
           {/* 하단 경고 / 입력 / 이동 버튼 */}
           <div className="mt-auto flex w-full flex-col items-end gap-10">
