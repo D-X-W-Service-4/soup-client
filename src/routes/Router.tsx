@@ -7,7 +7,7 @@ import Layout from '../components/Layout.tsx';
 import HomePage from '../pages/home/page.tsx';
 import QuestionPage from '../pages/question/QuestionPage.tsx';
 import LoginPage from '../pages/login/LoginPage.tsx';
-import StudyPage from '../pages/question/StduyPage.tsx';
+import StudyPage from '../pages/question/StudyPage.tsx';
 
 const router = createBrowserRouter([
   {

@@ -11,6 +11,7 @@ import OptionList from './component/OptionList.tsx';
 import HintModal from './component/HintModal.tsx';
 import { fetchQuestionById } from '../../apis/questionAPI.tsx';
 import type { QuestionData } from '../../apis/questionAPI.tsx';
+import { useNavigate } from 'react-router-dom';
 
 const TOTAL_QUESTIONS = 2; // mockQuestions 개수
 
@@ -72,6 +73,13 @@ export default function QuestionPage() {
   };
 
   const handleHintModal = () => setIsHintModalOpen((prev) => !prev);
+
+  const handleSubmit = () => {
+    console.log('모든 문제 제출:', answers, selectedOptions);
+    alert('모든 문제를 제출했습니다!');
+  };
+
+  const isAllSolved = solved.length === TOTAL_QUESTIONS;
 
   return (
     <div className="relative flex h-screen w-full flex-col items-center justify-start bg-primary-bg">
@@ -176,13 +184,23 @@ export default function QuestionPage() {
                 onClick={() => handleSelect(current - 1)}
                 disabled={current === 1}
               />
-              <QuestionPageButton
-                direction="next"
-                label="다음"
-                variant="primary"
-                onClick={() => handleSelect(current + 1)}
-                disabled={current === TOTAL_QUESTIONS}
-              />
+
+              {current === TOTAL_QUESTIONS ? (
+                <QuestionPageButton
+                  direction="next"
+                  label="제출"
+                  variant="primary"
+                  onClick={handleSubmit}
+                  disabled={!isAllSolved}
+                />
+              ) : (
+                <QuestionPageButton
+                  direction="next"
+                  label="다음"
+                  variant="primary"
+                  onClick={() => handleSelect(current + 1)}
+                />
+              )}
             </div>
           </div>
         </div>
