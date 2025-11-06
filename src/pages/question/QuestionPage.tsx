@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import QuestionBar from './component/QuestionBar.tsx';
 import HintBar from './component/HintBar.tsx';
 import WarningBox from './component/WarningBox.tsx';
@@ -11,7 +13,6 @@ import OptionList from './component/OptionList.tsx';
 import HintModal from './component/HintModal.tsx';
 import { fetchQuestionById } from '../../apis/questionAPI.tsx';
 import type { QuestionData } from '../../apis/questionAPI.tsx';
-import { useNavigate } from 'react-router-dom';
 
 const TOTAL_QUESTIONS = 2; // mockQuestions 개수
 
@@ -20,6 +21,8 @@ export default function QuestionPage() {
   const [question, setQuestion] = useState<QuestionData | null>(null);
   const [solved, setSolved] = useState<number[]>([]);
   const [isHintModalOpen, setIsHintModalOpen] = useState(false);
+  const [testInfo, setTestInfo] = useState<{ timeLimit: number } | null>(null);
+  const navigate = useNavigate();
 
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [selectedOptions, setSelectedOptions] = useState<
@@ -35,6 +38,26 @@ export default function QuestionPage() {
     '두 번째 힌트입니다.',
     '마지막 힌트!',
   ];
+
+  useEffect(() => {
+    const loadTestInfo = async () => {
+      try {
+        const res = await axios.get(
+          'http://13.125.158.205:8080/api/leveltest/info'
+        );
+        setTestInfo(res.data);
+      } catch (e) {
+        console.error('시험 정보 로드 실패:', e);
+        setTestInfo({ timeLimit: 30 }); // 기본값
+      }
+    };
+    loadTestInfo();
+  }, []);
+
+  const handleTimeUp = () => {
+    alert('시간이 종료되어 자동 제출됩니다.');
+    handleSubmit();
+  };
 
   useEffect(() => {
     const loadQuestion = async () => {
@@ -77,7 +100,46 @@ export default function QuestionPage() {
   const handleSubmit = () => {
     console.log('모든 문제 제출:', answers, selectedOptions);
     alert('모든 문제를 제출했습니다!');
+    navigate('/result');
   };
+  {
+    /*}
+  const handleSubmit = async () => {
+    try {
+      const submissionData = [];
+
+      for (let qNum = 1; qNum <= TOTAL_QUESTIONS; qNum++) {
+        // 단답형: 사용자가 입력한 text 값
+        if (answers[qNum]) {
+          submissionData.push({
+            questionId: qNum,
+            type: 'answer',
+            text: answers[qNum], // 단답형 값
+          });
+        }
+        // 객관식: 사용자가 선택한 보기의 텍스트
+        else if (selectedOptions[qNum] !== null && question?.options) {
+          const selectedOptionId = selectedOptions[qNum]!;
+          const selectedText = question.options[selectedOptionId - 1]?.text ?? '';
+          submissionData.push({
+            questionId: qNum,
+            type: 'answer',
+            text: selectedText, // 보기 text 전체를 그대로 넘김 ("②", "⑤ A×B=72" 등)
+          });
+        }
+      }
+      const res = await axios.post('http://your-api.com/api/submit', {
+        answers: submissionData,
+      });
+
+      navigate('/result', { state: { result: res.data } });
+    } catch (error) {
+      console.error('제출 실패:', error);
+      alert('제출 중 오류가 발생했습니다.');
+    }
+  };
+  */
+  }
 
   const isAllSolved = solved.length === TOTAL_QUESTIONS;
 
@@ -90,6 +152,8 @@ export default function QuestionPage() {
         solved={solved}
         onSelect={handleSelect}
         showTimer={true}
+        timeLimit={testInfo?.timeLimit ?? 30}
+        onTimeUp={handleTimeUp}
       />
 
       {/* 메인 영역 */}
