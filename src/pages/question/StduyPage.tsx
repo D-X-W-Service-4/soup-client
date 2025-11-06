@@ -14,7 +14,7 @@ import type { QuestionData } from '../../apis/questionAPI.tsx';
 
 const TOTAL_QUESTIONS = 2; // mockQuestions 개수
 
-export default function QuestionPage() {
+export default function StudyPage() {
   const [current, setCurrent] = useState(1);
   const [question, setQuestion] = useState<QuestionData | null>(null);
   const [solved, setSolved] = useState<number[]>([]);
@@ -75,17 +75,15 @@ export default function QuestionPage() {
 
   return (
     <div className="relative flex h-screen w-full flex-col items-center justify-start bg-primary-bg">
-      {/* 상단 문제 선택 바 */}
       <QuestionBar
         totalQuestions={TOTAL_QUESTIONS}
         current={current}
         solved={solved}
         onSelect={handleSelect}
+        showTimer={false}
       />
 
-      {/* 메인 영역 */}
       <div className="relative flex h-[calc(100vh-80px)] w-full flex-1 flex-row items-start justify-start gap-5 p-10">
-        {/* 힌트 바 */}
         <div className="absolute bottom-10 left-8 z-50">
           <HintBar
             hints={hints}
@@ -96,9 +94,7 @@ export default function QuestionPage() {
           />
         </div>
 
-        {/* 문제 및 풀이 영역 */}
         <div className="ml-20 flex h-full flex-1 flex-col items-center justify-start gap-6">
-          {/* 문제 표시 */}
           <div className="w-full flex-[0.4]">
             {question ? (
               <QuestionDisplay
@@ -127,9 +123,7 @@ export default function QuestionPage() {
           </div>
         </div>
 
-        {/* 우측 사이드 */}
         <div className="relative ml-5 flex h-full flex-col items-center gap-5">
-          {/* 힌트 모달 */}
           {isHintModalOpen && (
             <div className="pointer-events-auto absolute top-0 left-0 z-[9999]">
               <HintModal
@@ -140,7 +134,6 @@ export default function QuestionPage() {
             </div>
           )}
 
-          {/* 객관식 보기 */}
           {question?.type === '객관식' && (
             <OptionList
               options={['보기 1', '보기 2', '보기 3', '보기 4', '보기 5']}
@@ -150,7 +143,6 @@ export default function QuestionPage() {
             />
           )}
 
-          {/* 하단 경고 / 입력 / 이동 버튼 */}
           <div className="mt-auto flex w-full flex-col items-end gap-10">
             {question?.type === '단답형' && (
               <>
@@ -166,7 +158,6 @@ export default function QuestionPage() {
               </>
             )}
 
-            {/* 페이지 이동 버튼 */}
             <div className="flex w-full flex-row items-center gap-7">
               <QuestionPageButton
                 direction="prev"

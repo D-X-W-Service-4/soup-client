@@ -7,6 +7,7 @@ interface QuestionBarProps {
   current: number;
   solved: number[];
   onSelect: (q: number) => void;
+  showTimer?: boolean;
 }
 
 function QuestionBar({
@@ -14,13 +15,13 @@ function QuestionBar({
   current,
   solved,
   onSelect,
+  showTimer = true,
 }: QuestionBarProps) {
   return (
     <div className="flex w-full items-center justify-between gap-x-6 gap-y-4 border-b-[0.50px] border-neutral-200 bg-white px-10 py-5">
       <div className="flex-shrink-0">
         <img src={Logotype} alt="App Logo" className="h-8 w-18" />
       </div>
-
       <div className="flex min-w-[400px] flex-grow justify-center">
         <QuestionSelect
           totalQuestions={totalQuestions}
@@ -30,9 +31,11 @@ function QuestionBar({
         />
       </div>
 
-      <div className="flex-shrink-0">
-        <Timer initialMinutes={30} />
-      </div>
+      {showTimer && (
+        <div className="flex-shrink-0">
+          <Timer initialMinutes={30} />
+        </div>
+      )}
     </div>
   );
 }

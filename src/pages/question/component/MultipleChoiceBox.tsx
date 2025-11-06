@@ -2,7 +2,9 @@ import { useRef, useEffect, useState } from 'react';
 import { ReactSketchCanvas } from 'react-sketch-canvas';
 import type { ReactSketchCanvasRef } from 'react-sketch-canvas';
 import { useAnswerStore } from '../../../stores/useAnswerStore.ts';
-import { Icon } from '@iconify/react';
+import IconReturn from '../../../assets/svgs/IconReturn.tsx';
+import IconEraser from '../../../assets/svgs/IconEraser.tsx';
+import IconDelete from '../../../assets/svgs/IconDelete.tsx';
 
 interface MultipleChoiceBoxProps {
   questionId: number;
@@ -58,27 +60,17 @@ export default function MultipleChoiceBox({
           className="flex items-center justify-center rounded-md bg-white px-1 transition hover:bg-gray-100"
           title="되돌리기"
         >
-          <Icon
-            icon="mdi:undo"
-            width="22"
-            height="22"
-            className="text-secondary"
-          />
+          <IconReturn className="text-gray-400" />
         </button>
 
         <button
           onClick={() => setIsErasing(!isErasing)}
           className={`flex items-center justify-center rounded-md p-1 transition ${
-            isErasing ? 'bg-gray-400' : 'bg-white hover:bg-gray-100'
+            isErasing ? 'bg-gray-100' : 'bg-white hover:bg-gray-100'
           }`}
           title="지우개 모드"
         >
-          <Icon
-            icon="mdi:eraser"
-            width="22"
-            height="22"
-            className="text-secondary"
-          />
+          <IconEraser className="text-gray-400" />
         </button>
 
         <button
@@ -86,12 +78,7 @@ export default function MultipleChoiceBox({
           className="flex items-center justify-center rounded-md bg-white p-1 transition hover:bg-gray-100"
           title="전체 지우기"
         >
-          <Icon
-            icon="mdi:trash-can-outline"
-            width="22"
-            height="22"
-            className="text-secondary"
-          />
+          <IconDelete className="text-gray-400" />
         </button>
       </div>
 
@@ -109,6 +96,7 @@ export default function MultipleChoiceBox({
               eraserWidth={100}
               height="1500px"
               onStroke={handleAutoSave}
+              allowOnlyPointerType="pen"
               style={{ border: 'none', outline: 'none' }}
             />
           </div>
