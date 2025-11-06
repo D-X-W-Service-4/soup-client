@@ -25,14 +25,12 @@ const menuItems: MenuItem[] = [
   { id: 'close', icon: IconX, text: '' },
 ];
 
-const animationDelays = ['delay-75', 'delay-150', 'delay-200', 'delay-300'];
-
-const HintBar = ({
+export default function HintBar({
   onOpenHintModal,
   isHintModalOpen,
   isStarred = false,
   onToggleStar,
-}: HintBarProps) => {
+}: HintBarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
 
@@ -54,41 +52,45 @@ const HintBar = ({
   return (
     <div className="flex flex-col items-start gap-4">
       {isOpen ? (
-        menuItems.map((item, index) => {
-          let isSelected = item.id === selectedItemId;
-          if (item.id === 'hint') isSelected = isHintModalOpen;
-          if (item.id === 'star') isSelected = isStarred;
+        <div className="animate-fadeIn flex flex-col gap-4">
+          {menuItems.map((item, index) => {
+            let isSelected = item.id === selectedItemId;
+            if (item.id === 'hint') isSelected = isHintModalOpen;
+            if (item.id === 'star') isSelected = isStarred;
 
-          const iconBgColor = isSelected
-            ? 'bg-white'
-            : item.id === 'close'
-              ? 'bg-gray-400'
-              : 'bg-rose-400';
-          const iconColor = isSelected ? 'text-rose-400' : 'text-white';
+            const iconBgColor = isSelected
+              ? 'bg-white'
+              : item.id === 'close'
+                ? 'bg-gray-400'
+                : 'bg-rose-400';
+            const iconColor = isSelected ? 'text-rose-400' : 'text-white';
+            const IconComponent = item.icon;
 
-          const IconComponent = item.icon;
-
-          return (
-            <div
-              key={item.id}
-              className={`flex items-center gap-4 transition-all duration-300 ease-in-out ${isOpen ? 'translate-x-0 opacity-100' : '-translate-x-4 opacity-0'} ${animationDelays[index]}`}
-            >
-              <button
-                onClick={() => handleItemClick(item.id)}
-                className={`flex h-12.5 w-12.5 items-center justify-center rounded-full shadow-lg transition-transform hover:scale-110 ${iconBgColor}`}
+            return (
+              <div
+                key={item.id}
+                style={{
+                  animationDelay: `${index * 0.08}s`, // 버튼별 딜레이
+                }}
+                className="animate-slideIn flex items-center gap-4"
               >
-                <IconComponent className={`h-5.5 w-5.5 ${iconColor}`} />
-              </button>
-              <span className="w-32 text-left font-semibold text-slate-700">
-                {item.text}
-              </span>
-            </div>
-          );
-        })
+                <button
+                  onClick={() => handleItemClick(item.id)}
+                  className={`flex h-12.5 w-12.5 items-center justify-center rounded-full shadow-lg transition-transform duration-300 hover:scale-110 ${iconBgColor}`}
+                >
+                  <IconComponent className={`h-5.5 w-5.5 ${iconColor}`} />
+                </button>
+                <span className="w-32 text-left font-semibold text-slate-700">
+                  {item.text}
+                </span>
+              </div>
+            );
+          })}
+        </div>
       ) : (
         <button
           onClick={() => setIsOpen(true)}
-          className="flex h-12.5 w-12.5 items-center justify-center rounded-full bg-rose-400 shadow-lg transition-transform hover:scale-110"
+          className="animate-bounceOnce flex h-12.5 w-12.5 items-center justify-center rounded-full bg-rose-400 shadow-lg transition-transform hover:scale-110"
           aria-label="힌트 바 열기"
         >
           <IconHamburger className="h-5.5 w-5.5 text-white" />
@@ -96,6 +98,4 @@ const HintBar = ({
       )}
     </div>
   );
-};
-
-export default HintBar;
+}
