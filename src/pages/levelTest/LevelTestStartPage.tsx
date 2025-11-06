@@ -34,17 +34,50 @@ const LevelTestStartPage = () => {
 
   const grade = useUserStore((state) => state.grade);
   const term = useUserStore((state) => state.term);
+  const lastStudiedUnit = useUserStore((state) => state.lastStudiedUnit);
+  const unitName = lastStudiedUnit?.split(' - ')[1];
 
-  const totalQuestionCount = 30;
+  const totalQuestionCount = 20;
   const timeLimit = 30;
+
+  const currentUnits = () => {
+    if (!gradeKey || !term || !lastStudiedUnit) return [];
+    console.log(lastStudiedUnit);
+
+    const result: Chapter[] = [];
+
+    let found = false;
+    for (const gradeData of Object.values(subjectUnits)) {
+      for (const subject of gradeData) {
+        const filteredUnits: string[] = [];
+
+        for (const unit of subject.units) {
+          filteredUnits.push(unit);
+
+          if (unit === unitName) {
+            found = true;
+            break;
+          }
+        }
+        if (filteredUnits.length > 0) {
+          result.push({
+            subject: subject.subject,
+            units: filteredUnits,
+          });
+        }
+        if (found) break;
+      }
+      if (found) break;
+    }
+    console.log(result);
+    return result;
+  };
 
   const gradeKey = grade as Grade;
   const displayGrade = grade ? grade.replace('M', '') : '';
 
   const [selectedUnits, setSelectedUnits] = useState<Chapter[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
-
-  const currentUnits = subjectUnits[gradeKey] || [];
 
   const handleSelectSubjectUnits = (selected: SelectedUnit[]) => {
     const formatted = selected.map((item) => ({
@@ -54,7 +87,8 @@ const LevelTestStartPage = () => {
     setSelectedUnits(formatted);
   };
 
-  const displayUnits = selectedUnits.length > 0 ? selectedUnits : currentUnits;
+  const displayUnits =
+    selectedUnits.length > 0 ? selectedUnits : currentUnits();
 
   return (
     <div
