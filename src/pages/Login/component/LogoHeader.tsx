@@ -1,4 +1,4 @@
-import Logotype from '/assets/logo/Logotype.png';
+import Logotype from '/src/assets/logo/Logotype.png';
 
 export default function LogoHeader() {
   return (

@@ -1,5 +1,6 @@
 import { Icon } from '@iconify/react';
-import { Link, useMatch } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import { useState } from 'react';
 
 type sideBarProps = {
   isOpen: boolean;
@@ -43,17 +44,28 @@ const NAV = [
 ];
 
 export default function SideBar({ isOpen = true, onToggle }: sideBarProps) {
-  const isActive = (base: string) =>
-    !!(
-      useMatch({ path: base, end: true }) ||
-      useMatch({ path: base + '/*', end: false })
-    );
+  const [openMenus, setOpenMenus] = useState<string[]>([]);
+  const location = useLocation();
 
-  const isChildActive = (childPath: string) =>
-    !!(
-      useMatch({ path: childPath, end: true }) ||
-      useMatch({ path: childPath + '/*', end: false })
+  const isActive = (basePath: string) => {
+    return (
+      location.pathname === basePath ||
+      location.pathname.startsWith(basePath + '/')
     );
+  };
+
+  const isChildActive = (childPath: string) => {
+    return (
+      location.pathname === childPath ||
+      location.pathname.startsWith(childPath + '/')
+    );
+  };
+
+  const toggleMenu = (key: string) => {
+    setOpenMenus((prev) =>
+      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
+    );
+  };
 
   return (
     <aside
@@ -86,31 +98,53 @@ export default function SideBar({ isOpen = true, onToggle }: sideBarProps) {
       <nav className="flex w-full flex-col gap-3">
         {NAV.map((item) => {
           const active = isActive(item.path);
+          const isMenuOpen = openMenus.includes(item.key) || active;
+          const hasChildren = item.children && item.children.length > 0;
+
+          const itemContent = (
+            <>
+              <Icon
+                icon={item.icon}
+                className={`shrink-0 ${active ? 'text-white' : 'text-primary'}`}
+                width={18}
+                height={18}
+              />
+              <span
+                className={`overflow-hidden text-sm font-medium whitespace-nowrap ${isOpen ? 'w-auto opacity-100' : 'ml-0 w-0 opacity-0'}`}
+              >
+                {item.label}
+              </span>
+            </>
+          );
 
           return (
             <div key={item.key} className="group relative w-full">
-              <Link
-                to={item.path}
-                aria-current={active ? 'page' : undefined}
-                aria-haspopup={item.children ? 'menu' : undefined}
-                className={`flex h-10 w-full items-center rounded-[10px] transition-colors
-                    ${active ? 'bg-primary text-white' : 'text-secondary hover:bg-secondary-bg'}
-                    ${isOpen ? 'gap-3 px-3 py-2' : 'gap-0 p-[11px]'}`}
-              >
-                <Icon
-                  icon={item.icon}
-                  className={`shrink-0 ${active ? 'text-white' : 'text-primary'}`}
-                  width={18}
-                  height={18}
-                />
-                <span
-                  className={`overflow-hidden text-sm font-medium whitespace-nowrap ${isOpen ? 'w-auto opacity-100' : 'ml-0 w-0 opacity-0'}`}
+              {hasChildren ? (
+                <button
+                  type="button"
+                  onClick={() => toggleMenu(item.key)}
+                  aria-current={active ? 'page' : undefined}
+                  aria-haspopup="menu"
+                  aria-expanded={isMenuOpen}
+                  className={`flex h-10 w-full items-center rounded-[10px] transition-colors
+                      ${active ? 'bg-primary text-white' : 'text-secondary hover:bg-secondary-bg'}
+                      ${isOpen ? 'gap-3 px-3 py-2' : 'gap-0 p-[11px]'}`}
                 >
-                  {item.label}
-                </span>
-              </Link>
+                  {itemContent}
+                </button>
+              ) : (
+                <Link
+                  to={item.path}
+                  aria-current={active ? 'page' : undefined}
+                  className={`flex h-10 w-full items-center rounded-[10px] transition-colors
+                      ${active ? 'bg-primary text-white' : 'text-secondary hover:bg-secondary-bg'}
+                      ${isOpen ? 'gap-3 px-3 py-2' : 'gap-0 p-[11px]'}`}
+                >
+                  {itemContent}
+                </Link>
+              )}
 
-              {isOpen && active && item.children?.length ? (
+              {isOpen && isMenuOpen && item.children?.length ? (
                 <div className="mt-4 pl-10">
                   <div className="flex flex-col gap-4">
                     {item.children.map((child) => {
