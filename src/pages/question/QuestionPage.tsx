@@ -49,7 +49,7 @@ export default function QuestionPage() {
     const loadTestInfo = async () => {
       try {
         const res = await axios.get(
-          'http://13.125.158.205:8080/api/leveltest/info'
+          'http://13.125.158.205:8080/api/leveltest/info' // API 연결시 리뷰 반영해서 수정예정
         );
         setTestInfo(res.data);
       } catch (e) {
