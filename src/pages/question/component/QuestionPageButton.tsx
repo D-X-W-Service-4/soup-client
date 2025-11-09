@@ -25,18 +25,20 @@ export default function QuestionPageButton({
     textColor ?? (variant === 'primary' ? 'text-white' : 'text-neutral-700');
   const disabledStyle = 'opacity-50 cursor-not-allowed';
 
+  const isSubmit = label === '제출';
+
   return (
     <button
       type="button"
       onClick={() => {
         if (!disabled) {
-          console.log(`✅ Prev/Next 클릭됨 → direction: ${direction}`);
+          console.log(`Prev/Next 클릭됨 → direction: ${direction}`);
           onClick?.();
         }
       }}
       disabled={disabled}
       className={`
-        flex flex-1 items-center justify-between gap-1 rounded-lg px-5 py-3 text-base font-medium
+        flex flex-1 items-center justify-center gap-1 rounded-lg px-5 py-3 text-base font-medium
         ${baseBg} ${baseText} ${disabled ? disabledStyle : ''}
       `}
     >
@@ -46,12 +48,13 @@ export default function QuestionPageButton({
           <span>{label}</span>
         </>
       )}
-      {direction === 'next' && (
+      {direction === 'next' && !isSubmit && (
         <>
           <span>{label}</span>
           <IconArrowRight className="h-5 w-5" />
         </>
       )}
+      {isSubmit && <span>{label}</span>}
     </button>
   );
 }

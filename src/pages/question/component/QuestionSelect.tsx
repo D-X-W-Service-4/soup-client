@@ -83,8 +83,8 @@ export default function QuestionSelect({
                 bgClass = 'bg-primary';
                 textClass = 'text-white';
               } else if (state === 'solved') {
-                bgClass = 'bg-green-100';
-                textClass = 'text-success';
+                bgClass = 'bg-green-300';
+                textClass = 'text-white';
               } else if (state === 'disabled') {
                 bgClass = 'bg-neutral-50';
                 textClass = 'text-neutral-300';

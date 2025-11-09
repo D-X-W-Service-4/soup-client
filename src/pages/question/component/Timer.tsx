@@ -1,23 +1,27 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import IconTimer from '../../../assets/svgs/IconTimer.tsx';
 
 interface TimerProps {
   initialMinutes: number;
+  onTimeUp?: () => void;
 }
 
-function Timer({ initialMinutes }: TimerProps) {
+function Timer({ initialMinutes, onTimeUp }: TimerProps) {
   const initialSeconds = initialMinutes * 60;
   const [timeLeft, setTimeLeft] = useState(initialSeconds);
 
   useEffect(() => {
-    if (timeLeft <= 0) return;
+    if (timeLeft <= 0) {
+      onTimeUp?.();
+      return;
+    }
 
     const timer = setInterval(() => {
-      setTimeLeft((prevTime) => prevTime - 1);
+      setTimeLeft((prev) => prev - 1);
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [timeLeft]);
+  }, [timeLeft, onTimeUp]);
 
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
@@ -29,7 +33,7 @@ function Timer({ initialMinutes }: TimerProps) {
       <div className="relative h-6 w-6 overflow-hidden">
         <IconTimer />
       </div>
-      <div className="justify-start text-center font-['Pretendard_Variable'] text-xl leading-7 font-bold text-red-500">
+      <div className="font-['Pretendard_Variable'] text-xl font-bold text-red-500">
         {formatTime(minutes)} : {formatTime(seconds)}
       </div>
     </div>

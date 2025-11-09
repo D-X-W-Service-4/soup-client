@@ -11,8 +11,7 @@ const QuestionDisplay = ({
 }: QuestionDisplayProps) => {
   return (
     <div
-      className={`// ✨ 높이 고정
-                      부모가 늘어나지 않게 방지
+      className={`
                   flex
                   h-[20vh] min-h-[200px]
                   w-full shrink-0
