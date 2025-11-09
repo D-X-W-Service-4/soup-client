@@ -23,10 +23,14 @@ const NAV = [
     key: 'test',
     label: '수준테스트',
     icon: 'pepicons-pop:pen',
-    path: '/test',
+    path: '/levelTest/levelTest',
     children: [
-      { key: 'go', label: '수준테스트 보러가기', path: '/test/go' },
-      { key: 'hist', label: '기록 조회하기', path: '/test/hist' },
+      {
+        key: 'go',
+        label: '수준테스트 보러가기',
+        path: '/levelTest/levelTest',
+      },
+      { key: 'hist', label: '기록 조회하기', path: '/levelTest/levelTest' },
     ],
   },
   {

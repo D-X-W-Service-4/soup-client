@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "prepare": "husky"
+    "prepare": "husky",
+    "tailwind:init": "tailwindcss init"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx}": [
@@ -27,7 +28,7 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.9.1",
-    "tailwindcss": "^4.1.13",
+    "tailwind-scrollbar-hide": "^4.0.0",
     "zustand": "^5.0.8"
   },
   "devDependencies": {
