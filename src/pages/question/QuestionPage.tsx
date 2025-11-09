@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import QuestionBar from './component/QuestionBar.tsx';
 import HintBar from './component/HintBar.tsx';
 import WarningBox from './component/WarningBox.tsx';
@@ -15,7 +15,7 @@ import HintModal from './component/HintModal.tsx';
 import { fetchQuestionById } from '../../apis/questionAPI.tsx';
 import type { QuestionData } from '../../apis/questionAPI.tsx';
 
-const TOTAL_QUESTIONS = 2; // mockQuestions 개수
+const TOTAL_QUESTIONS = 2;
 
 export default function QuestionPage() {
   const [current, setCurrent] = useState(1);
@@ -25,6 +25,9 @@ export default function QuestionPage() {
   const [testInfo, setTestInfo] = useState<{ timeLimit: number } | null>(null);
   const navigate = useNavigate();
 
+  const location = useLocation();
+  const hideToolbar = location.state?.hideToolbar ?? false;
+
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [selectedOptions, setSelectedOptions] = useState<
     Record<number, Option | null>
@@ -33,6 +36,8 @@ export default function QuestionPage() {
 
   const answerValue = answers[current] ?? '';
   const selectedOption = selectedOptions[current] ?? null;
+
+  const isLast = current === TOTAL_QUESTIONS;
 
   const hints = [
     '이 문제는 유리수 단원의 문제입니다. 화이팅!',
@@ -125,7 +130,6 @@ export default function QuestionPage() {
   };
 
   const isAllSolved = solved.length === TOTAL_QUESTIONS;
-
   return (
     <div className="relative flex h-screen w-full flex-col items-center justify-start bg-primary-bg">
       <QuestionBar
@@ -138,22 +142,20 @@ export default function QuestionPage() {
         onTimeUp={handleTimeUp}
       />
 
-      {/* 메인 영역 */}
       <div className="relative flex h-[calc(100vh-80px)] w-full flex-1 flex-row items-start justify-start gap-5 p-10">
-        {/* 힌트 바 */}
-        <div className="absolute bottom-10 left-8 z-50">
-          <HintBar
-            hints={hints}
-            onOpenHintModal={handleHintModal}
-            isHintModalOpen={isHintModalOpen}
-            isStarred={!!starred[current]}
-            onToggleStar={handleToggleStar}
-          />
-        </div>
+        {!hideToolbar && (
+          <div className="absolute bottom-10 left-8 z-50">
+            <HintBar
+              hints={hints}
+              onOpenHintModal={handleHintModal}
+              isHintModalOpen={isHintModalOpen}
+              isStarred={!!starred[current]}
+              onToggleStar={handleToggleStar}
+            />
+          </div>
+        )}
 
-        {/* 문제 및 풀이 영역 */}
         <div className="ml-20 flex h-full flex-1 flex-col items-center justify-start gap-6">
-          {/* 문제 표시 */}
           <div className="w-full flex-[0.4]">
             {question ? (
               <QuestionDisplay
@@ -182,9 +184,7 @@ export default function QuestionPage() {
           </div>
         </div>
 
-        {/* 우측 사이드 */}
         <div className="relative ml-5 flex h-full flex-col items-center gap-5">
-          {/* 힌트 모달 */}
           {isHintModalOpen && (
             <div className="pointer-events-auto absolute top-0 left-0 z-[9999]">
               <HintModal
@@ -195,7 +195,6 @@ export default function QuestionPage() {
             </div>
           )}
 
-          {/* 객관식 보기 */}
           {question?.type === '객관식' && (
             <OptionList
               options={[
@@ -210,16 +209,7 @@ export default function QuestionPage() {
               isHintOpen={isHintModalOpen}
             />
           )}
-          {/*
-           <OptionList
-            options={question.options || []} //백엔드 데이터로 교체
-            selectedOption={selectedOptions[current] ?? null}
-            onSelect={handleOptionSelect}
-            isHintOpen={isHintModalOpen}
-          />
-           */}
 
-          {/* 하단 경고 / 입력 / 이동 버튼 */}
           <div className="mt-auto flex w-full flex-col items-end gap-10">
             {question?.type === '단답형' && (
               <>
@@ -235,7 +225,6 @@ export default function QuestionPage() {
               </>
             )}
 
-            {/* 페이지 이동 버튼 */}
             <div className="flex w-full flex-row items-center gap-7">
               <QuestionPageButton
                 direction="prev"
@@ -245,22 +234,15 @@ export default function QuestionPage() {
                 disabled={current === 1}
               />
 
-              {current === TOTAL_QUESTIONS ? (
-                <QuestionPageButton
-                  direction="next"
-                  label="제출"
-                  variant="primary"
-                  onClick={handleSubmit}
-                  disabled={!isAllSolved}
-                />
-              ) : (
-                <QuestionPageButton
-                  direction="next"
-                  label="다음"
-                  variant="primary"
-                  onClick={() => handleSelect(current + 1)}
-                />
-              )}
+              <QuestionPageButton
+                direction="next"
+                label={isLast ? '제출' : '다음'}
+                variant="primary"
+                onClick={
+                  isLast ? handleSubmit : () => handleSelect(current + 1)
+                }
+                disabled={isLast && !isAllSolved}
+              />
             </div>
           </div>
         </div>
