@@ -5,11 +5,10 @@ import IconBookOpenFill from '../../assets/svgs/IconBookOpenFill.tsx';
 import IconSpeechBubble from '../../assets/svgs/IconSpeechBubble.tsx';
 import { useUserStore } from '../../stores/userStore.ts';
 import SideBar from '../../components/SideBar.tsx';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import subjectUnits from './SubjectUnits.ts';
 import SubjectUnitsModal from '../../components/SubjectUnitsModal.tsx';
-import { useNavigate } from 'react-router-dom';
 
 interface SelectedUnit {
   grade: string;
@@ -152,6 +151,7 @@ const LevelTestStartPage = () => {
                     </div>
                   </div>
                 </div>
+
                 <div
                   className={`flex flex-col items-start justify-start gap-2.5 self-stretch overflow-hidden rounded-[10px] bg-gray-50 p-5 outline-[0.20px] outline-offset-[-0.20px] outline-white ${
                     !hideSidebar ? 'cursor-pointer hover:bg-gray-100' : ''
@@ -189,8 +189,12 @@ const LevelTestStartPage = () => {
                 </div>
 
                 <div
-                  className="inline-flex cursor-pointer items-center justify-center gap-2.5 self-stretch rounded-lg bg-primary px-5 py-3"
-                  onClick={() => navigate('/levelTest/levelTest')}
+                  className="inline-flex cursor-pointer items-center justify-center gap-2.5 self-stretch rounded-lg bg-primary px-5 py-3 transition hover:bg-primary/90"
+                  onClick={() =>
+                    navigate('/question/test', {
+                      state: { hideToolbar: hideSidebar },
+                    })
+                  }
                 >
                   <div className="justify-start text-base leading-6 font-medium text-white">
                     수준 테스트 시작하기

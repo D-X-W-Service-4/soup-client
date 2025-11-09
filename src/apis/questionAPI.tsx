@@ -24,7 +24,7 @@ export const mockQuestions: QuestionData[] = [
     term: 2,
     topic: '9206044',
     topicName: '접선과 현이 이루는 각의 활용(1)',
-    type: '단답형',
+    type: '객관식',
     stemType: 1,
     condition: 0,
     step: '기본',

@@ -64,13 +64,13 @@ const HintModal = ({ isOpen, onClose, hints }: HintModalProps) => {
       </div>
 
       {/* 하단 버튼 영역 */}
-      <div className="flex w-full items-center justify-end gap-4">
+      <div className="flex w-full items-center justify-end gap-8">
         {!isFirstHint && (
           <Button
             type="button"
             onClick={handlePreviousHint}
-            size="medium"
-            variant="primary_bg"
+            size="large"
+            variant="white"
           >
             <div className="flex items-center gap-2">
               <IconRightArrow className="h-3.5 w-3.5 rotate-180 text-secondary" />
@@ -81,17 +81,19 @@ const HintModal = ({ isOpen, onClose, hints }: HintModalProps) => {
         <Button
           type="button"
           onClick={handleNextHint}
-          size="medium"
-          variant="primary_bg"
+          size="large"
+          variant="white"
           disabled={hintCount === 0}
         >
           <div className="flex items-center gap-2">
             <span className="text-xs font-medium text-secondary">
               {isLastHint ? '닫기' : '다음'}
             </span>
-            {!isLastHint && (
-              <IconRightArrow className="h-3.5 w-3.5 text-secondary" />
-            )}
+            <IconRightArrow
+              className={`h-3.5 w-3.5 text-secondary transition-opacity duration-200 ${
+                isLastHint ? 'opacity-0' : 'opacity-100'
+              }`}
+            />
           </div>
         </Button>
       </div>
