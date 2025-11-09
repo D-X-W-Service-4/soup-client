@@ -13,7 +13,6 @@ const UserInfoModal = () => {
   const [semester, setSemester] = useState('');
   const [studyTime, setStudyTime] = useState('');
 
-  /* 저장되면 초기화 */
   const handleSave = () => {
     setNickname('');
     setGrade('');
