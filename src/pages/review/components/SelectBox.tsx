@@ -13,7 +13,7 @@ interface SelectToggleProps {
   onChange: (value: string) => void;
 }
 
-export default function SelectToggle({
+export default function SelectBox({
   placeholder = '',
   options,
   value,
@@ -47,9 +47,9 @@ export default function SelectToggle({
 
   return (
     <div>
-      <div className="relative w-full justify-between" ref={dropdownRef}>
+      <div className="relative justify-between" ref={dropdownRef}>
         <div
-          className="flex h-9 w-26 cursor-pointer items-center justify-between rounded-md px-4 py-2.5 outline outline-[0.80px] outline-neutral-200"
+          className="flex h-9 cursor-pointer items-center justify-between rounded-md px-4 py-2.5 outline outline-[0.80px] outline-neutral-200"
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         >
           <span className="justify-start text-center text-sm font-normal text-secondary">

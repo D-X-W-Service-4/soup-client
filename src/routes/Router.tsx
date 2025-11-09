@@ -5,10 +5,11 @@ import WorkBookPage from '../pages/onboarding/WorkBookPage.tsx';
 import LoginSuccessPage from '../pages/onboarding/LoginSuccessPage.tsx';
 import Layout from '../components/Layout.tsx';
 import HomePage from '../pages/home/page.tsx';
-import QuestionPage from '../pages/Question/QuestionPage.tsx';
-import LoginPage from '../pages/Login/LoginPage.tsx';
+import QuestionPage from '../pages/question/QuestionPage.tsx';
+import LoginPage from '../pages/login/LoginPage.tsx';
 import TestResultPage from '../pages/test/result/page.tsx';
 import TestHistoryPage from '../pages/test/hist/page.tsx';
+import ReviewPage from '../pages/review/page.tsx';
 
 const router = createBrowserRouter([
   {
@@ -20,8 +21,9 @@ const router = createBrowserRouter([
       { path: '/onboarding/studyInfo', element: <StudyInfoPage /> },
       { path: '/onboarding/workBook', element: <WorkBookPage /> },
       { path: '/onboarding/loginSuccess', element: <LoginSuccessPage /> },
-      { path: '/Login', element: <LoginPage /> },
+      { path: '/login', element: <LoginPage /> },
       { path: '/', element: <HomePage /> },
+      { path: '/review', element: <ReviewPage /> },
       {
         path: '/test',
         element: <Outlet />,

@@ -1,16 +1,19 @@
 import { Icon } from '@iconify/react';
-import { useState } from 'react';
 
-export default function SelectButton() {
-  const [filter, setFilter] = useState<'all' | 'incorrect' | 'isStarred'>(
-    'all'
-  );
+interface SelectButtonProps {
+  filter: 'all' | 'incorrect' | 'isStarred';
+  onFilterChange: (filter: 'all' | 'incorrect' | 'isStarred') => void;
+}
 
+export default function SelectButton({
+  filter,
+  onFilterChange,
+}: SelectButtonProps) {
   return (
     <div className="flex h-10 items-center justify-between self-stretch rounded-md bg-neutral-50 px-[3px]">
       <button
         type="button"
-        onClick={() => setFilter('all')}
+        onClick={() => onFilterChange('all')}
         className={`flex h-9 flex-1 items-center justify-center gap-2.5 rounded-md ${
           filter === 'all'
             ? 'bg-primary text-white'
@@ -24,7 +27,7 @@ export default function SelectButton() {
       </button>
       <button
         type="button"
-        onClick={() => setFilter('incorrect')}
+        onClick={() => onFilterChange('incorrect')}
         className={`flex h-9 flex-1 items-center justify-center gap-2 rounded-lg ${
           filter === 'incorrect'
             ? 'bg-primary text-white'
@@ -38,7 +41,7 @@ export default function SelectButton() {
       </button>
       <button
         type="button"
-        onClick={() => setFilter('isStarred')}
+        onClick={() => onFilterChange('isStarred')}
         className={`flex h-9 flex-1 items-center justify-center gap-2 rounded-lg ${
           filter === 'isStarred'
             ? 'bg-primary text-white'
