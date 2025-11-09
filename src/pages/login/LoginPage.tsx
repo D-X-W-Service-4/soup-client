@@ -14,7 +14,6 @@ export default function LoginPage() {
 
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center bg-neutral-50">
-      {/* 중앙 컨테이너 */}
       <div className="flex w-[633px] flex-col items-center justify-center gap-14">
         <LogoHeader />
 

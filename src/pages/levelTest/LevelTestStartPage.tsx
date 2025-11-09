@@ -157,7 +157,7 @@ const LevelTestStartPage = () => {
                     !hideSidebar ? 'cursor-pointer hover:bg-gray-100' : ''
                   }`}
                   onClick={() => {
-                    if (!hideSidebar) setModalOpen(true);
+                    if (!hideSidebar) setModalOpen(true); // 문제풀이 페이지랑 연결 과정에서 추가
                   }}
                 >
                   <div className="flex flex-col items-start justify-start gap-2.5">

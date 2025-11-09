@@ -15,7 +15,7 @@ const router = createBrowserRouter([
     element: <Layout />,
 
     children: [
-      { path: '/', element: <Navigate to="/onboarding/nickname" replace /> },
+      { path: '/', element: <Navigate to="/login" replace /> },
       { path: '/login', element: <LoginPage /> },
       { path: '/onboarding/nickname', element: <NicknamePage /> },
       { path: '/onboarding/studyInfo', element: <StudyInfoPage /> },
