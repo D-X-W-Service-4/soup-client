@@ -5,16 +5,15 @@ import IconNaver from '../../assets/svgs/IconNaver.tsx';
 
 export default function LoginPage() {
   const handleKakaoLogin = () => {
-    window.location.href = 'http://localhost:5173/question';
+    window.location.href = 'http://localhost:5173/onboarding/nickname';
   };
 
   const handleNaverLogin = () => {
-    window.location.href = 'http://localhost:5173/question';
+    window.location.href = 'http://localhost:5173/onboarding/nickname';
   };
 
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center bg-neutral-50">
-      {/* 중앙 컨테이너 */}
       <div className="flex w-[633px] flex-col items-center justify-center gap-14">
         <LogoHeader />
 
