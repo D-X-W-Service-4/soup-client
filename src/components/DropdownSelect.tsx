@@ -27,13 +27,13 @@ const DropdownSelect = ({
         onClick={() => setIsOpen(!isOpen)}
       >
         <div className="text-xs leading-none font-normal text-zinc-500">
-          {value === '' ? placeholder : value}{' '}
+          {!value ? placeholder : value}{' '}
         </div>
         <IconChevronDown />
       </div>
 
       {isOpen && (
-        <div className="absolute top-8 left-0 z-20 w-full rounded-lg bg-secondary-bg shadow-sm">
+        <div className="absolute top-8 left-0 z-20 max-h-40 w-full overflow-scroll rounded-lg bg-secondary-bg shadow-sm">
           {options.map((item) => (
             <div
               key={item}
