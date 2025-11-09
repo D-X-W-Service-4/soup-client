@@ -4,10 +4,7 @@ import StudyInfoPage from '../pages/onboarding/StudyInfoPage.tsx';
 import WorkBookPage from '../pages/onboarding/WorkBookPage.tsx';
 import LoginSuccessPage from '../pages/onboarding/LoginSuccessPage.tsx';
 import Layout from '../components/Layout.tsx';
-import HomePage from '../pages/home/page.tsx';
-import QuestionPage from '../pages/question/QuestionPage.tsx';
-import LoginPage from '../pages/login/LoginPage.tsx';
-import StudyPage from '../pages/question/StudyPage.tsx';
+import LevelTestStartPage from '../pages/levelTest/LevelTestStartPage.tsx';
 
 const router = createBrowserRouter([
   {
@@ -19,10 +16,8 @@ const router = createBrowserRouter([
       { path: '/onboarding/studyInfo', element: <StudyInfoPage /> },
       { path: '/onboarding/workBook', element: <WorkBookPage /> },
       { path: '/onboarding/loginSuccess', element: <LoginSuccessPage /> },
-      { path: '/', element: <HomePage /> },
-      { path: '/question/test', element: <QuestionPage /> },
-      { path: '/login', element: <LoginPage /> },
-      { path: '/question/study', element: <StudyPage /> },
+      { path: '/levelTest/levelTestStart', element: <LevelTestStartPage /> },
+      { path: '/levelTest/levelTest', element: <LevelTestStartPage /> },
     ],
   },
 ]);

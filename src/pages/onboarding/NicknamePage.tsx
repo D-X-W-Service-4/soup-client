@@ -67,8 +67,8 @@ const NicknamePage = () => {
             <NicknameInput
               value={nickname}
               onChange={setNickname}
-              inputClassName="!h-7 !text-lg" // input 높이 + 폰트 크기 커스텀
-              containerClassName="px-5 py-4" // wrapper padding 커스텀
+              inputClassName="!h-7 !text-lg"
+              containerClassName="px-5 py-4"
               onErrorChange={setError}
             />
           </div>

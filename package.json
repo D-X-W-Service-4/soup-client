@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "prepare": "husky"
+    "prepare": "husky",
+    "tailwind:init": "tailwindcss init"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx}": [
@@ -30,6 +31,7 @@
     "react-router-dom": "^7.9.1",
     "react-sketch-canvas": "^6.2.0",
     "tailwindcss": "^4.1.13",
+    "tailwind-scrollbar-hide": "^4.0.0",
     "zustand": "^5.0.8"
   },
   "devDependencies": {
