@@ -5,11 +5,11 @@ import IconNaver from '../../assets/svgs/IconNaver.tsx';
 
 export default function LoginPage() {
   const handleKakaoLogin = () => {
-    window.location.href = 'http://localhost:5173/';
+    window.location.href = 'http://localhost:5173/onboarding/nickname';
   };
 
   const handleNaverLogin = () => {
-    window.location.href = 'http://localhost:5173/';
+    window.location.href = 'http://localhost:5173/onboarding/nickname';
   };
 
   return (
