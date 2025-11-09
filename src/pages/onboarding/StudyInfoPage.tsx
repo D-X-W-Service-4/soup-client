@@ -52,12 +52,11 @@ const StudyInfoPage = () => {
     const currentUnitsData =
       subjectUnits[grade as keyof typeof subjectUnits] || [];
 
-    const options: string[] = [];
-    currentUnitsData.map((subjectData) => {
-      subjectData.units.map((unitName) => {
-        options.push(`${subjectData.subject} - ${unitName}`);
-      });
-    });
+    const options = currentUnitsData.flatMap((subjectData) =>
+      subjectData.units.map(
+        (unitName) => `${subjectData.subject} - ${unitName}`
+      )
+    );
 
     return options;
   }, [grade]);

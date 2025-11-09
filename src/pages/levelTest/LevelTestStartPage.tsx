@@ -189,7 +189,7 @@ const LevelTestStartPage = () => {
                 </div>
 
                 <div
-                  className="inline-flex items-center justify-center gap-2.5 self-stretch rounded-lg bg-primary px-5 py-3"
+                  className="inline-flex cursor-pointer items-center justify-center gap-2.5 self-stretch rounded-lg bg-primary px-5 py-3"
                   onClick={() => navigate('/levelTest/levelTest')}
                 >
                   <div className="justify-start text-base leading-6 font-medium text-white">
