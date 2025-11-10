@@ -104,7 +104,7 @@ export default function ReviewPage() {
         <main className="flex min-h-0 flex-1 flex-col gap-6">
           <section className="flex flex-col items-start justify-start gap-6 rounded-[20px] bg-white p-10 shadow-base">
             <div className="flex items-center justify-start gap-2 px-2">
-              <Icon icon="pepicons-pop:pen" className="h-5 w-5 text-primary" />
+              <Icon icon="feather:bookmark" className="h-5 w-5 text-primary" />
               <span className="text-xl font-semibold">문제 다시보기</span>
             </div>
             <div className="flex w-full items-center justify-center gap-8">
