@@ -100,7 +100,11 @@ const LevelTestStartPage = () => {
       )}
       <div className="inline-flex flex-col items-center justify-center">
         <div className="inline-flex items-center justify-start">
-          <div className="inline-flex w-265 flex-col items-center justify-center self-stretch bg-primary-bg">
+          <div
+            className={`inline-flex flex-col items-center justify-center self-stretch bg-primary-bg ${
+              isSidebarOpen ? 'w-200' : 'w-265'
+            }`}
+          >
             <div className="flex w-188 flex-col items-center justify-center gap-9">
               <div className="flex flex-col items-center justify-start gap-4">
                 <div className="inline-flex items-center justify-center gap-4 self-stretch">
