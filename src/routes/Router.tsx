@@ -24,7 +24,6 @@ const router = createBrowserRouter([
       { path: '/onboarding/workBook', element: <WorkBookPage /> },
       { path: '/onboarding/loginSuccess', element: <LoginSuccessPage /> },
       { path: '/levelTest/levelTestStart', element: <LevelTestStartPage /> },
-      { path: '/levelTest/levelTest', element: <LevelTestStartPage /> },
       { path: '/question/test', element: <QuestionPage /> },
       { path: '/question/study', element: <StudyPage /> },
       { path: '/login', element: <LoginPage /> },
@@ -34,7 +33,7 @@ const router = createBrowserRouter([
         path: '/test',
         element: <Outlet />,
         children: [
-          { path: 'go', element: <QuestionPage /> },
+          { path: 'go', element: <LevelTestStartPage /> },
           { path: 'result', element: <TestHistoryPage /> },
           { path: 'result/:testId', element: <TestResultPage /> },
         ],
