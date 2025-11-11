@@ -1,7 +1,6 @@
 import { useModalStore } from '../stores/modalStore.ts';
 import { useState } from 'react';
 import NicknameInput from './inputs/NicknameInput.tsx';
-import StudyTimeInput from './inputs/StudyTimeInput.tsx';
 import DropdownSelect from './DropdownSelect.tsx';
 
 const UserInfoModal = () => {
@@ -11,13 +10,11 @@ const UserInfoModal = () => {
 
   const [grade, setGrade] = useState('');
   const [semester, setSemester] = useState('');
-  const [studyTime, setStudyTime] = useState('');
 
   const handleSave = () => {
     setNickname('');
     setGrade('');
     setSemester('');
-    setStudyTime('');
 
     toggleUserModal();
   };
@@ -31,7 +28,7 @@ const UserInfoModal = () => {
         onClick={toggleUserModal}
       ></div>
 
-      <div className="relative z-10 inline-flex h-96 w-194.5 flex-col items-start justify-start gap-5 rounded-2xl bg-white px-10 py-7 shadow-[0px_2px_10px_0px_rgba(0,0,0,0.10)]">
+      <div className="relative z-10 inline-flex h-120 w-194.5 flex-col items-start justify-start gap-5 rounded-2xl bg-white px-10 py-7 shadow-[0px_2px_10px_0px_rgba(0,0,0,0.10)]">
         <div className="flex w-32 flex-col items-start justify-start gap-2.5">
           <div className="self-stretch text-xl leading-7 font-medium text-black">
             내 정보 수정
@@ -67,13 +64,6 @@ const UserInfoModal = () => {
             onChange={setSemester}
             placeholder="학기를 선택해주세요!"
           />
-          {/* 공부 시간 입력 */}
-          <div className="flex flex-col items-start justify-start gap-2 self-stretch">
-            <div className="text-base leading-normal font-medium text-black">
-              공부시간 입력
-            </div>
-            <StudyTimeInput value={studyTime} onChange={setStudyTime} />
-          </div>
         </div>
 
         <div
