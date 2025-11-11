@@ -7,21 +7,8 @@ import { useUserStore } from '../../stores/userStore.ts';
 import SideBar from '../../components/SideBar.tsx';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import subjectUnits from './SubjectUnits.ts';
+import subjectUnits, { type SubjectUnit } from '../levelTest/SubjectUnits.ts';
 import SubjectUnitsModal from '../../components/SubjectUnitsModal.tsx';
-
-interface SelectedUnit {
-  grade: string;
-  subjects: string;
-  units: string;
-}
-
-interface Chapter {
-  subject: string;
-  units: string[];
-}
-
-type Grade = 'M1' | 'M2' | 'M3';
 
 const LevelTestStartPage = () => {
   const navigate = useNavigate();
@@ -34,56 +21,36 @@ const LevelTestStartPage = () => {
   const grade = useUserStore((state) => state.grade);
   const term = useUserStore((state) => state.term);
   const lastStudiedUnit = useUserStore((state) => state.lastStudiedUnit);
-  const unitName = lastStudiedUnit?.split(' - ')[1];
 
   const totalQuestionCount = 20;
   const timeLimit = 30;
 
-  const currentUnits = () => {
-    if (!gradeKey || !term || !lastStudiedUnit) return [];
-    console.log(lastStudiedUnit);
+  const currentUnits = (): SubjectUnit[] => {
+    if (!lastStudiedUnit) return [];
 
-    const result: Chapter[] = [];
+    const targetUnit = subjectUnits.find(
+      (unit) => unit.name === lastStudiedUnit
+    );
 
-    let found = false;
-    for (const gradeData of Object.values(subjectUnits)) {
-      for (const subject of gradeData) {
-        const filteredUnits: string[] = [];
+    if (!targetUnit) return [];
 
-        for (const unit of subject.units) {
-          filteredUnits.push(unit);
+    const targetId = targetUnit.subjectUnitId;
 
-          if (unit === unitName) {
-            found = true;
-            break;
-          }
-        }
-        if (filteredUnits.length > 0) {
-          result.push({
-            subject: subject.subject,
-            units: filteredUnits,
-          });
-        }
-        if (found) break;
-      }
-      if (found) break;
-    }
+    const result = subjectUnits.filter(
+      (unit) => unit.subjectUnitId <= targetId
+    );
+
     console.log(result);
     return result;
   };
 
-  const gradeKey = grade as Grade;
   const displayGrade = grade ? grade.replace('M', '') : '';
 
-  const [selectedUnits, setSelectedUnits] = useState<Chapter[]>([]);
+  const [selectedUnits, setSelectedUnits] = useState<SubjectUnit[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
 
-  const handleSelectSubjectUnits = (selected: SelectedUnit[]) => {
-    const formatted = selected.map((item) => ({
-      subject: item.subjects,
-      units: [item.units],
-    }));
-    setSelectedUnits(formatted);
+  const handleSelectSubjectUnits = (selected: SubjectUnit[]) => {
+    setSelectedUnits(selected);
   };
 
   const displayUnits =
@@ -161,7 +128,7 @@ const LevelTestStartPage = () => {
                     !hideSidebar ? 'cursor-pointer hover:bg-gray-100' : ''
                   }`}
                   onClick={() => {
-                    if (!hideSidebar) setModalOpen(true); // 문제풀이 페이지랑 연결 과정에서 추가
+                    if (!hideSidebar) setModalOpen(true);
                   }}
                 >
                   <div className="flex flex-col items-start justify-start gap-2.5">
@@ -176,18 +143,16 @@ const LevelTestStartPage = () => {
                       </div>
                     </div>
                     <div className="flex items-center justify-start gap-3.5 overflow-x-scroll">
-                      {displayUnits.map((subjectData) =>
-                        subjectData.units.map((unitName) => (
-                          <Badge
-                            key={`${subjectData.subject}-${unitName}`}
-                            size="small"
-                            variant="levelTest"
-                            className="flex-shrink-0"
-                          >
-                            {`${subjectData.subject} - ${unitName}`}
-                          </Badge>
-                        ))
-                      )}
+                      {displayUnits.map((unit) => (
+                        <Badge
+                          key={unit.subjectUnitId}
+                          size="small"
+                          variant="levelTest"
+                          className="flex-shrink-0"
+                        >
+                          {unit.name}
+                        </Badge>
+                      ))}
                     </div>
                   </div>
                 </div>
