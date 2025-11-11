@@ -7,21 +7,11 @@ import { useUserStore } from '../../stores/userStore.ts';
 import SideBar from '../../components/SideBar.tsx';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import subjectUnits from './SubjectUnits.ts';
+// [CHANGE] 'subjectUnits' (default)와 'SubjectUnit' (type)을 임포트합니다.
+import subjectUnits, { type SubjectUnit } from '../levelTest/SubjectUnits.ts';
 import SubjectUnitsModal from '../../components/SubjectUnitsModal.tsx';
 
-interface SelectedUnit {
-  grade: string;
-  subjects: string;
-  units: string;
-}
-
-interface Chapter {
-  subject: string;
-  units: string[];
-}
-
-type Grade = 'M1' | 'M2' | 'M3';
+// [DELETED] 'SelectedUnit', 'Chapter', 'Grade' 타입은 더 이상 필요 없습니다.
 
 const LevelTestStartPage = () => {
   const navigate = useNavigate();
@@ -34,58 +24,50 @@ const LevelTestStartPage = () => {
   const grade = useUserStore((state) => state.grade);
   const term = useUserStore((state) => state.term);
   const lastStudiedUnit = useUserStore((state) => state.lastStudiedUnit);
-  const unitName = lastStudiedUnit?.split(' - ')[1];
+  // [DELETED] 'unitName'은 더 이상 필요 없습니다.
 
   const totalQuestionCount = 20;
   const timeLimit = 30;
 
-  const currentUnits = () => {
-    if (!gradeKey || !term || !lastStudiedUnit) return [];
-    console.log(lastStudiedUnit);
+  // [RE-WRITTEN] currentUnits 함수 로직 전체 수정
+  const currentUnits = (): SubjectUnit[] => {
+    // 1. 마지막 학습 단원 정보가 없으면 빈 배열 반환 (학년(grade)은 이제 불필요)
+    if (!lastStudiedUnit) return [];
 
-    const result: Chapter[] = [];
+    // 2. 'lastStudiedUnit' 이름으로 'subjectUnits' 배열에서
+    //    해당 객체를 찾아 'subjectUnitId'를 가져옵니다. (학년 무관)
+    const targetUnit = subjectUnits.find(
+      (unit) => unit.name === lastStudiedUnit
+    );
 
-    let found = false;
-    for (const gradeData of Object.values(subjectUnits)) {
-      for (const subject of gradeData) {
-        const filteredUnits: string[] = [];
+    // 3. 일치하는 단원을 못 찾으면 빈 배열 반환
+    if (!targetUnit) return [];
 
-        for (const unit of subject.units) {
-          filteredUnits.push(unit);
+    const targetId = targetUnit.subjectUnitId;
 
-          if (unit === unitName) {
-            found = true;
-            break;
-          }
-        }
-        if (filteredUnits.length > 0) {
-          result.push({
-            subject: subject.subject,
-            units: filteredUnits,
-          });
-        }
-        if (found) break;
-      }
-      if (found) break;
-    }
+    // 4. 'subjectUnitId'가 1부터 'targetId'까지인 모든 단원을 필터링합니다. (학년 무관)
+    const result = subjectUnits.filter(
+      (unit) => unit.subjectUnitId <= targetId
+    );
+
     console.log(result);
     return result;
   };
 
-  const gradeKey = grade as Grade;
+  // [DELETED] 'gradeKey'는 더 이상 필요 없습니다.
   const displayGrade = grade ? grade.replace('M', '') : '';
 
-  const [selectedUnits, setSelectedUnits] = useState<Chapter[]>([]);
+  // [CHANGE] state가 SubjectUnit 배열을 저장하도록 변경
+  const [selectedUnits, setSelectedUnits] = useState<SubjectUnit[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
 
-  const handleSelectSubjectUnits = (selected: SelectedUnit[]) => {
-    const formatted = selected.map((item) => ({
-      subject: item.subjects,
-      units: [item.units],
-    }));
-    setSelectedUnits(formatted);
+  // [CHANGE] 모달이 SubjectUnit[]을 반환하므로,
+  //          그대로 state에 저장합니다. (SelectedUnit[] 타입 제거)
+  const handleSelectSubjectUnits = (selected: SubjectUnit[]) => {
+    setSelectedUnits(selected);
   };
 
+  // [CHANGE] displayUnits는 이제 SubjectUnit[] 타입입니다.
   const displayUnits =
     selectedUnits.length > 0 ? selectedUnits : currentUnits();
 
@@ -175,30 +157,37 @@ const LevelTestStartPage = () => {
                         {displayGrade}학년 {term}
                       </div>
                     </div>
+                    {/* [CHANGE] 렌더링 로직 수정 */}
                     <div className="flex items-center justify-start gap-3.5 overflow-x-scroll">
-                      {displayUnits.map((subjectData) =>
-                        subjectData.units.map((unitName) => (
-                          <Badge
-                            key={`${subjectData.subject}-${unitName}`}
-                            size="small"
-                            variant="levelTest"
-                            className="flex-shrink-0"
-                          >
-                            {`${subjectData.subject} - ${unitName}`}
-                          </Badge>
-                        ))
-                      )}
+                      {displayUnits.map((unit) => (
+                        <Badge
+                          key={unit.subjectUnitId} // 고유 ID 사용
+                          size="small"
+                          variant="levelTest"
+                          className="flex-shrink-0"
+                        >
+                          {unit.name} {/* 'name'에 전체 문자열이 들어있음 */}
+                        </Badge>
+                      ))}
                     </div>
                   </div>
                 </div>
 
                 <div
                   className="inline-flex cursor-pointer items-center justify-center gap-2.5 self-stretch rounded-lg bg-primary px-5 py-3 transition hover:bg-primary/90"
-                  onClick={() =>
+                  onClick={() => {
+                    const unitNumbersToSend = displayUnits.map(
+                      (unit) => unit.unitNumber
+                    );
+
                     navigate('/question/test', {
-                      state: { hideToolbar: hideSidebar },
-                    })
-                  }
+                      state: {
+                        hideToolbar: hideSidebar,
+                        unitNumbers: unitNumbersToSend, // <-- 추가된 부분
+                      },
+                    });
+                    console.log(unitNumbersToSend);
+                  }}
                 >
                   <div className="justify-start text-base leading-6 font-medium text-white">
                     수준 테스트 시작하기
@@ -212,7 +201,7 @@ const LevelTestStartPage = () => {
 
       {modalOpen && (
         <SubjectUnitsModal
-          onClose={() => setModalOpen(false)}
+          onClose={() => setModalOpen(False)}
           onSelectSubjectUnits={handleSelectSubjectUnits}
         />
       )}
