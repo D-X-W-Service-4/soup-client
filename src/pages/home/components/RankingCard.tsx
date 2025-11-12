@@ -2,11 +2,11 @@ import { SOUP } from '../../../types/soup.ts';
 import type { SoupLevel } from '../../../types/soup.ts';
 
 const BADGE: Record<SoupLevel, string> = {
-  TOMATO: '/assets/badge/tomato.png',
-  CORN: '/assets/badge/corn.png',
-  MUSHROOM: '/assets/badge/mushroom.png',
-  PUMPKIN: '/assets/badge/pumpkin.png',
-  SWEETPOTATO: '/assets/badge/sweetpotato.png',
+  TOMATO: 'src/assets/badge/tomato.png',
+  CORN: 'src/assets/badge/corn.png',
+  MUSHROOM: 'src/assets/badge/mushroom.png',
+  PUMPKIN: 'src/assets/badge/pumpkin.png',
+  SWEETPOTATO: 'src/assets/badge/sweetpotato.png',
 };
 
 const SOUP_LABEL_KO: Record<SoupLevel, string> = {

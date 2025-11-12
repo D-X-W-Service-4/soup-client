@@ -21,7 +21,7 @@ export default function UserInfoCard({
     <div className="flex flex-col overflow-hidden rounded-[20px] shadow-base">
       <div className="flex items-center justify-start gap-5 bg-primary-bg px-5 py-3">
         <img
-          src="/assets/logo/SoupLogo.png"
+          src="/src/assets/logo/SoupLogo.png"
           alt="수프 로고"
           className="h-14 w-14"
         />

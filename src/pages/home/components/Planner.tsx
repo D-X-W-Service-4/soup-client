@@ -2,7 +2,7 @@ export default function Planner() {
   return (
     <div className="flex h-full flex-col items-center justify-center gap-2.5 rounded-[20px] bg-white shadow-base">
       <img
-        src="/assets/logo/Logo.png"
+        src="/src/assets/logo/Logo.png"
         alt="로고"
         width={157}
         height={157}

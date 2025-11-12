@@ -1,5 +1,5 @@
-import IconBookOpen from '../../public/assets/svgs/IconBookOpen.tsx';
-import IconXMark from '../../public/assets/svgs/IconXMark.tsx';
+import IconBookOpen from '../assets/svgs/IconBookOpen.tsx';
+import IconXMark from '../assets/svgs/IconXMark.tsx';
 
 interface WorkBookProps {
   title: string;

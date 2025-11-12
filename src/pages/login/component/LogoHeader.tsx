@@ -1,4 +1,5 @@
-import Logotype from '../../../../public/assets/logo/Logotype.png';
+import Logotype from '/src/assets/logo/Logotype.png';
+
 export default function LogoHeader() {
   return (
     <div className="flex flex-col items-center justify-center">

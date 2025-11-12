@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import IconChevronDown from '../../public/assets/svgs/IconChevronDown.tsx';
+import IconChevronDown from '../assets/svgs/IconChevronDown.tsx';
 
 interface DropdownSelectProps {
   label: string;
