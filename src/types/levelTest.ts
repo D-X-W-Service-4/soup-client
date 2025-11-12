@@ -1,28 +1,5 @@
 import type { SoupLevel } from './soup';
-
-// API 응답 공통 타입
-export interface ApiResponse<T> {
-  status: number;
-  code: string;
-  message: string;
-  data: T;
-}
-
-// 교과 단원 정보
-export interface SubjectUnitDto {
-  subjectUnitId: number;
-  grade: 'M1' | 'M2' | 'M3';
-  term: number;
-  unitName: string;
-}
-
-// 문제 정보
-export interface QuestionDto {
-  questionId: number;
-  subjectUnit: SubjectUnitDto;
-  questionImagePath: string;
-  solutionImagePath: string;
-}
+import type { ApiResponse, QuestionDto, SubjectUnitDto } from './question';
 
 // 레벨 테스트 문제
 export interface LevelTestQuestionDto {
@@ -79,19 +56,18 @@ export interface CreateLevelTestRequest {
 export type CreateLevelTestResponse = ApiResponse<LevelTestDetailDto>;
 
 // POST /v1/level-tests/{levelTestId}/grade 요청
-export interface GradeLevelTestQuestionRequest {
-  levelTestQuestionId: number;
+export interface QuestionUserAnswer {
+  questionId: string;
   userAnswer: string;
-  descriptiveImagePath: string;
-  isTimeout: boolean;
+  descriptiveImageUrl?: string;
 }
 
 export interface GradeLevelTestRequest {
-  questions: GradeLevelTestQuestionRequest[];
+  answers: QuestionUserAnswer[];
 }
 
 // POST /v1/level-tests/{levelTestId}/grade 응답
-export type GradeLevelTestResponse = ApiResponse<string>;
+export type GradeLevelTestResponse = ApiResponse<object>;
 
 // GET /v1/level-tests/{levelTestId} 응답
 export type GetLevelTestDetailResponse = ApiResponse<LevelTestDetailDto>;

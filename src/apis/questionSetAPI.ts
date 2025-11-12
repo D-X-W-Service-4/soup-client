@@ -30,17 +30,7 @@ const createMockQuestionSetDetail = (): QuestionSetDetailDto => {
     questionSetItems: [
       {
         questionSetItemId: 501,
-        question: {
-          questionId: 1,
-          subjectUnit: {
-            subjectUnitId: 1,
-            grade: 'M1',
-            term: 1,
-            unitName: '자연수의 혼합 계산',
-          },
-          questionImagePath: '/images/questions/q1.png',
-          solutionImagePath: '/images/solutions/s1.png',
-        },
+        question: { questionId: 'M1_1_01_00041_42236' },
         isCorrect: true,
         userAnswer: 'F = ma',
         descriptiveImagePath: 'https://example.com/uploads/answers/answer1.png',
@@ -60,25 +50,28 @@ const createMockQuestionSetDetail = (): QuestionSetDetailDto => {
  * GET /v1/question-sets
  */
 export const getQuestionSets = async (): Promise<GetQuestionSetsResponse> => {
-  // 목 데이터
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        status: 200,
-        code: 'SUCCESS',
-        message: '요청에 성공했습니다.',
-        data: {
-          questionSets: [createMockQuestionSetSummary()],
-        },
+  try {
+    const response =
+      await axiosInstance.get<GetQuestionSetsResponse>('/v1/question-sets');
+    return response.data;
+  } catch (error: any) {
+    if (error.response?.status === 404) {
+      console.warn('⚠️ API 엔드포인트가 준비되지 않아 목 데이터를 사용합니다.');
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({
+            status: 200,
+            code: 'SUCCESS',
+            message: '요청에 성공했습니다.',
+            data: {
+              questionSets: [createMockQuestionSetSummary()],
+            },
+          });
+        }, 300);
       });
-    }, 500);
-  });
-
-  // 실제 API 연결 시
-  // const response = await axiosInstance.get<GetQuestionSetsResponse>(
-  //   '/v1/question-sets'
-  // );
-  // return response.data;
+    }
+    throw error;
+  }
 };
 
 /**
@@ -88,25 +81,24 @@ export const getQuestionSets = async (): Promise<GetQuestionSetsResponse> => {
 export const createQuestionSet = async (
   request: CreateQuestionSetRequest
 ): Promise<CreateQuestionSetResponse> => {
-  // 목 데이터
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      console.log('문제 세트 생성:', request);
-      resolve({
-        status: 200,
-        code: 'SUCCESS',
-        message: '요청에 성공했습니다.',
-        data: createMockQuestionSetDetail(),
-      });
-    }, 500);
-  });
+  const response = await axiosInstance.post<CreateQuestionSetResponse>(
+    '/v1/question-sets',
+    request
+  );
+  return response.data;
 
-  // 실제 API 연결 시
-  // const response = await axiosInstance.post<CreateQuestionSetResponse>(
-  //   '/v1/question-sets',
-  //   request
-  // );
-  // return response.data;
+  // 목 데이터
+  // return new Promise((resolve) => {
+  //   setTimeout(() => {
+  //     console.log('문제 세트 생성:', request);
+  //     resolve({
+  //       status: 200,
+  //       code: 'SUCCESS',
+  //       message: '요청에 성공했습니다.',
+  //       data: createMockQuestionSetDetail(),
+  //     });
+  //   }, 500);
+  // });
 };
 
 /**
@@ -117,25 +109,24 @@ export const gradeQuestionSet = async (
   questionSetId: number,
   request: GradeQuestionSetRequest
 ): Promise<GradeQuestionSetResponse> => {
-  // 목 데이터
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      console.log('문제 세트 채점:', questionSetId, request);
-      resolve({
-        status: 200,
-        code: 'SUCCESS',
-        message: '요청에 성공했습니다.',
-        data: 'string',
-      });
-    }, 500);
-  });
+  const response = await axiosInstance.post<GradeQuestionSetResponse>(
+    `/v1/question-sets/${questionSetId}/grade`,
+    request
+  );
+  return response.data;
 
-  // 실제 API 연결 시
-  // const response = await axiosInstance.post<GradeQuestionSetResponse>(
-  //   `/v1/question-sets/${questionSetId}/grade`,
-  //   request
-  // );
-  // return response.data;
+  // 목 데이터
+  // return new Promise((resolve) => {
+  //   setTimeout(() => {
+  //     console.log('문제 세트 채점:', questionSetId, request);
+  //     resolve({
+  //       status: 200,
+  //       code: 'SUCCESS',
+  //       message: '요청에 성공했습니다.',
+  //       data: 'string',
+  //     });
+  //   }, 500);
+  // });
 };
 
 /**
@@ -145,21 +136,20 @@ export const gradeQuestionSet = async (
 export const getQuestionSetDetail = async (
   questionSetId: number
 ): Promise<GetQuestionSetDetailResponse> => {
-  // 목 데이터
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        status: 200,
-        code: 'SUCCESS',
-        message: '요청에 성공했습니다.',
-        data: createMockQuestionSetDetail(),
-      });
-    }, 500);
-  });
+  const response = await axiosInstance.get<GetQuestionSetDetailResponse>(
+    `/v1/question-sets/${questionSetId}`
+  );
+  return response.data;
 
-  // 실제 API 연결 시
-  // const response = await axiosInstance.get<GetQuestionSetDetailResponse>(
-  //   `/v1/question-sets/${questionSetId}`
-  // );
-  // return response.data;
+  // 목 데이터
+  // return new Promise((resolve) => {
+  //   setTimeout(() => {
+  //     resolve({
+  //       status: 200,
+  //       code: 'SUCCESS',
+  //       message: '요청에 성공했습니다.',
+  //       data: createMockQuestionSetDetail(),
+  //     });
+  //   }, 500);
+  // });
 };

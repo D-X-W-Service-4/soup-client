@@ -9,17 +9,14 @@ export interface ApiResponse<T> {
 // 교과 단원 정보
 export interface SubjectUnitDto {
   subjectUnitId: number;
+  name: string;
   grade: 'M1' | 'M2' | 'M3';
-  term: number;
-  unitName: string;
+  unitNumber: string;
 }
 
 // 문제 정보
 export interface QuestionDto {
-  questionId: number;
-  subjectUnit: SubjectUnitDto;
-  questionImagePath: string;
-  solutionImagePath: string;
+  questionId: string;
 }
 
 // 사용자별 문제 정보
@@ -41,6 +38,6 @@ export interface GetQuestionsParams {
 
 // GET /v1/questions 응답
 export interface GetQuestionsData {
-  userQuestions: UserQuestionDto[];
+  questions: UserQuestionDto[];
 }
 export type GetQuestionsResponse = ApiResponse<GetQuestionsData>;

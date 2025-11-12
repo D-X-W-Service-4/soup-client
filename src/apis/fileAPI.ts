@@ -9,24 +9,34 @@ export const generatePresignedUrl = async (
   fileName: string,
   contentType: string
 ): Promise<GetFilePresignedUrlResponse> => {
-  // 목 데이터
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      console.log('Presigned URL 생성:', fileName, contentType);
-      resolve({
-        status: 200,
-        code: 'SUCCESS',
-        message: '요청에 성공했습니다.',
-        data: {
-          presignedUrl: `https://example-bucket.s3.amazonaws.com/uploads/${fileName}?X-Amz-Algorithm=...`,
+  try {
+    const response = await axiosInstance.get<GetFilePresignedUrlResponse>(
+      `/v1/files/presigned-url`,
+      {
+        params: {
+          fileName,
+          contentType,
         },
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    if (error.response?.status === 404) {
+      console.warn('⚠️ API 엔드포인트가 준비되지 않아 목 데이터를 사용합니다.');
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          console.log('Presigned URL 생성:', fileName, contentType);
+          resolve({
+            status: 200,
+            code: 'SUCCESS',
+            message: '요청에 성공했습니다.',
+            data: {
+              presignedUrl: `https://example-bucket.s3.amazonaws.com/uploads/${fileName}?X-Amz-Algorithm=...`,
+            },
+          });
+        }, 300);
       });
-    }, 300);
-  });
-
-  // 실제 API 연결 시
-  // const response = await axiosInstance.get<GetFilePresignedUrlResponse>(
-  //   `/v1/files/presigned-url?fileName=${encodeURIComponent(fileName)}&contentType=${encodeURIComponent(contentType)}`
-  // );
-  // return response.data;
+    }
+    throw error;
+  }
 };

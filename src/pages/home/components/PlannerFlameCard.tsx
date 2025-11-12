@@ -41,7 +41,7 @@ export default function PlannerFlameCard({ flames }: flameDateCardProps) {
     <div className="flex flex-col items-center rounded-[20px] bg-white px-9 py-3 shadow-base">
       <div className="flex w-full justify-between">
         {items.map(({ date, day, flame }) => (
-          <div className="flex flex-col items-center gap-1">
+          <div key={date} className="flex flex-col items-center gap-1">
             {flame ? (
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-xl font-normal text-white">
                 {date.slice(8)}

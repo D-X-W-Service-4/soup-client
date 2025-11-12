@@ -1,25 +1,10 @@
-// API 응답 공통 타입
-export interface ApiResponse<T> {
-  status: number;
-  code: string;
-  message: string;
-  data: T;
-}
+import type { ApiResponse, QuestionDto } from './question';
 
-// 교과 단원 정보
-export interface SubjectUnitDto {
-  subjectUnitId: number;
-  grade: 'M1' | 'M2' | 'M3';
-  term: number;
-  unitName: string;
-}
-
-// 문제 정보
-export interface QuestionDto {
-  questionId: number;
-  subjectUnit: SubjectUnitDto;
-  questionImagePath: string;
-  solutionImagePath: string;
+// 사용자 답변 정보 (채점 요청용)
+export interface QuestionUserAnswer {
+  questionId: string;
+  userAnswer: string;
+  descriptiveImageUrl?: string;
 }
 
 // 문제 세트 아이템
@@ -61,26 +46,19 @@ export type GetQuestionSetsResponse = ApiResponse<GetQuestionSetsData>;
 
 // POST /v1/question-sets 요청
 export interface CreateQuestionSetRequest {
-  userQuestionIds: number[];
+  questionIds: string[];
 }
 
 // POST /v1/question-sets 응답
 export type CreateQuestionSetResponse = ApiResponse<QuestionSetDetailDto>;
 
 // POST /v1/question-sets/{questionSetId}/grade 요청
-export interface GradeQuestionSetItemRequest {
-  questionSetItemId: number;
-  userAnswer: string;
-  descriptiveImagePath: string;
-  isTimeout: boolean;
-}
-
 export interface GradeQuestionSetRequest {
-  items: GradeQuestionSetItemRequest[];
+  answers: QuestionUserAnswer[];
 }
 
 // POST /v1/question-sets/{questionSetId}/grade 응답
-export type GradeQuestionSetResponse = ApiResponse<string>;
+export type GradeQuestionSetResponse = ApiResponse<object>;
 
 // GET /v1/question-sets/{questionSetId} 응답
 export type GetQuestionSetDetailResponse = ApiResponse<QuestionSetDetailDto>;
