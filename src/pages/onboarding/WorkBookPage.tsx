@@ -8,14 +8,9 @@ import WorkbooksModal from '../../components/WorkbooksModal.tsx';
 
 const WorkBookPage = () => {
   const navigate = useNavigate();
-  const [workbooks, setWorkbooks] = useState([
-    { id: 1, title: '쎈 중등 수학 1 - 1' },
-    { id: 2, title: '쎈 중등 수학 1 - 2' },
-    { id: 3, title: '쎈 중등 수학 1 - 2' },
-    { id: 4, title: '쎈 중등 수학 1 - 2' },
-    { id: 5, title: '쎈 중등 수학 1 - 2' },
-    { id: 6, title: '쎈 중등 수학 1 - 2' },
-  ]);
+  const [workbooks, setWorkbooks] = useState<{ id: number; title: string }[]>(
+    []
+  );
   const count = workbooks.length;
   const [isWorkBookOpen, setIsWorkBookOpen] = useState(false);
   const handleRemove = (id: number) => {
