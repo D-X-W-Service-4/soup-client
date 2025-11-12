@@ -9,7 +9,7 @@ export interface TestSummary {
 
 export interface QuestionItem {
   question: string;
-  tryCount: number;
+  tryCount?: number;
   isCorrect: boolean;
   isStarred: boolean;
   createdAt: string;

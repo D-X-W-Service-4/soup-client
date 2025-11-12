@@ -45,10 +45,7 @@ const createMockQuestionSetDetail = (): QuestionSetDetailDto => {
   };
 };
 
-/**
- * 문제 세트 목록 조회
- * GET /v1/question-sets
- */
+// GET /v1/question-sets
 export const getQuestionSets = async (): Promise<GetQuestionSetsResponse> => {
   try {
     const response =
@@ -74,10 +71,7 @@ export const getQuestionSets = async (): Promise<GetQuestionSetsResponse> => {
   }
 };
 
-/**
- * 문제 세트 생성
- * POST /v1/question-sets
- */
+// POST /v1/question-sets
 export const createQuestionSet = async (
   request: CreateQuestionSetRequest
 ): Promise<CreateQuestionSetResponse> => {
@@ -86,25 +80,9 @@ export const createQuestionSet = async (
     request
   );
   return response.data;
-
-  // 목 데이터
-  // return new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     console.log('문제 세트 생성:', request);
-  //     resolve({
-  //       status: 200,
-  //       code: 'SUCCESS',
-  //       message: '요청에 성공했습니다.',
-  //       data: createMockQuestionSetDetail(),
-  //     });
-  //   }, 500);
-  // });
 };
 
-/**
- * 문제 세트 채점
- * POST /v1/question-sets/{questionSetId}/grade
- */
+// POST /v1/question-sets/{questionSetId}/grade
 export const gradeQuestionSet = async (
   questionSetId: number,
   request: GradeQuestionSetRequest
@@ -114,25 +92,9 @@ export const gradeQuestionSet = async (
     request
   );
   return response.data;
-
-  // 목 데이터
-  // return new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     console.log('문제 세트 채점:', questionSetId, request);
-  //     resolve({
-  //       status: 200,
-  //       code: 'SUCCESS',
-  //       message: '요청에 성공했습니다.',
-  //       data: 'string',
-  //     });
-  //   }, 500);
-  // });
 };
 
-/**
- * 문제 세트 상세 조회
- * GET /v1/question-sets/{questionSetId}
- */
+// GET /v1/question-sets/{questionSetId}
 export const getQuestionSetDetail = async (
   questionSetId: number
 ): Promise<GetQuestionSetDetailResponse> => {
@@ -140,16 +102,4 @@ export const getQuestionSetDetail = async (
     `/v1/question-sets/${questionSetId}`
   );
   return response.data;
-
-  // 목 데이터
-  // return new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     resolve({
-  //       status: 200,
-  //       code: 'SUCCESS',
-  //       message: '요청에 성공했습니다.',
-  //       data: createMockQuestionSetDetail(),
-  //     });
-  //   }, 500);
-  // });
 };

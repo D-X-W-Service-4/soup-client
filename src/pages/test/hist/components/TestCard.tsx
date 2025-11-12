@@ -35,6 +35,7 @@ export default function TestCard({
   const taken = timeStringToSeconds(timeTaken);
   const given = timeStringToSeconds(timeGiven);
   const timePct = clampPct(given ? (taken / given) * 100 : 0);
+  const formattedDate = createdAt ? createdAt.split('T')[0] : '';
 
   return (
     <div
@@ -55,7 +56,7 @@ export default function TestCard({
             {name}
           </span>
           <span className="text-sm font-medium text-neutral-400">
-            {createdAt}
+            {formattedDate}
           </span>
         </div>
       </div>
