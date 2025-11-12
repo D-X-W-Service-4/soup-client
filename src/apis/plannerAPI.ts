@@ -53,12 +53,11 @@ export const getPlanner = async (date: string): Promise<GetPlannerResponse> => {
     );
     return response.data;
   } catch (error: any) {
-    // 404는 플래너가 없는 것이므로 에러를 throw
     if (error.response?.status === 404) {
+      console.log(`ℹ️ ${date} 날짜의 플래너가 없습니다.`);
       throw error;
     }
 
-    // 그 외 모든 에러 시 목 데이터 사용 (개발 중)
     console.warn('⚠️ 플래너 조회 API 오류로 목 데이터를 사용합니다.');
     return new Promise((resolve) => {
       setTimeout(() => {

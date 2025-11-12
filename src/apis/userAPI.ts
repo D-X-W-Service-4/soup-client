@@ -57,19 +57,6 @@ export const updateUser = async (
     userData
   );
   return response.data;
-
-  // 목 데이터
-  // return new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     console.log('유저 정보 수정:', userData);
-  //     resolve({
-  //       status: 200,
-  //       code: 'SUCCESS',
-  //       message: '요청에 성공했습니다.',
-  //       data: 'string',
-  //     });
-  //   }, 300);
-  // });
 };
 
 // POST /v1/users/sign-up
@@ -81,19 +68,6 @@ export const signUp = async (
     signUpData
   );
   return response.data;
-
-  // 목 데이터
-  // return new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     console.log('회원가입:', signUpData);
-  //     resolve({
-  //       status: 200,
-  //       code: 'SUCCESS',
-  //       message: '요청에 성공했습니다.',
-  //       data: 'string',
-  //     });
-  //   }, 500);
-  // });
 };
 
 // PATCH /v1/users/me/nickname
@@ -105,17 +79,4 @@ export const updateNickname = async (
     nicknameData
   );
   return response.data;
-
-  // 목 데이터
-  // return new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     console.log('닉네임 수정:', nicknameData);
-  //     resolve({
-  //       status: 200,
-  //       code: 'SUCCESS',
-  //       message: '요청에 성공했습니다.',
-  //       data: 'string',
-  //     });
-  //   }, 300);
-  // });
 };

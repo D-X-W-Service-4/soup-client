@@ -30,6 +30,7 @@ export default function PlannerFlameCard({
     flame: map.get(d) ?? false,
     isPast: dayjs(d).isBefore(today, 'day'),
     isToday: d === today,
+    isFuture: dayjs(d).isAfter(today, 'day'),
     isSelected: d === selectedDate,
   }));
 
@@ -42,43 +43,53 @@ export default function PlannerFlameCard({
   return (
     <div className="flex flex-col items-center rounded-[20px] bg-white px-9 py-3 shadow-base">
       <div className="flex w-full justify-between">
-        {items.map(({ date, day, flame, isPast, isToday, isSelected }) => {
-          const isClickable = isPast || isToday;
-          return (
-            <div
-              key={date}
-              className={`flex flex-col items-center gap-1 ${
-                isClickable
-                  ? 'cursor-pointer hover:opacity-80'
-                  : 'cursor-default'
-              }`}
-              onClick={() => handleDateClick(date, isPast, isToday)}
-            >
-              {flame ? (
+        {items.map(
+          ({ date, day, flame, isPast, isToday, isFuture, isSelected }) => {
+            const isClickable = isPast || isToday;
+            return (
+              <div
+                key={date}
+                className={`flex flex-col items-center gap-1 ${
+                  isClickable
+                    ? 'cursor-pointer hover:opacity-80'
+                    : 'cursor-not-allowed opacity-60'
+                }`}
+                onClick={() => handleDateClick(date, isPast, isToday)}
+              >
+                {isToday || flame ? (
+                  <span
+                    className={`flex h-9 w-9 items-center justify-center rounded-full ${
+                      isFuture ? 'bg-primary/50' : 'bg-primary'
+                    } text-xl font-normal text-white ${isSelected ? 'ring-2 ring-primary ring-offset-2' : ''}`}
+                  >
+                    {date.slice(8)}
+                  </span>
+                ) : (
+                  <span
+                    className={`flex h-9 w-9 items-center justify-center rounded-full ${
+                      isFuture ? 'bg-gray-300' : 'bg-gray-400'
+                    } text-xl font-normal ${isFuture ? 'text-gray-500' : 'text-white'} ${isSelected ? 'ring-2 ring-gray-400 ring-offset-2' : ''}`}
+                  >
+                    {date.slice(8)}
+                  </span>
+                )}
                 <span
-                  className={`flex h-9 w-9 items-center justify-center rounded-full bg-primary text-xl font-normal text-white ${isSelected ? 'ring-2 ring-primary ring-offset-2' : ''}`}
+                  className={`text-xs font-normal ${isFuture ? 'text-gray-400' : 'text-secondary'}`}
                 >
-                  {date.slice(8)}
+                  {day}
                 </span>
-              ) : (
-                <span
-                  className={`flex h-9 w-9 items-center justify-center rounded-full bg-gray-400 text-xl font-normal text-white ${isSelected ? 'ring-2 ring-gray-400 ring-offset-2' : ''}`}
-                >
-                  {date.slice(8)}
-                </span>
-              )}
-              <span className="text-xs font-normal text-secondary">{day}</span>
-              {flame ? (
-                <Icon icon="fluent-emoji-flat:fire" className="h-5 w-5" />
-              ) : (
-                <Icon
-                  icon="fluent-emoji-high-contrast:fire"
-                  className="h-5 w-5 text-gray-400"
-                />
-              )}
-            </div>
-          );
-        })}
+                {flame ? (
+                  <Icon icon="fluent-emoji-flat:fire" className="h-5 w-5" />
+                ) : (
+                  <Icon
+                    icon="fluent-emoji-high-contrast:fire"
+                    className={`h-5 w-5 ${isFuture ? 'text-gray-300' : 'text-gray-400'}`}
+                  />
+                )}
+              </div>
+            );
+          }
+        )}
       </div>
     </div>
   );
