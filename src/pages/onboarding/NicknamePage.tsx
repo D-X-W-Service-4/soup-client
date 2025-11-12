@@ -77,7 +77,7 @@ const NicknamePage = () => {
         <button
           className="w-full rounded-lg bg-primary px-5 py-3 text-base font-medium text-white active:bg-rose-500 disabled:bg-rose-300"
           disabled={!nickname || error}
-          onClick={() => navigate('/onboarding/studyInfo')}
+          onClick={() => navigate('/onboarding/study-info')}
         >
           다음
         </button>

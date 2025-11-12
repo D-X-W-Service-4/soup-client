@@ -1,6 +1,8 @@
 import { Icon } from '@iconify/react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useModalStore } from '../stores/modalStore';
+import { useAuthStore } from '../stores/authStore';
+import { useState } from 'react';
 
 type sideBarProps = {
   isOpen: boolean;
@@ -12,7 +14,7 @@ const NAV = [
     key: 'home',
     label: '홈',
     icon: 'heroicons-outline:home',
-    path: '/',
+    path: '/home',
   },
   {
     key: 'review',
@@ -24,33 +26,61 @@ const NAV = [
     key: 'test',
     label: '수준테스트',
     icon: 'pepicons-pop:pen',
-    path: '/levelTest/levelTest',
+    path: '/test',
     children: [
-      {
-        key: 'go',
-        label: '수준테스트 보러가기',
-        path: '/levelTest/levelTest',
-      },
-      { key: 'hist', label: '기록 조회하기', path: '/levelTest/levelTest' },
+      { key: 'go', label: '수준테스트 보러가기', path: '/test/go' },
+      { key: 'result', label: '기록 조회하기', path: '/test/result' },
     ],
   },
   {
     key: 'my',
     label: '마이페이지',
     icon: 'heroicons-outline:user',
-    path: '/my',
+    children: [
+      { key: 'info', label: '내 정보 수정' },
+      { key: 'logout', label: '로그아웃' },
+    ],
   },
 ];
 
 export default function SideBar({ isOpen = true, onToggle }: sideBarProps) {
-  const { pathname } = useLocation();
-  const { toggleUserModal, isUserModalOpen } = useModalStore();
+  const [openMenus, setOpenMenus] = useState<string[]>([]);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { openInfoModal } = useModalStore();
+  const logout = useAuthStore((state) => state.logout);
 
-  const isActive = (base: string) =>
-    base === '/' ? pathname === '/' : pathname.startsWith(base);
+  const isActive = (basePath: string) => {
+    return (
+      location.pathname === basePath ||
+      location.pathname.startsWith(basePath + '/')
+    );
+  };
 
-  const isChildActive = (childPath: string) =>
-    pathname === childPath || pathname.startsWith(childPath + '/');
+  const isChildActive = (childPath: string) => {
+    return (
+      location.pathname === childPath ||
+      location.pathname.startsWith(childPath + '/')
+    );
+  };
+
+  const toggleMenu = (key: string) => {
+    setOpenMenus((prev) =>
+      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
+    );
+  };
+
+  const handleMyPageChildClick = (childKey: string) => {
+    switch (childKey) {
+      case 'info':
+        openInfoModal();
+        break;
+      case 'logout':
+        logout();
+        navigate('/login');
+        break;
+    }
+  };
 
   return (
     <aside
@@ -66,7 +96,7 @@ export default function SideBar({ isOpen = true, onToggle }: sideBarProps) {
         >
           {isOpen ? (
             <img
-              src="/assets/logo/Logotype.png"
+              src="/src/assets/logo/Logotype.png"
               alt="App Logo"
               className="h-6 w-14"
             />
@@ -82,67 +112,86 @@ export default function SideBar({ isOpen = true, onToggle }: sideBarProps) {
       {/* 내비게이션 */}
       <nav className="flex w-full flex-col gap-3">
         {NAV.map((item) => {
-          let active = isActive(item.path);
+          let active = false;
           if (item.key === 'my') {
-            active = isUserModalOpen;
+            active = false;
+          } else if (item.path) {
+            active = isActive(item.path);
           }
+          const isMenuOpen = openMenus.includes(item.key);
+          const hasChildren = item.children && item.children.length > 0;
+
+          const itemContent = (
+            <>
+              <Icon
+                icon={item.icon}
+                className={`shrink-0 ${active ? 'text-white' : 'text-primary'}`}
+                width={18}
+                height={18}
+              />
+              <span
+                className={`overflow-hidden text-sm font-medium whitespace-nowrap ${isOpen ? 'w-auto opacity-100' : 'ml-0 w-0 opacity-0'}`}
+              >
+                {item.label}
+              </span>
+            </>
+          );
 
           return (
             <div key={item.key} className="group relative w-full">
-              {item.key === 'my' ? (
+              {hasChildren ? (
                 <button
                   type="button"
-                  onClick={toggleUserModal}
-                  aria-haspopup="dialog"
-                  aria-expanded={isUserModalOpen}
+                  onClick={() => toggleMenu(item.key)}
+                  aria-current={active ? 'page' : undefined}
+                  aria-haspopup="menu"
+                  aria-expanded={isMenuOpen}
                   className={`flex h-10 w-full items-center rounded-[10px] transition-colors
-                    ${active ? 'bg-primary text-white' : 'text-secondary hover:bg-secondary-bg'}
-                    ${isOpen ? 'gap-3 px-3 py-2' : 'gap-0 p-[11px]'}`}
+                      ${active ? 'bg-primary text-white' : 'text-secondary hover:bg-secondary-bg'}
+                      ${isOpen ? 'gap-3 px-3 py-2' : 'gap-0 p-[11px]'}`}
                 >
-                  <Icon
-                    icon={item.icon}
-                    className={`shrink-0 ${active ? 'text-white' : 'text-primary'}`}
-                    width={18}
-                    height={18}
-                  />
-                  <span
-                    className={`overflow-hidden text-sm font-medium whitespace-nowrap ${isOpen ? 'w-auto opacity-100' : 'ml-0 w-0 opacity-0'}`}
-                  >
-                    {item.label}
-                  </span>
+                  {itemContent}
                 </button>
-              ) : (
+              ) : item.path ? (
                 <Link
                   to={item.path}
                   aria-current={active ? 'page' : undefined}
-                  aria-haspopup={item.children ? 'menu' : undefined}
                   className={`flex h-10 w-full items-center rounded-[10px] transition-colors
-                    ${active ? 'bg-primary text-white' : 'text-secondary hover:bg-secondary-bg'}
-                    ${isOpen ? 'gap-3 px-3 py-2' : 'gap-0 p-[11px]'}`}
+                      ${active ? 'bg-primary text-white' : 'text-secondary hover:bg-secondary-bg'}
+                      ${isOpen ? 'gap-3 px-3 py-2' : 'gap-0 p-[11px]'}`}
                 >
-                  <Icon
-                    icon={item.icon}
-                    className={`shrink-0 ${active ? 'text-white' : 'text-primary'}`}
-                    width={18}
-                    height={18}
-                  />
-                  <span
-                    className={`overflow-hidden text-sm font-medium whitespace-nowrap ${isOpen ? 'w-auto opacity-100' : 'ml-0 w-0 opacity-0'}`}
-                  >
-                    {item.label}
-                  </span>
+                  {itemContent}
                 </Link>
+              ) : (
+                <div
+                  className={`flex h-10 w-full items-center rounded-[10px] text-secondary transition-colors ${isOpen ? 'gap-3 px-3 py-2' : 'gap-0 p-[11px]'}`}
+                >
+                  {itemContent}
+                </div>
               )}
 
-              {isOpen && active && item.children?.length ? (
-                <div className="mt-4 pl-10">
+              {isOpen && isMenuOpen && item.children?.length ? (
+                <div className="mt-3 pl-10">
                   <div className="flex flex-col gap-4">
                     {item.children.map((child) => {
-                      const childActive = isChildActive(child.path);
+                      if (item.key === 'my') {
+                        return (
+                          <button
+                            key={child.key}
+                            onClick={() => handleMyPageChildClick(child.key)}
+                            className="overflow-hidden text-left text-sm font-medium whitespace-nowrap text-neutral-400 transition-colors hover:text-secondary"
+                          >
+                            {child.label}
+                          </button>
+                        );
+                      }
+
+                      const childActive =
+                        'path' in child ? isChildActive(child.path) : false;
                       return (
                         <Link
                           key={child.key}
-                          to={child.path}
+                          to={'path' in child ? child.path : '#'}
                           className={`overflow-hidden text-sm font-medium whitespace-nowrap transition-colors
                               ${childActive ? 'text-primary' : 'text-neutral-400 hover:text-secondary'}`}
                         >
@@ -169,11 +218,25 @@ export default function SideBar({ isOpen = true, onToggle }: sideBarProps) {
                     {item.label}
                   </div>
                   {item.children.map((child) => {
-                    const childActive = isChildActive(child.path);
+                    if (item.key === 'my') {
+                      return (
+                        <button
+                          key={child.key}
+                          onClick={() => handleMyPageChildClick(child.key)}
+                          className="block w-full rounded-md px-3 py-2 text-left text-sm text-neutral-400 transition-colors hover:text-secondary"
+                          role="menuitem"
+                        >
+                          {child.label}
+                        </button>
+                      );
+                    }
+
+                    const childActive =
+                      'path' in child ? isChildActive(child.path) : false;
                     return (
                       <Link
                         key={child.key}
-                        to={child.path}
+                        to={'path' in child ? child.path : '#'}
                         className={`block rounded-md px-3 py-2 text-sm transition-colors
                           ${childActive ? 'text-primary' : 'text-neutral-400 hover:text-secondary'}`}
                         aria-current={childActive ? 'page' : undefined}

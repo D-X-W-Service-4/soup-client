@@ -4,7 +4,7 @@ import NicknameInput from './inputs/NicknameInput.tsx';
 import DropdownSelect from './DropdownSelect.tsx';
 
 const UserInfoModal = () => {
-  const { isUserModalOpen, toggleUserModal } = useModalStore();
+  const { isInfoModalOpen, closeInfoModal } = useModalStore();
 
   const [nickname, setNickname] = useState('');
 
@@ -16,16 +16,16 @@ const UserInfoModal = () => {
     setGrade('');
     setSemester('');
 
-    toggleUserModal();
+    closeInfoModal();
   };
 
-  if (!isUserModalOpen) return null;
+  if (!isInfoModalOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div
         className="absolute inset-0 bg-black/50"
-        onClick={toggleUserModal}
+        onClick={closeInfoModal}
       ></div>
 
       <div className="relative z-10 inline-flex h-120 w-194.5 flex-col items-start justify-start gap-5 rounded-2xl bg-white px-10 py-7 shadow-[0px_2px_10px_0px_rgba(0,0,0,0.10)]">

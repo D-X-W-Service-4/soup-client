@@ -171,7 +171,7 @@ const StudyInfoPage = () => {
             </div>
             <button
               className="w-full rounded-lg bg-primary px-5 py-3 text-base font-medium text-white active:bg-rose-500"
-              onClick={() => navigate('/onboarding/workBook')}
+              onClick={() => navigate('/onboarding/workbook')}
             >
               다음
             </button>

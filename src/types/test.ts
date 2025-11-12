@@ -14,6 +14,7 @@ export interface QuestionItem {
   isStarred: boolean;
   createdAt: string;
   difficulty: Difficulty;
+  testName?: string;
 }
 
 export interface TestDetail {

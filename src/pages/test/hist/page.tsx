@@ -85,7 +85,7 @@ export default function TestHistoryPage() {
                 </div>
                 <div className="relative w-full" ref={dropdownRef}>
                   <div
-                    className="flex h-9 w-full cursor-pointer items-center justify-between rounded-md px-5 py-3 outline outline-[0.80px] outline-offset-[-0.80px] outline-neutral-200"
+                    className="flex h-9 w-full cursor-pointer items-center justify-between rounded-md px-5 py-3 outline outline-[0.80px] outline-neutral-200"
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   >
                     <span className="justify-start text-center text-sm font-normal text-secondary">
@@ -103,7 +103,11 @@ export default function TestHistoryPage() {
                         return (
                           <div
                             key={option}
-                            className={`flex cursor-pointer items-center justify-between px-5 py-3 text-sm transition-colors ${selected ? 'text-primary' : 'text-secondary hover:bg-neutral-50'}`}
+                            className={`flex cursor-pointer items-center justify-between px-5 py-3 text-sm transition-colors ${
+                              selected
+                                ? 'bg-primary-bg text-primary'
+                                : 'text-secondary hover:bg-neutral-50'
+                            }`}
                             onClick={() => {
                               setSelectedFilter(option);
                               setIsDropdownOpen(false);
