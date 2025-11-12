@@ -43,7 +43,7 @@ export const getQuestions = async (
   } catch (error: any) {
     // 404 에러 시 목 데이터 사용
     if (error.response?.status === 404) {
-      console.warn('⚠️ API 엔드포인트가 준비되지 않아 목 데이터를 사용합니다.');
+      console.warn('API 엔드포인트가 준비되지 않아 목 데이터를 사용합니다.');
       return new Promise((resolve) => {
         setTimeout(() => {
           resolve({
@@ -60,3 +60,4 @@ export const getQuestions = async (
     throw error;
   }
 };
+export class QuestionData {}
