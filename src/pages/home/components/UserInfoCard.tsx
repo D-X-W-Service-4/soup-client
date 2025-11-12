@@ -36,7 +36,7 @@ export default function UserInfoCard({
         </div>
       </div>
       <div className="flex justify-center bg-white px-7 py-7.5">
-        <div className="flex gap-4">
+        <div className="flex items-center gap-4">
           <div className="flex flex-col items-center gap-1">
             <span className="text-2xl font-medium text-success">
               {solvedQuestionCount}
@@ -57,7 +57,7 @@ export default function UserInfoCard({
           <div className="h-12 w-px bg-secondary-bg" />
           <div className="flex flex-col items-center gap-1">
             <span className="text-2xl font-medium text-primary">
-              {plannerAchievementRate * 100}%
+              {plannerAchievementRate}%
             </span>
             <span className="text-xs font-normal text-secondary">
               일일 달성률

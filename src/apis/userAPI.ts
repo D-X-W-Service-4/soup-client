@@ -1,3 +1,4 @@
+import axiosInstance from './axiosInstance';
 import type {
   GetUserResponse,
   UpdateUserRequest,
