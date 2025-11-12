@@ -9,18 +9,19 @@ import QuestionPageButton from './component/QuestionPageButton.tsx';
 import QuestionDisplay from './component/QuestionDisplay.tsx';
 import EssayAnswerBox from './component/EssayAnswerBox.tsx';
 import MultipleChoiceBox from './component/MultipleChoiceBox.tsx';
-import OptionList, { type Option } from './component/OptionList.tsx';
+import OptionList from './component/OptionList.tsx';
 import HintModal from './component/HintModal.tsx';
-import {
-  fetchQuestionById,
-  type QuestionData,
-} from '../../apis/questionAPI.tsx';
 
+declare global {
+  interface Window {
+    saveEssayAnswer?: (id: number) => Promise<void>;
+  }
+}
 const TOTAL_QUESTIONS = 2;
 
 export default function QuestionPage() {
   const [current, setCurrent] = useState(1);
-  const [question, setQuestion] = useState<QuestionData | null>(null);
+  const [questions, setQuestions] = useState<any[]>([]); // 전체 문제 목록
   const [solved, setSolved] = useState<number[]>([]);
   const [isHintModalOpen, setIsHintModalOpen] = useState(false);
   const [testInfo, setTestInfo] = useState<{
@@ -34,15 +35,16 @@ export default function QuestionPage() {
 
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [selectedOptions, setSelectedOptions] = useState<
-    Record<number, Option | null>
+    Record<number, string | null>
   >({});
   const [starred, setStarred] = useState<Record<number, boolean>>({});
 
-  const answerValue = answers[current] ?? '';
-  const selectedOption = selectedOptions[current] ?? null;
-  const isLast = current === (testInfo?.totalQuestionCount ?? TOTAL_QUESTIONS);
   const subjectUnitIds = location.state?.subjectUnitIds ?? [];
   const hideToolbar = location.state?.hideToolbar ?? false;
+
+  const answerValue = answers[current] ?? '';
+
+  const isLast = current === (testInfo?.totalQuestionCount ?? TOTAL_QUESTIONS);
 
   const hints = [
     '이 문제는 유리수 단원의 문제입니다. 화이팅!',
@@ -54,12 +56,15 @@ export default function QuestionPage() {
     const createLevelTest = async () => {
       try {
         const res = await axiosInstance.post('/v1/level-tests', {
-          isInitialTest: hideToolbar, // 첫 테스트면 true
+          isInitialTest: hideToolbar,
           subjectUnitIds,
         });
 
         const data = res.data.data;
+        console.log('수준테스트 생성 성공:', data);
+
         setLevelTestId(data.levelTestId);
+        setQuestions(data.levelTestQuestions || []);
 
         const rawTimeLimit = data?.timeLimit ?? 30;
         const totalCount = data?.totalQuestionCount ?? TOTAL_QUESTIONS;
@@ -71,34 +76,14 @@ export default function QuestionPage() {
           timeLimit: convertedTimeLimit,
           totalQuestionCount: totalCount,
         });
-
-        console.log('레벨 테스트 생성 성공:', data);
       } catch (e) {
-        console.error('레벨 테스트 생성 실패:', e);
+        console.error('수준테스트 생성 실패:', e);
         setTestInfo({ timeLimit: 30, totalQuestionCount: TOTAL_QUESTIONS });
       }
     };
 
     createLevelTest();
-  }, [hideToolbar]);
-
-  const handleTimeUp = () => {
-    alert('시간이 종료되어 자동 제출됩니다.');
-    handleSubmit();
-  };
-
-  useEffect(() => {
-    const loadQuestion = async () => {
-      try {
-        const q = await fetchQuestionById(current);
-        setQuestion(q);
-      } catch (e) {
-        console.error('문제 로드 중 오류:', e);
-        setQuestion(null);
-      }
-    };
-    loadQuestion();
-  }, [current]);
+  }, [hideToolbar, subjectUnitIds]);
 
   useEffect(() => {
     const newSolved: number[] = [];
@@ -113,13 +98,25 @@ export default function QuestionPage() {
     setSolved(newSolved);
   }, [answers, selectedOptions, testInfo]);
 
-  const handleSelect = (qNum: number) => {
+  const handleSelect = async (qNum: number) => {
     const totalCount = testInfo?.totalQuestionCount ?? TOTAL_QUESTIONS;
-    if (qNum >= 1 && qNum <= totalCount) setCurrent(qNum);
-  };
+    if (qNum < 1 || qNum > totalCount) return;
 
-  const handleOptionSelect = (option: Option | null) => {
-    setSelectedOptions((prev) => ({ ...prev, [current]: option }));
+    console.log(` handleSelect(${qNum}) 호출됨, 현재: ${current}`);
+
+    for (let i = 0; i < 2; i++) {
+      if (window.saveEssayAnswer) {
+        console.log(` saveEssayAnswer 호출 (재시도 ${i})`);
+        await window.saveEssayAnswer(current);
+        break;
+      } else {
+        console.warn(` window.saveEssayAnswer 없음 (재시도 ${i})`);
+        await new Promise((res) => setTimeout(res, 100));
+      }
+    }
+
+    // 다음 문제로 이동
+    setCurrent(qNum);
   };
 
   const handleToggleStar = () => {
@@ -127,6 +124,11 @@ export default function QuestionPage() {
   };
 
   const handleHintModal = () => setIsHintModalOpen((prev) => !prev);
+
+  const handleTimeUp = () => {
+    alert('시간이 종료되어 자동 제출됩니다.');
+    handleSubmit();
+  };
 
   const handleSubmit = async () => {
     if (!levelTestId) {
@@ -137,24 +139,35 @@ export default function QuestionPage() {
     if (!testInfo) return;
 
     const totalCount = testInfo.totalQuestionCount ?? TOTAL_QUESTIONS;
-    const submissionData = [];
+    const submissionData: any[] = [];
 
     for (let qNum = 1; qNum <= totalCount; qNum++) {
       const essayAnswer = answers[qNum];
       const selected = selectedOptions[qNum];
+      const levelTestQuestion = questions[qNum - 1];
+      const questionId = levelTestQuestion?.question?.questionId;
+
+      if (!levelTestQuestion || !questionId) continue;
 
       if (essayAnswer) {
+        // useAnswerStore에서 이미지 base64를 불러와 S3 업로드했다고 가정
+        const descriptiveImageUrl = levelTestQuestion?.userImageUrl ?? null;
+
         submissionData.push({
-          questionId: qNum,
+          questionId,
           userAnswer: essayAnswer,
+          descriptiveImageUrl,
         });
       } else if (selected) {
         submissionData.push({
-          questionId: qNum,
-          userAnswer: selected.text,
+          questionId,
+          userAnswer: `${selected}번`, // Swagger 형식 맞춤
+          descriptiveImageUrl: null,
         });
       }
     }
+
+    console.log('제출 데이터:', submissionData);
 
     if (submissionData.length === 0) {
       console.warn('제출 데이터 없음');
@@ -168,7 +181,7 @@ export default function QuestionPage() {
       });
 
       alert(
-        '답안이 제출되었습니다!\n\n채점이 완료되면 [결과 조회하기]에서 확인할 수 있습니다.'
+        '답안이 제출되었습니다!\n채점이 완료되면 결과 조회하기에서 확인할 수 있습니다.'
       );
       navigate('/home');
     } catch (e) {
@@ -179,6 +192,12 @@ export default function QuestionPage() {
 
   const isAllSolved =
     solved.length === (testInfo?.totalQuestionCount ?? TOTAL_QUESTIONS);
+
+  const currentQuestion = questions[current - 1]?.question;
+  const imageUrl = currentQuestion?.filename
+    ? `${import.meta.env.VITE_S3_BASE_URL}${currentQuestion.filename}`
+    : null;
+  const textContent = currentQuestion?.text ?? '';
 
   return (
     <div className="relative flex h-screen w-full flex-col items-center justify-start bg-primary-bg">
@@ -210,17 +229,8 @@ export default function QuestionPage() {
         {/* 문제 영역 */}
         <div className="ml-20 flex h-full flex-1 flex-col items-center justify-start gap-6">
           <div className="w-full flex-[0.4]">
-            {question ? (
-              <QuestionDisplay
-                imageUrl={
-                  question.contents?.endsWith('.png') ? question.contents : null
-                }
-                textContent={
-                  !question.contents?.endsWith('.png')
-                    ? question.contents || ''
-                    : ''
-                }
-              />
+            {currentQuestion ? (
+              <QuestionDisplay imageUrl={imageUrl} textContent={textContent} />
             ) : (
               <div className="text-center text-lg text-gray-400">
                 문제를 불러오는 중...
@@ -229,7 +239,7 @@ export default function QuestionPage() {
           </div>
 
           <div className="h-full w-full flex-1">
-            {question?.type === '단답형' ? (
+            {currentQuestion?.questionFormat === '단답형' ? (
               <EssayAnswerBox questionId={current} />
             ) : (
               <MultipleChoiceBox questionId={current} />
@@ -249,24 +259,34 @@ export default function QuestionPage() {
             </div>
           )}
 
-          {question?.type === '객관식' && (
+          {/* 객관식 보기 */}
+          {/* 객관식 보기 */}
+          {currentQuestion?.questionFormat === '선택형' && (
             <OptionList
               options={[
-                { id: 1, text: '① 4' },
-                { id: 2, text: '② 6' },
-                { id: 3, text: '③ 7' },
-                { id: 4, text: '④ 8' },
-                { id: 5, text: '⑤ 9' },
+                { id: 1, text: '' },
+                { id: 2, text: '' },
+                { id: 3, text: '' },
+                { id: 4, text: '' },
               ]}
-              selectedOption={selectedOption}
-              onSelect={handleOptionSelect}
+              selectedOptionId={
+                selectedOptions[current]
+                  ? Number(selectedOptions[current])
+                  : null
+              }
+              onSelect={(value) => {
+                setSelectedOptions((prev) => ({
+                  ...prev,
+                  [current]: value, // "1" | "2" | null
+                }));
+              }}
               isHintOpen={isHintModalOpen}
             />
           )}
 
           {/* 제출 버튼 */}
           <div className="mt-auto flex w-full flex-col items-end gap-10">
-            {question?.type === '단답형' && (
+            {currentQuestion?.questionFormat === '단답형' && (
               <>
                 <WarningBox>
                   원활한 채점을 위해 답안을 <br /> 정확히 작성해 주세요.

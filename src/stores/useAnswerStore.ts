@@ -35,8 +35,7 @@ export const useAnswerStore = create<AnswerStore>()(
         set((state) => {
           const key = String(id);
           const updated = { ...state.images };
-          if (!base64) delete updated[key];
-          else updated[key] = base64;
+          if (base64 && base64.length > 50) updated[key] = base64;
           return { images: updated };
         }),
 
