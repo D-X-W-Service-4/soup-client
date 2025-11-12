@@ -1,7 +1,9 @@
 import CharacterLogo from '../../assets/Character.svg';
 import { motion } from 'framer-motion';
-
+import { useNavigate } from 'react-router-dom';
 const LoginSuccessPage = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="inline-flex h-[834px] w-[1194px] flex-col items-center justify-between bg-primary-bg px-96 py-36">
       <div className="flex w-72 flex-col items-center justify-start gap-4">
@@ -36,7 +38,10 @@ const LoginSuccessPage = () => {
           <img className="h-80 w-80" src={CharacterLogo} alt="Character Logo" />
         </div>
       </div>
-      <div className="inline-flex items-center justify-center gap-2.5 self-stretch rounded-lg bg-red-400 px-24 py-3">
+      <div
+        className="inline-flex items-center justify-center gap-2.5 self-stretch rounded-lg bg-primary px-24 py-3"
+        onClick={() => navigate('../levelTest/levelTestStart')}
+      >
         <div className="justify-start text-base leading-normal font-medium text-white">
           시작하기
         </div>

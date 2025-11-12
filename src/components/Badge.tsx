@@ -8,7 +8,8 @@ type BadgeVariant =
   | 'secondary-bg'
   | 'success'
   | 'warning'
-  | 'danger';
+  | 'danger'
+  | 'levelTest';
 
 export interface BadgeProps {
   size: BadgeSize;
@@ -31,6 +32,7 @@ const VARIANT_MAP: Record<BadgeVariant, string> = {
   success: 'bg-success text-white',
   warning: 'bg-warning text-white',
   danger: 'bg-danger text-white',
+  levelTest: 'bg-gray-300 text-secondary',
 };
 
 export default function Badge({
