@@ -4,16 +4,18 @@ import Iconkakao from '../../assets/svgs/Iconkakao.tsx';
 import IconNaver from '../../assets/svgs/IconNaver.tsx';
 
 export default function LoginPage() {
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   const handleKakaoLogin = () => {
-    window.location.href = 'http://localhost:5173/onboarding/nickname';
+    window.location.href = `${API_BASE_URL}/oauth2/authorization/kakao`;
   };
 
   const handleNaverLogin = () => {
-    window.location.href = 'http://localhost:5173/onboarding/nickname';
+    window.location.href = `${API_BASE_URL}/oauth2/authorization/naver`;
   };
 
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-center bg-neutral-50">
+    <div className="flex h-screen w-full flex-col items-center justify-center bg-primary-bg">
       <div className="flex w-[633px] flex-col items-center justify-center gap-14">
         <LogoHeader />
 

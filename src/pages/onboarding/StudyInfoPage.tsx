@@ -34,8 +34,8 @@ const StudyInfoPage = () => {
   const lastStudiedUnit = useUserStore((state) => state.lastStudiedUnit);
   const setLastStudiedUnit = useUserStore((state) => state.setLastStudiedUnit);
 
-  const studyTime = useUserStore((state) => state.studyTime);
-  const setStudyTime = useUserStore((state) => state.setStudyTime);
+  const studyTime = useUserStore((state) => state.studyHours);
+  const setStudyTime = useUserStore((state) => state.setStudyHours);
 
   const navigate = useNavigate();
 
