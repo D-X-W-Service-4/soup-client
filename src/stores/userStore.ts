@@ -5,13 +5,13 @@ interface UserStoreState {
   grade: string;
   term: string;
   lastStudiedUnit: string;
-  studyTime: string;
+  studyHours: string;
 
   setNickname: (nickname: string) => void;
   setGrade: (grade: string) => void;
   setTerm: (term: string) => void;
   setLastStudiedUnit: (lastStudiedUnit: string) => void;
-  setStudyTime: (studyTime: string) => void;
+  setStudyHours: (studyTime: string) => void;
 }
 
 export const useUserStore = create<UserStoreState>((set) => ({
@@ -19,10 +19,10 @@ export const useUserStore = create<UserStoreState>((set) => ({
   grade: '',
   term: '',
   lastStudiedUnit: '',
-  studyTime: '',
+  studyHours: '',
   setNickname: (nickname) => set({ nickname }),
   setGrade: (grade) => set({ grade }),
   setTerm: (term) => set({ term }),
-  setStudyTime: (studyTime) => set({ studyTime }),
+  setStudyHours: (studyHours) => set({ studyHours }),
   setLastStudiedUnit: (lastStudiedUnit) => set({ lastStudiedUnit }),
 }));
