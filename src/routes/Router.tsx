@@ -13,6 +13,7 @@ import TestResultPage from '../pages/test/result/page.tsx';
 import TestHistoryPage from '../pages/test/hist/page.tsx';
 import ReviewPage from '../pages/review/page.tsx';
 import { useAuthStore } from '../stores/authStore.ts';
+import CallbackPage from '../pages/login/CallbackPage.tsx';
 
 const RootRedirect = () => {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
@@ -32,6 +33,7 @@ const router = createBrowserRouter([
       { path: '/home', element: <HomePage /> },
       { path: '/login', element: <LoginPage /> },
       { path: '/review', element: <ReviewPage /> },
+      { path: '/callback', element: <CallbackPage /> },
       {
         path: '/onboarding',
         element: <Outlet />,
