@@ -8,34 +8,37 @@ export interface ApiResponse<T> {
   data: T;
 }
 
-// 문제 정보
-export interface Question {
-  questionId: string;
+// 교과 단원 정보
+export interface SubjectUnitDto {
+  subjectUnitId: number;
+  grade: 'M1' | 'M2' | 'M3';
+  term: number;
+  unitName: string;
 }
 
-// 단원 정보
-export interface SubjectUnit {
-  subjectUnitId: number;
-  name: string;
-  grade: string;
-  unitNumber: string;
+// 문제 정보
+export interface QuestionDto {
+  questionId: number;
+  subjectUnit: SubjectUnitDto;
+  questionImagePath: string;
+  solutionImagePath: string;
 }
 
 // 레벨 테스트 문제
-export interface LevelTestQuestion {
+export interface LevelTestQuestionDto {
   levelTestQuestionId: number;
   questionNumber: number;
-  question: Question;
+  question: QuestionDto;
   isCorrect: boolean;
   userAnswer: string;
-  descriptiveImageUrl: string;
+  descriptiveImagePath: string;
   isTimeout: boolean;
   essayTypeScore: number;
   essayTypeScoreText: string;
 }
 
 // 레벨 테스트 요약 정보
-export interface LevelTestSummary {
+export interface LevelTestSummaryDto {
   levelTestId: number;
   timeLimit: number;
   totalQuestionCount: number;
@@ -46,16 +49,23 @@ export interface LevelTestSummary {
 }
 
 // 레벨 테스트 상세 정보
-export interface LevelTestDetail extends LevelTestSummary {
-  subjectUnits: SubjectUnit[];
-  levelTestQuestions: LevelTestQuestion[];
+export interface LevelTestDetailDto {
+  levelTestId: number;
+  timeLimit: number;
+  totalQuestionCount: number;
+  correctCount: number;
+  score: number;
+  resultSoup: SoupLevel;
+  finishedAt: string;
+  subjectUnits: SubjectUnitDto[];
+  levelTestQuestions: LevelTestQuestionDto[];
   createdAt: string;
   updatedAt: string;
 }
 
 // GET /v1/level-tests 응답
 export interface GetLevelTestsData {
-  levelTests: LevelTestSummary[];
+  levelTests: LevelTestSummaryDto[];
 }
 export type GetLevelTestsResponse = ApiResponse<GetLevelTestsData>;
 
@@ -66,21 +76,22 @@ export interface CreateLevelTestRequest {
 }
 
 // POST /v1/level-tests 응답
-export type CreateLevelTestResponse = ApiResponse<LevelTestDetail>;
+export type CreateLevelTestResponse = ApiResponse<LevelTestDetailDto>;
 
 // POST /v1/level-tests/{levelTestId}/grade 요청
-export interface GradeLevelTestAnswer {
-  questionId: string;
+export interface GradeLevelTestQuestionRequest {
+  levelTestQuestionId: number;
   userAnswer: string;
-  descriptiveImageUrl: string;
+  descriptiveImagePath: string;
+  isTimeout: boolean;
 }
 
 export interface GradeLevelTestRequest {
-  answers: GradeLevelTestAnswer[];
+  questions: GradeLevelTestQuestionRequest[];
 }
 
 // POST /v1/level-tests/{levelTestId}/grade 응답
 export type GradeLevelTestResponse = ApiResponse<string>;
 
 // GET /v1/level-tests/{levelTestId} 응답
-export type GetLevelTestDetailResponse = ApiResponse<LevelTestDetail>;
+export type GetLevelTestDetailResponse = ApiResponse<LevelTestDetailDto>;

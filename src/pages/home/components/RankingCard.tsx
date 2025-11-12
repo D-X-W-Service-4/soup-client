@@ -6,7 +6,7 @@ const BADGE: Record<SoupLevel, string> = {
   CORN: 'src/assets/badge/corn.png',
   MUSHROOM: 'src/assets/badge/mushroom.png',
   PUMPKIN: 'src/assets/badge/pumpkin.png',
-  SWEETPOTATO: 'src/assets/badge/sweetpotato.png',
+  SWEET_POTATO: 'src/assets/badge/sweetpotato.png',
 };
 
 const SOUP_LABEL_KO: Record<SoupLevel, string> = {
@@ -14,7 +14,7 @@ const SOUP_LABEL_KO: Record<SoupLevel, string> = {
   CORN: '옥수수',
   MUSHROOM: '양송이',
   PUMPKIN: '단호박',
-  SWEETPOTATO: '고구마',
+  SWEET_POTATO: '고구마',
 };
 
 const SOUP_TEXT_COLOR: Record<SoupLevel, string> = {
@@ -22,12 +22,12 @@ const SOUP_TEXT_COLOR: Record<SoupLevel, string> = {
   CORN: 'text-yellow-400',
   MUSHROOM: 'text-orange-300',
   PUMPKIN: 'text-amber-700',
-  SWEETPOTATO: 'text-purple-700',
+  SWEET_POTATO: 'text-purple-700',
 };
 
 interface RankingCardProps {
   soup: SoupLevel;
-  solvedQuestionCount: number;
+  consecutiveFlames: number;
   perLevel?: number;
 }
 
@@ -39,11 +39,11 @@ function nextSoup(current: SoupLevel, steps: number): SoupLevel {
 
 export default function RankingCard({
   soup,
-  solvedQuestionCount,
+  consecutiveFlames,
   perLevel = 10,
 }: RankingCardProps) {
   const safePer = Math.max(1, perLevel);
-  const total = Math.max(0, Math.floor(Number(solvedQuestionCount) || 0));
+  const total = Math.max(0, Math.floor(Number(consecutiveFlames) || 0));
   const levelUps = Math.floor(total / safePer);
   const displaySoup = nextSoup(soup, levelUps);
   let within = total % safePer;
@@ -65,7 +65,7 @@ export default function RankingCard({
       </div>
       <div className="flex flex-col items-start justify-start gap-1 self-stretch pb-5">
         <span className="text-xs font-normal text-neutral-600">
-          다음 수프까지 {remain}문제
+          다음 수프까지 {remain}일
         </span>
         <div className="w-full" aria-label="레벨 진행도">
           <div

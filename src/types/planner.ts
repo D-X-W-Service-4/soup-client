@@ -28,13 +28,13 @@ export interface PlannerData {
   plannerId: number;
   date: string;
   flame: boolean;
-  feedback: 'GOOD' | 'NORMAL' | 'BAD';
+  feedback: 'GOOD' | 'BAD' | 'NEUTRAL';
   items: PlannerItem[];
   createdAt: string;
   updatedAt: string;
 }
 
-// GET /v1/planners 응답
+// GET /v1/planners?date={date} 응답
 export type GetPlannerResponse = ApiResponse<PlannerData>;
 
 // POST /v1/planners 요청
@@ -47,7 +47,7 @@ export type CreatePlannerResponse = ApiResponse<PlannerData>;
 
 // PATCH /v1/planners/{plannerId}/feedback 요청
 export interface UpdatePlannerFeedbackRequest {
-  feedback: 'GOOD' | 'NORMAL' | 'BAD';
+  feedback: 'GOOD' | 'BAD' | 'NEUTRAL';
 }
 
 // PATCH /v1/planners/{plannerId}/feedback 응답

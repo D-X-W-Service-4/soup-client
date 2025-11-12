@@ -3,14 +3,15 @@ import type {
   GetQuestionSetsResponse,
   CreateQuestionSetRequest,
   CreateQuestionSetResponse,
+  GradeQuestionSetRequest,
   GradeQuestionSetResponse,
   GetQuestionSetDetailResponse,
-  QuestionSetDetail,
-  QuestionSetSummary,
+  QuestionSetDetailDto,
+  QuestionSetSummaryDto,
 } from '../types/questionSet';
 
 // 목 데이터 - 문제 세트 요약
-const createMockQuestionSetSummary = (): QuestionSetSummary => {
+const createMockQuestionSetSummary = (): QuestionSetSummaryDto => {
   return {
     questionSetId: 15,
     totalQuestionCount: 10,
@@ -20,7 +21,7 @@ const createMockQuestionSetSummary = (): QuestionSetSummary => {
 };
 
 // 목 데이터 - 문제 세트 상세
-const createMockQuestionSetDetail = (): QuestionSetDetail => {
+const createMockQuestionSetDetail = (): QuestionSetDetailDto => {
   return {
     questionSetId: 42,
     totalQuestionCount: 10,
@@ -30,11 +31,19 @@ const createMockQuestionSetDetail = (): QuestionSetDetail => {
       {
         questionSetItemId: 501,
         question: {
-          questionId: 'M1_1_01_00041_42236',
+          questionId: 1,
+          subjectUnit: {
+            subjectUnitId: 1,
+            grade: 'M1',
+            term: 1,
+            unitName: '자연수의 혼합 계산',
+          },
+          questionImagePath: '/images/questions/q1.png',
+          solutionImagePath: '/images/solutions/s1.png',
         },
         isCorrect: true,
         userAnswer: 'F = ma',
-        descriptiveImageUrl: 'https://example.com/uploads/answers/answer1.png',
+        descriptiveImagePath: 'https://example.com/uploads/answers/answer1.png',
         isTimeout: false,
         essayTypeScore: 4,
         essayTypeScoreText:
@@ -105,12 +114,13 @@ export const createQuestionSet = async (
  * POST /v1/question-sets/{questionSetId}/grade
  */
 export const gradeQuestionSet = async (
-  questionSetId: number
+  questionSetId: number,
+  request: GradeQuestionSetRequest
 ): Promise<GradeQuestionSetResponse> => {
   // 목 데이터
   return new Promise((resolve) => {
     setTimeout(() => {
-      console.log('문제 세트 채점:', questionSetId);
+      console.log('문제 세트 채점:', questionSetId, request);
       resolve({
         status: 200,
         code: 'SUCCESS',
@@ -122,7 +132,8 @@ export const gradeQuestionSet = async (
 
   // 실제 API 연결 시
   // const response = await axiosInstance.post<GradeQuestionSetResponse>(
-  //   `/v1/question-sets/${questionSetId}/grade`
+  //   `/v1/question-sets/${questionSetId}/grade`,
+  //   request
   // );
   // return response.data;
 };

@@ -33,8 +33,8 @@ const createMockPlannerData = (): PlannerData => {
   };
 };
 
-// GET /v1/planners
-export const getPlanner = async (): Promise<GetPlannerResponse> => {
+// GET /v1/planners?date={date}
+export const getPlanner = async (date: string): Promise<GetPlannerResponse> => {
   // 목 데이터
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -48,7 +48,9 @@ export const getPlanner = async (): Promise<GetPlannerResponse> => {
   });
 
   // 실제 API 연결 시
-  // const response = await axiosInstance.get<GetPlannerResponse>('/v1/planners');
+  // const response = await axiosInstance.get<GetPlannerResponse>(
+  //   `/v1/planners?date=${date}`
+  // );
   // return response.data;
 };
 
@@ -103,7 +105,7 @@ export const updatePlannerFeedback = async (
   // return response.data;
 };
 
-// PATCH /v1/planners/item/{plannerItemId}/check
+// PATCH /v1/planners/items/{plannerItemId}/check
 export const updatePlannerItemCheck = async (
   plannerItemId: number,
   request: UpdatePlannerItemCheckRequest
@@ -123,14 +125,17 @@ export const updatePlannerItemCheck = async (
 
   // 실제 API 연결 시
   // const response = await axiosInstance.patch<UpdatePlannerItemCheckResponse>(
-  //   `/v1/planners/item/${plannerItemId}/check`,
+  //   `/v1/planners/items/${plannerItemId}/check`,
   //   request
   // );
   // return response.data;
 };
 
-// GET /v1/planners/flames
-export const getPlannerFlames = async (): Promise<GetPlannerFlamesResponse> => {
+// GET /v1/planners/flames?startDate={startDate}&endDate={endDate}
+export const getPlannerFlames = async (
+  startDate: string,
+  endDate: string
+): Promise<GetPlannerFlamesResponse> => {
   // 목 데이터
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -160,7 +165,7 @@ export const getPlannerFlames = async (): Promise<GetPlannerFlamesResponse> => {
 
   // 실제 API 연결 시
   // const response = await axiosInstance.get<GetPlannerFlamesResponse>(
-  //   '/v1/planners/flames'
+  //   `/v1/planners/flames?startDate=${startDate}&endDate=${endDate}`
   // );
   // return response.data;
 };

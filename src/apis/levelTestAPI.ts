@@ -6,12 +6,12 @@ import type {
   GradeLevelTestRequest,
   GradeLevelTestResponse,
   GetLevelTestDetailResponse,
-  LevelTestSummary,
-  LevelTestDetail,
+  LevelTestSummaryDto,
+  LevelTestDetailDto,
 } from '../types/levelTest';
 
 // 목 데이터 - 레벨 테스트 요약
-const createMockLevelTestSummary = (): LevelTestSummary => {
+const createMockLevelTestSummary = (): LevelTestSummaryDto => {
   return {
     levelTestId: 15,
     timeLimit: 30,
@@ -24,7 +24,7 @@ const createMockLevelTestSummary = (): LevelTestSummary => {
 };
 
 // 목 데이터 - 레벨 테스트 상세
-const createMockLevelTestDetail = (): LevelTestDetail => {
+const createMockLevelTestDetail = (): LevelTestDetailDto => {
   return {
     levelTestId: 42,
     timeLimit: 30,
@@ -36,9 +36,9 @@ const createMockLevelTestDetail = (): LevelTestDetail => {
     subjectUnits: [
       {
         subjectUnitId: 5,
-        name: '정수와 유리수 - 정수와 유리수의 덧셈과 뺄셈',
         grade: 'M2',
-        unitNumber: '1-1',
+        term: 1,
+        unitName: '정수와 유리수의 덧셈과 뺄셈',
       },
     ],
     levelTestQuestions: [
@@ -46,11 +46,19 @@ const createMockLevelTestDetail = (): LevelTestDetail => {
         levelTestQuestionId: 101,
         questionNumber: 3,
         question: {
-          questionId: 'M1_1_01_00041_42236',
+          questionId: 1,
+          subjectUnit: {
+            subjectUnitId: 5,
+            grade: 'M2',
+            term: 1,
+            unitName: '정수와 유리수의 덧셈과 뺄셈',
+          },
+          questionImagePath: '/images/questions/q1.png',
+          solutionImagePath: '/images/solutions/s1.png',
         },
         isCorrect: true,
         userAnswer: 'F = ma',
-        descriptiveImageUrl: 'https://example.com/uploads/answers/12345.png',
+        descriptiveImagePath: 'https://example.com/uploads/answers/12345.png',
         isTimeout: true,
         essayTypeScore: 5,
         essayTypeScoreText: '핵심 개념을 잘 설명했습니다.',
