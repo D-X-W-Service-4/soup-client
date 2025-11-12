@@ -14,6 +14,7 @@ import type { Option } from './component/OptionList.tsx';
 import HintModal from './component/HintModal.tsx';
 import { fetchQuestionById } from '../../apis/questionAPI.tsx';
 import type { QuestionData } from '../../apis/questionAPI.tsx';
+import { useAuthStore } from '../../stores/authStore.ts';
 
 const TOTAL_QUESTIONS = 2;
 
@@ -24,6 +25,7 @@ export default function QuestionPage() {
   const [isHintModalOpen, setIsHintModalOpen] = useState(false);
   const [testInfo, setTestInfo] = useState<{ timeLimit: number } | null>(null);
   const navigate = useNavigate();
+  const setIsLoggedIn = useAuthStore((state) => state.setIsLoggedIn);
 
   const location = useLocation();
   const hideToolbar = location.state?.hideToolbar ?? false;
@@ -126,7 +128,13 @@ export default function QuestionPage() {
 
     console.log('제출 데이터:', submissionData);
     alert('모든 문제를 제출했습니다!');
-    navigate('/result');
+
+    if (hideToolbar) {
+      setIsLoggedIn(true);
+      navigate('/home');
+    } else {
+      navigate('/result');
+    }
   };
 
   const isAllSolved = solved.length === TOTAL_QUESTIONS;

@@ -100,7 +100,7 @@ const WorkBookPage = () => {
         </div>
         <div
           className="flex flex-col items-start justify-start gap-2.5 self-stretch"
-          onClick={() => navigate('/onboarding/loginSuccess')}
+          onClick={() => navigate('/onboarding/success')}
         >
           <div className="inline-flex items-center justify-center gap-2.5 self-stretch rounded-lg bg-primary px-5 py-3">
             <div className="justify-start text-base leading-normal font-medium text-white">

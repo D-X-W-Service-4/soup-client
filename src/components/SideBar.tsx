@@ -1,5 +1,7 @@
 import { Icon } from '@iconify/react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useModalStore } from '../stores/modalStore';
+import { useAuthStore } from '../stores/authStore';
 import { useState } from 'react';
 
 type sideBarProps = {
@@ -12,7 +14,7 @@ const NAV = [
     key: 'home',
     label: '홈',
     icon: 'heroicons-outline:home',
-    path: '/',
+    path: '/home',
   },
   {
     key: 'review',
@@ -34,11 +36,9 @@ const NAV = [
     key: 'my',
     label: '마이페이지',
     icon: 'heroicons-outline:user',
-    path: '/my',
     children: [
-      { key: 'learning', label: '학습 정보 변경', path: '/my/learning' },
-      { key: 'info', label: '내 정보 수정', path: '/my/info' },
-      { key: 'logout', label: '로그아웃', path: '/my/logout' },
+      { key: 'info', label: '내 정보 수정' },
+      { key: 'logout', label: '로그아웃' },
     ],
   },
 ];
@@ -46,6 +46,9 @@ const NAV = [
 export default function SideBar({ isOpen = true, onToggle }: sideBarProps) {
   const [openMenus, setOpenMenus] = useState<string[]>([]);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { openInfoModal } = useModalStore();
+  const logout = useAuthStore((state) => state.logout);
 
   const isActive = (basePath: string) => {
     return (
@@ -65,6 +68,18 @@ export default function SideBar({ isOpen = true, onToggle }: sideBarProps) {
     setOpenMenus((prev) =>
       prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
     );
+  };
+
+  const handleMyPageChildClick = (childKey: string) => {
+    switch (childKey) {
+      case 'info':
+        openInfoModal();
+        break;
+      case 'logout':
+        logout();
+        navigate('/login');
+        break;
+    }
   };
 
   return (
@@ -97,8 +112,13 @@ export default function SideBar({ isOpen = true, onToggle }: sideBarProps) {
       {/* 내비게이션 */}
       <nav className="flex w-full flex-col gap-3">
         {NAV.map((item) => {
-          const active = isActive(item.path);
-          const isMenuOpen = openMenus.includes(item.key) || active;
+          let active = false;
+          if (item.key === 'my') {
+            active = false;
+          } else if (item.path) {
+            active = isActive(item.path);
+          }
+          const isMenuOpen = openMenus.includes(item.key);
           const hasChildren = item.children && item.children.length > 0;
 
           const itemContent = (
@@ -132,7 +152,7 @@ export default function SideBar({ isOpen = true, onToggle }: sideBarProps) {
                 >
                   {itemContent}
                 </button>
-              ) : (
+              ) : item.path ? (
                 <Link
                   to={item.path}
                   aria-current={active ? 'page' : undefined}
@@ -142,17 +162,36 @@ export default function SideBar({ isOpen = true, onToggle }: sideBarProps) {
                 >
                   {itemContent}
                 </Link>
+              ) : (
+                <div
+                  className={`flex h-10 w-full items-center rounded-[10px] text-secondary transition-colors ${isOpen ? 'gap-3 px-3 py-2' : 'gap-0 p-[11px]'}`}
+                >
+                  {itemContent}
+                </div>
               )}
 
               {isOpen && isMenuOpen && item.children?.length ? (
-                <div className="mt-4 pl-10">
+                <div className="mt-3 pl-10">
                   <div className="flex flex-col gap-4">
                     {item.children.map((child) => {
-                      const childActive = isChildActive(child.path);
+                      if (item.key === 'my') {
+                        return (
+                          <button
+                            key={child.key}
+                            onClick={() => handleMyPageChildClick(child.key)}
+                            className="overflow-hidden text-left text-sm font-medium whitespace-nowrap text-neutral-400 transition-colors hover:text-secondary"
+                          >
+                            {child.label}
+                          </button>
+                        );
+                      }
+
+                      const childActive =
+                        'path' in child ? isChildActive(child.path) : false;
                       return (
                         <Link
                           key={child.key}
-                          to={child.path}
+                          to={'path' in child ? child.path : '#'}
                           className={`overflow-hidden text-sm font-medium whitespace-nowrap transition-colors
                               ${childActive ? 'text-primary' : 'text-neutral-400 hover:text-secondary'}`}
                         >
@@ -179,11 +218,25 @@ export default function SideBar({ isOpen = true, onToggle }: sideBarProps) {
                     {item.label}
                   </div>
                   {item.children.map((child) => {
-                    const childActive = isChildActive(child.path);
+                    if (item.key === 'my') {
+                      return (
+                        <button
+                          key={child.key}
+                          onClick={() => handleMyPageChildClick(child.key)}
+                          className="block w-full rounded-md px-3 py-2 text-left text-sm text-neutral-400 transition-colors hover:text-secondary"
+                          role="menuitem"
+                        >
+                          {child.label}
+                        </button>
+                      );
+                    }
+
+                    const childActive =
+                      'path' in child ? isChildActive(child.path) : false;
                     return (
                       <Link
                         key={child.key}
-                        to={child.path}
+                        to={'path' in child ? child.path : '#'}
                         className={`block rounded-md px-3 py-2 text-sm transition-colors
                           ${childActive ? 'text-primary' : 'text-neutral-400 hover:text-secondary'}`}
                         aria-current={childActive ? 'page' : undefined}

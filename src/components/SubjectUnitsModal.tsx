@@ -1,25 +1,15 @@
 import { useState } from 'react';
-import subjectUnits from '../pages/levelTest/SubjectUnits.ts';
 import IconMagnifingGlass from '../assets/svgs/IconMagnifingGlass.tsx';
+import {
+  gradeStoreToDisplay,
+  type SubjectUnit,
+  subjectUnits,
+} from '../pages/levelTest/SubjectUnits.ts';
 
 interface SubjectUnitsModalProps {
   onClose: () => void;
-  onSelectSubjectUnits: (
-    selected: { grade: string; subjects: string; units: string }[]
-  ) => void;
+  onSelectSubjectUnits: (selected: SubjectUnit[]) => void;
 }
-
-interface Chapter {
-  subject: string;
-  units: string[];
-}
-type Grade = 'M1' | 'M2' | 'M3';
-
-const gradeStoreToDisplay = {
-  M1: '1학년',
-  M2: '2학년',
-  M3: '3학년',
-};
 
 const SubjectUnitsModal = ({
   onClose,
@@ -28,26 +18,13 @@ const SubjectUnitsModal = ({
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [searchText, setSearchText] = useState('');
 
-  const allUnits = (
-    Object.entries(subjectUnits) as [Grade, Chapter[]][]
-  ).flatMap(([grade, chapters]) =>
-    chapters.flatMap((chapter, subjIdx) =>
-      chapter.units.map((unit, unitIdx) => ({
-        id: parseInt(`${grade.replace('M', '')}${subjIdx}${unitIdx}`),
-        grade,
-        subjects: chapter.subject,
-        units: unit,
-      }))
-    )
-  );
+  const filtered = subjectUnits.filter((item) => {
+    const displayGrade = gradeStoreToDisplay[item.grade];
+    const lowerSearchText = searchText.toLowerCase();
 
-  const filtered = allUnits.filter((item) => {
-    const displayGrade =
-      gradeStoreToDisplay[item.grade as keyof typeof gradeStoreToDisplay];
     return (
       displayGrade.includes(searchText) ||
-      item.subjects.toLowerCase().includes(searchText.toLowerCase()) ||
-      item.units.toLowerCase().includes(searchText.toLowerCase())
+      item.name.toLowerCase().includes(lowerSearchText)
     );
   });
 
@@ -58,7 +35,9 @@ const SubjectUnitsModal = ({
   };
 
   const handleAdd = () => {
-    const selectedUnits = allUnits.filter((u) => selectedIds.includes(u.id));
+    const selectedUnits = subjectUnits.filter((u) =>
+      selectedIds.includes(u.subjectUnitId)
+    );
     onSelectSubjectUnits(selectedUnits);
     onClose();
     console.log(selectedUnits);
@@ -88,32 +67,25 @@ const SubjectUnitsModal = ({
             <div className="h-0 self-stretch outline-1 outline-primary"></div>
           </div>
         </div>
-
         <div className="flex-1 space-y-2 overflow-y-scroll">
           {filtered.map((item) => (
             <div
-              key={item.id}
-              onClick={() => toggleSelect(item.id)}
+              key={item.subjectUnitId}
+              onClick={() => toggleSelect(item.subjectUnitId)}
               className={`cursor-pointer border-gray-300 p-2 ${
-                selectedIds.includes(item.id)
+                selectedIds.includes(item.subjectUnitId)
                   ? 'rounded-2xl bg-gray-100'
                   : 'border-b hover:bg-gray-100'
               }`}
             >
               <div className="text-sm text-gray-600">
-                {
-                  gradeStoreToDisplay[
-                    item.grade as keyof typeof gradeStoreToDisplay
-                  ]
-                }
+                {gradeStoreToDisplay[item.grade]}
               </div>
-              <div className="font-medium">{item.subjects}</div>
-              <div className="text-sm">{item.units}</div>
+              <div className="font-medium">{item.name}</div>
             </div>
           ))}
         </div>
 
-        {/* 버튼 */}
         <div
           className="flex flex-col items-start justify-start gap-2.5 self-stretch"
           onClick={handleAdd}

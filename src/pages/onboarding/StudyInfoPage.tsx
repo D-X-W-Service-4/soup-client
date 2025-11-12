@@ -43,20 +43,20 @@ const StudyInfoPage = () => {
     const storeValue =
       gradeDisplayToStore[displayValue as keyof typeof gradeDisplayToStore];
     setGrade(storeValue);
+    setLastStudiedUnit('');
   };
 
   const displayGrade =
     gradeStoreToDisplay[grade as keyof typeof gradeStoreToDisplay];
 
   const unitOptions = useMemo(() => {
-    const currentUnitsData =
-      subjectUnits[grade as keyof typeof subjectUnits] || [];
+    if (!grade) {
+      return [];
+    }
 
-    const options = currentUnitsData.flatMap((subjectData) =>
-      subjectData.units.map(
-        (unitName) => `${subjectData.subject} - ${unitName}`
-      )
-    );
+    const filteredUnits = subjectUnits.filter((unit) => unit.grade === grade);
+
+    const options = filteredUnits.map((unit) => unit.name);
 
     return options;
   }, [grade]);
@@ -171,7 +171,7 @@ const StudyInfoPage = () => {
             </div>
             <button
               className="w-full rounded-lg bg-primary px-5 py-3 text-base font-medium text-white active:bg-rose-500"
-              onClick={() => navigate('/onboarding/workBook')}
+              onClick={() => navigate('/onboarding/workbook')}
             >
               다음
             </button>
