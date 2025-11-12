@@ -58,8 +58,6 @@ export default function Planner({
   const handleToggleCheck = async (itemId: number, currentChecked: boolean) => {
     try {
       setUpdatingItemId(itemId);
-
-      // 로컬 state를 즉시 업데이트 (낙관적 업데이트)
       let updatedPlanner: PlannerData | null = null;
       if (localPlanner) {
         updatedPlanner = {
@@ -85,14 +83,10 @@ export default function Planner({
             await updatePlannerFeedback(updatedPlanner.plannerId, {
               feedback: 'GOOD',
             });
-
-            // 로컬 state 업데이트
             setLocalPlanner({
               ...updatedPlanner,
               flame: true,
             });
-
-            // PlannerFlameCard 갱신
             if (onFlameUpdate) {
               onFlameUpdate();
             }

@@ -86,7 +86,7 @@ export const createPlanner = async (
   } catch (error: any) {
     // Network Error, 500, 404 에러 등 모든 에러 시 목 데이터 사용 (개발 중)
     console.warn(
-      '⚠️ 플래너 생성 API 오류로 목 데이터를 사용합니다.',
+      '플래너 생성 API 오류로 목 데이터를 사용합니다.',
       error.message || error.response?.data
     );
     return new Promise((resolve) => {
@@ -113,19 +113,6 @@ export const updatePlannerFeedback = async (
     request
   );
   return response.data;
-
-  // 목 데이터
-  // return new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     console.log('플래너 피드백 업데이트:', plannerId, request);
-  //     resolve({
-  //       status: 200,
-  //       code: 'SUCCESS',
-  //       message: '요청에 성공했습니다.',
-  //       data: 'string',
-  //     });
-  //   }, 300);
-  // });
 };
 
 // PATCH /v1/planners/items/{plannerItemId}/check
@@ -138,19 +125,6 @@ export const updatePlannerItemCheck = async (
     request
   );
   return response.data;
-
-  // 목 데이터
-  // return new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     console.log('플래너 아이템 체크 업데이트:', plannerItemId, request);
-  //     resolve({
-  //       status: 200,
-  //       code: 'SUCCESS',
-  //       message: '요청에 성공했습니다.',
-  //       data: 'string',
-  //     });
-  //   }, 300);
-  // });
 };
 
 // GET /v1/planners/flames?startDate={startDate}&endDate={endDate}
@@ -195,17 +169,4 @@ export const deletePlanner = async (
     `/v1/planners/${plannerId}`
   );
   return response.data;
-
-  // 목 데이터
-  // return new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     console.log('플래너 삭제:', plannerId);
-  //     resolve({
-  //       status: 200,
-  //       code: 'SUCCESS',
-  //       message: '요청에 성공했습니다.',
-  //       data: 'string',
-  //     });
-  //   }, 300);
-  // });
 };
