@@ -33,21 +33,18 @@ export const getUser = async (): Promise<GetUserResponse> => {
     const response = await axiosInstance.get<GetUserResponse>('/v1/users/me');
     return response.data;
   } catch (error: any) {
-    // 404 에러 시 목 데이터 사용 (개발 중)
-    if (error.response?.status === 404) {
-      console.warn('⚠️ API 엔드포인트가 준비되지 않아 목 데이터를 사용합니다.');
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve({
-            status: 200,
-            code: 'SUCCESS',
-            message: '요청에 성공했습니다.',
-            data: createMockUserData(),
-          });
-        }, 300);
-      });
-    }
-    throw error;
+    // 모든 에러 시 목 데이터 사용 (개발 중)
+    console.warn('⚠️ 사용자 정보 API 오류로 목 데이터를 사용합니다.');
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          status: 200,
+          code: 'SUCCESS',
+          message: '요청에 성공했습니다.',
+          data: createMockUserData(),
+        });
+      }, 300);
+    });
   }
 };
 

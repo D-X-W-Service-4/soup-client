@@ -18,14 +18,26 @@ const createMockPlannerData = (): PlannerData => {
   return {
     plannerId: 55,
     date: today,
-    flame: true,
-    feedback: 'GOOD',
+    flame: false,
+    feedback: 'NEUTRAL',
     items: [
       {
         plannerItemId: 101,
         content: '알고리즘 문제 2개 풀기',
-        checked: true,
+        checked: false,
         duration: 1.5,
+      },
+      {
+        plannerItemId: 102,
+        content: '자료구조 복습 - 스택, 큐',
+        checked: false,
+        duration: 2.0,
+      },
+      {
+        plannerItemId: 103,
+        content: '데이터베이스 과제 제출',
+        checked: false,
+        duration: 1.0,
       },
     ],
     createdAt: new Date().toISOString(),
@@ -35,46 +47,60 @@ const createMockPlannerData = (): PlannerData => {
 
 // GET /v1/planners?date={date}
 export const getPlanner = async (date: string): Promise<GetPlannerResponse> => {
-  const response = await axiosInstance.get<GetPlannerResponse>(
-    `/v1/planners?date=${date}`
-  );
-  return response.data;
+  try {
+    const response = await axiosInstance.get<GetPlannerResponse>(
+      `/v1/planners?date=${date}`
+    );
+    return response.data;
+  } catch (error: any) {
+    // 404는 플래너가 없는 것이므로 에러를 throw
+    if (error.response?.status === 404) {
+      throw error;
+    }
 
-  // 목 데이터
-  // return new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     resolve({
-  //       status: 200,
-  //       code: 'SUCCESS',
-  //       message: '요청에 성공했습니다.',
-  //       data: createMockPlannerData(),
-  //     });
-  //   }, 500);
-  // });
+    // 그 외 모든 에러 시 목 데이터 사용 (개발 중)
+    console.warn('⚠️ 플래너 조회 API 오류로 목 데이터를 사용합니다.');
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          status: 200,
+          code: 'SUCCESS',
+          message: '요청에 성공했습니다.',
+          data: createMockPlannerData(),
+        });
+      }, 300);
+    });
+  }
 };
 
 // POST /v1/planners
 export const createPlanner = async (
   request: CreatePlannerRequest
 ): Promise<CreatePlannerResponse> => {
-  const response = await axiosInstance.post<CreatePlannerResponse>(
-    '/v1/planners',
-    request
-  );
-  return response.data;
-
-  // 목 데이터
-  // return new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     console.log('플래너 생성:', request);
-  //     resolve({
-  //       status: 200,
-  //       code: 'SUCCESS',
-  //       message: '요청에 성공했습니다.',
-  //       data: createMockPlannerData(),
-  //     });
-  //   }, 500);
-  // });
+  try {
+    const response = await axiosInstance.post<CreatePlannerResponse>(
+      '/v1/planners',
+      request
+    );
+    return response.data;
+  } catch (error: any) {
+    // Network Error, 500, 404 에러 등 모든 에러 시 목 데이터 사용 (개발 중)
+    console.warn(
+      '⚠️ 플래너 생성 API 오류로 목 데이터를 사용합니다.',
+      error.message || error.response?.data
+    );
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        console.log('플래너 생성 (목 데이터):', request);
+        resolve({
+          status: 200,
+          code: 'SUCCESS',
+          message: '요청에 성공했습니다.',
+          data: createMockPlannerData(),
+        });
+      }, 300);
+    });
+  }
 };
 
 // PATCH /v1/planners/{plannerId}/feedback
@@ -132,37 +158,33 @@ export const getPlannerFlames = async (
   startDate: string,
   endDate: string
 ): Promise<GetPlannerFlamesResponse> => {
-  const response = await axiosInstance.get<GetPlannerFlamesResponse>(
-    `/v1/planners/flames?startDate=${startDate}&endDate=${endDate}`
-  );
-  return response.data;
-
-  // 목 데이터
-  // return new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     resolve({
-  //       status: 200,
-  //       code: 'SUCCESS',
-  //       message: '요청에 성공했습니다.',
-  //       data: {
-  //         flames: [
-  //           {
-  //             date: '2025-11-10',
-  //             flame: true,
-  //           },
-  //           {
-  //             date: '2025-11-09',
-  //             flame: true,
-  //           },
-  //           {
-  //             date: '2025-11-08',
-  //             flame: false,
-  //           },
-  //         ],
-  //       },
-  //     });
-  //   }, 500);
-  // });
+  try {
+    const response = await axiosInstance.get<GetPlannerFlamesResponse>(
+      `/v1/planners/flames?startDate=${startDate}&endDate=${endDate}`
+    );
+    return response.data;
+  } catch (error: any) {
+    // 404 에러나 500 에러 시 목 데이터 사용
+    if (error.response?.status === 404 || error.response?.status === 500) {
+      console.warn('⚠️ 플래너 불꽃 API 오류로 목 데이터를 사용합니다.');
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({
+            status: 200,
+            code: 'SUCCESS',
+            message: '요청에 성공했습니다.',
+            data: {
+              flames: [
+                { date: startDate, flame: true },
+                { date: endDate, flame: false },
+              ],
+            },
+          });
+        }, 300);
+      });
+    }
+    throw error;
+  }
 };
 
 // DELETE /v1/planners/{plannerId}

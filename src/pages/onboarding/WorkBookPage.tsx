@@ -5,6 +5,10 @@ import { useNavigate } from 'react-router-dom';
 import WorkBook from '../../components/WorkBook.tsx';
 import { useState } from 'react';
 import WorkbooksModal from '../../components/WorkbooksModal.tsx';
+import { useUserStore } from '../../stores/userStore.ts';
+import { signUp } from '../../apis/userAPI.ts';
+import { createLevelTest } from '../../apis/levelTestAPI.ts';
+import subjectUnits from '../levelTest/SubjectUnits.ts';
 
 const WorkBookPage = () => {
   const navigate = useNavigate();
@@ -13,11 +17,70 @@ const WorkBookPage = () => {
   );
   const count = workbooks.length;
   const [isWorkBookOpen, setIsWorkBookOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { grade, term, lastStudiedUnit, studyHours } = useUserStore();
+
   const handleRemove = (id: number) => {
     setWorkbooks((prev) => prev.filter((workbook) => workbook.id !== id));
   };
   const handleRemoveAll = () => {
     setWorkbooks([]);
+  };
+
+  const handleSave = async () => {
+    try {
+      setIsSubmitting(true);
+
+      const selectedUnit = subjectUnits.find(
+        (unit) => unit.name === lastStudiedUnit
+      );
+      if (!selectedUnit) {
+        alert('단원 정보를 찾을 수 없습니다.');
+        return;
+      }
+
+      const termNumber = term === '1학기' ? 1 : 2;
+      const studyHoursNumber = parseFloat(studyHours) || 0;
+      const workbookNames = workbooks.map((wb) => wb.title);
+
+      console.log('회원가입 요청:', {
+        grade,
+        term: termNumber,
+        lastSubjectUnitId: selectedUnit.subjectUnitId,
+        studyHours: studyHoursNumber,
+        workbooks: workbookNames,
+      });
+
+      await signUp({
+        grade,
+        term: termNumber,
+        lastSubjectUnitId: selectedUnit.subjectUnitId,
+        studyHours: studyHoursNumber,
+        workbooks: workbookNames,
+      });
+
+      console.log('회원가입 성공! 수준테스트 생성 중...');
+
+      const levelTestResponse = await createLevelTest({
+        isInitialTest: true,
+        subjectUnitIds: [selectedUnit.subjectUnitId],
+      });
+
+      console.log('수준테스트 생성 완료:', levelTestResponse);
+
+      navigate(
+        `/level-test/start?testId=${levelTestResponse.data.levelTestId}`
+      );
+    } catch (error: any) {
+      console.error('온보딩 처리 중 오류 발생:', error);
+      alert(
+        error.response?.data?.message ||
+          '온보딩 처리 중 오류가 발생했습니다. 다시 시도해주세요.'
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   return (
     <div className="inline-flex h-[834px] w-[1194px] flex-col items-center justify-start gap-12 bg-primary-bg px-36 py-4">
@@ -95,13 +158,16 @@ const WorkBookPage = () => {
         </div>
         <div
           className="flex flex-col items-start justify-start gap-2.5 self-stretch"
-          onClick={() => navigate('/onboarding/success')}
+          onClick={handleSave}
         >
-          <div className="inline-flex items-center justify-center gap-2.5 self-stretch rounded-lg bg-primary px-5 py-3">
+          <button
+            className="inline-flex items-center justify-center gap-2.5 self-stretch rounded-lg bg-primary px-5 py-3 disabled:opacity-50"
+            disabled={isSubmitting}
+          >
             <div className="justify-start text-base leading-normal font-medium text-white">
-              이대로 저장할래요
+              {isSubmitting ? '처리 중...' : '이대로 저장할래요'}
             </div>
-          </div>
+          </button>
         </div>
       </div>
       {isWorkBookOpen && (
