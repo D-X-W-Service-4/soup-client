@@ -17,6 +17,15 @@ export interface SubjectUnitDto {
 // 문제 정보
 export interface QuestionDto {
   questionId: string;
+  filename: string;
+  subjectUnit: SubjectUnitDto;
+  difficulty: number;
+  topic: string;
+  questionType: string;
+  questionFormat: string;
+  text: string;
+  answer: string;
+  answerText: string;
 }
 
 // 사용자별 문제 정보

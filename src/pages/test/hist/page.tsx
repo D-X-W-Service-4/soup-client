@@ -125,7 +125,7 @@ export default function TestHistoryPage() {
                       score={test.score}
                       totalQuestions={test.totalQuestionCount}
                       correctAnswers={test.correctCount}
-                      timeTaken={`${test.timeLimit}`}
+                      timeTaken="0"
                       timeGiven={`${test.timeLimit}`}
                     />
                   ))}

@@ -8,7 +8,7 @@ export interface LevelTestQuestionDto {
   question: QuestionDto;
   isCorrect: boolean;
   userAnswer: string;
-  descriptiveImagePath: string;
+  descriptiveImageUrl: string;
   isTimeout: boolean;
   essayTypeScore: number;
   essayTypeScoreText: string;

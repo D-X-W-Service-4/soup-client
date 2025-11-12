@@ -118,7 +118,7 @@ export default function TestResultPage() {
                         isCorrect={q.isCorrect}
                         isStarred={false}
                         createdAt={data.createdAt}
-                        difficulty="medium"
+                        difficulty={q.question.difficulty}
                       />
                     ))}
                 </div>

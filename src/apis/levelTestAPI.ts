@@ -37,8 +37,8 @@ const createMockLevelTestDetail = (): LevelTestDetailDto => {
       {
         subjectUnitId: 5,
         grade: 'M2',
-        term: 1,
-        unitName: '정수와 유리수의 덧셈과 뺄셈',
+        unitNumber: '1-1',
+        name: '정수와 유리수의 덧셈과 뺄셈',
       },
     ],
     levelTestQuestions: [
@@ -46,19 +46,25 @@ const createMockLevelTestDetail = (): LevelTestDetailDto => {
         levelTestQuestionId: 101,
         questionNumber: 3,
         question: {
-          questionId: 1,
+          questionId: 'M1_1_01_00041_42236',
+          filename: 'string',
           subjectUnit: {
             subjectUnitId: 5,
+            name: '정수와 유리수 - 정수와 유리수의 덧셈과 뺄셈',
             grade: 'M2',
-            term: 1,
-            unitName: '정수와 유리수의 덧셈과 뺄셈',
+            unitNumber: '1-1',
           },
-          questionImagePath: '/images/questions/q1.png',
-          solutionImagePath: '/images/solutions/s1.png',
+          difficulty: 0,
+          topic: 'string',
+          questionType: 'string',
+          questionFormat: 'string',
+          text: 'string',
+          answer: 'string',
+          answerText: 'string',
         },
         isCorrect: true,
         userAnswer: 'F = ma',
-        descriptiveImagePath: 'https://example.com/uploads/answers/12345.png',
+        descriptiveImageUrl: 'https://example.com/uploads/answers/12345.png',
         isTimeout: true,
         essayTypeScore: 5,
         essayTypeScoreText: '핵심 개념을 잘 설명했습니다.',
@@ -71,23 +77,39 @@ const createMockLevelTestDetail = (): LevelTestDetailDto => {
 
 // GET /v1/level-tests
 export const getLevelTests = async (): Promise<GetLevelTestsResponse> => {
-  const response =
-    await axiosInstance.get<GetLevelTestsResponse>('/v1/level-tests');
-  return response.data;
-
-  // 목 데이터
-  // return new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     resolve({
-  //       status: 200,
-  //       code: 'SUCCESS',
-  //       message: '요청에 성공했습니다.',
-  //       data: {
-  //         levelTests: [createMockLevelTestSummary()],
-  //       },
-  //     });
-  //   }, 500);
-  // });
+  try {
+    const response =
+      await axiosInstance.get<GetLevelTestsResponse>('/v1/level-tests');
+    return response.data;
+  } catch (error: any) {
+    console.warn('레벨 테스트 목록 조회 API 오류로 목 데이터를 사용합니다.');
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          status: 200,
+          code: 'SUCCESS',
+          message: '요청에 성공했습니다.',
+          data: {
+            levelTests: [
+              createMockLevelTestSummary(),
+              {
+                ...createMockLevelTestSummary(),
+                levelTestId: 16,
+                score: 90,
+                correctCount: 9,
+              },
+              {
+                ...createMockLevelTestSummary(),
+                levelTestId: 17,
+                score: 70,
+                correctCount: 7,
+              },
+            ],
+          },
+        });
+      }, 500);
+    });
+  }
 };
 
 // POST /v1/level-tests
@@ -99,19 +121,6 @@ export const createLevelTest = async (
     request
   );
   return response.data;
-
-  // 목 데이터
-  // return new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     console.log('레벨 테스트 생성:', request);
-  //     resolve({
-  //       status: 200,
-  //       code: 'SUCCESS',
-  //       message: '요청에 성공했습니다.',
-  //       data: createMockLevelTestDetail(),
-  //     });
-  //   }, 500);
-  // });
 };
 
 // POST /v1/level-tests/{levelTestId}/grade
@@ -124,39 +133,28 @@ export const gradeLevelTest = async (
     request
   );
   return response.data;
-
-  // 목 데이터
-  // return new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     console.log('레벨 테스트 채점:', levelTestId, request);
-  //     resolve({
-  //       status: 200,
-  //       code: 'SUCCESS',
-  //       message: '요청에 성공했습니다.',
-  //       data: 'string',
-  //     });
-  //   }, 500);
-  // });
 };
 
 // GET /v1/level-tests/{levelTestId}
 export const getLevelTestDetail = async (
   levelTestId: number
 ): Promise<GetLevelTestDetailResponse> => {
-  const response = await axiosInstance.get<GetLevelTestDetailResponse>(
-    `/v1/level-tests/${levelTestId}`
-  );
-  return response.data;
-
-  // 목 데이터
-  // return new Promise((resolve) => {
-  //   setTimeout(() => {
-  //     resolve({
-  //       status: 200,
-  //       code: 'SUCCESS',
-  //       message: '요청에 성공했습니다.',
-  //       data: createMockLevelTestDetail(),
-  //     });
-  //   }, 500);
-  // });
+  try {
+    const response = await axiosInstance.get<GetLevelTestDetailResponse>(
+      `/v1/level-tests/${levelTestId}`
+    );
+    return response.data;
+  } catch (error: any) {
+    console.warn('레벨 테스트 상세 조회 API 오류로 목 데이터를 사용합니다.');
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({
+          status: 200,
+          code: 'SUCCESS',
+          message: '요청에 성공했습니다.',
+          data: createMockLevelTestDetail(),
+        });
+      }, 500);
+    });
+  }
 };
