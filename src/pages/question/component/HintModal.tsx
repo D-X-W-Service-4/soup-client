@@ -1,7 +1,4 @@
-import { useState, useEffect } from 'react';
-import IconRightArrow from '../../../assets/svgs/IconRightArrow.tsx';
 import IconHint_sm from '../../../assets/svgs/IconHint_sm.tsx';
-import Button from '../../../components/Button.tsx';
 import IconX_Red from '../../../assets/svgs/IconX_Red.tsx';
 
 type HintModalProps = {
@@ -11,28 +8,12 @@ type HintModalProps = {
 };
 
 const HintModal = ({ isOpen, onClose, hints }: HintModalProps) => {
-  const [currentHintIndex, setCurrentHintIndex] = useState(0);
-
-  useEffect(() => {
-    if (isOpen) setCurrentHintIndex(0);
-  }, [isOpen]);
-
   if (!isOpen) return null;
 
-  const hintCount = Array.isArray(hints) ? hints.length : 0;
   const currentHint =
-    hintCount > 0 ? hints[currentHintIndex] : '등록된 힌트가 없습니다.';
-  const isLastHint = currentHintIndex === Math.max(0, hintCount - 1);
-  const isFirstHint = currentHintIndex === 0;
-
-  const handleNextHint = () => {
-    if (currentHintIndex < hintCount - 1) setCurrentHintIndex((p) => p + 1);
-    else onClose();
-  };
-
-  const handlePreviousHint = () => {
-    if (!isFirstHint) setCurrentHintIndex((p) => p - 1);
-  };
+    Array.isArray(hints) && hints.length > 0
+      ? hints[0]
+      : '등록된 힌트가 없습니다.';
 
   return (
     <div className="inline-flex h-60 w-60 flex-col justify-between overflow-hidden rounded-[20px] bg-white px-5 py-6 shadow-[0px_2px_10px_0px_rgba(0,0,0,0.05)]">
@@ -54,49 +35,21 @@ const HintModal = ({ isOpen, onClose, hints }: HintModalProps) => {
 
       {/* 힌트 내용 */}
       <div className="mb-4 flex flex-col gap-3">
-        <div className="text-xs font-bold text-black">
-          힌트 {currentHintIndex + 1}
-        </div>
+        <div className="text-xs font-bold text-black">힌트</div>
         <div
           className="text-sm leading-tight font-medium text-black"
           dangerouslySetInnerHTML={{ __html: currentHint }}
         />
       </div>
 
-      {/* 하단 버튼 영역 */}
-      <div className="flex w-full items-center justify-end gap-8">
-        {!isFirstHint && (
-          <Button
-            type="button"
-            onClick={handlePreviousHint}
-            size="large"
-            variant="white"
-          >
-            <div className="flex items-center gap-2">
-              <IconRightArrow className="h-3.5 w-3.5 rotate-180 text-secondary" />
-              <span className="text-xs font-medium text-secondary">이전</span>
-            </div>
-          </Button>
-        )}
-        <Button
-          type="button"
-          onClick={handleNextHint}
-          size="large"
-          variant="white"
-          disabled={hintCount === 0}
-        >
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-secondary">
-              {isLastHint ? '닫기' : '다음'}
-            </span>
-            <IconRightArrow
-              className={`h-3.5 w-3.5 text-secondary transition-opacity duration-200 ${
-                isLastHint ? 'opacity-0' : 'opacity-100'
-              }`}
-            />
-          </div>
-        </Button>
-      </div>
+      {/* 닫기 버튼 */}
+      <button
+        type="button"
+        onClick={onClose}
+        className="flex w-full items-center justify-center rounded-lg bg-gray-100 py-2 text-xs font-medium text-secondary transition hover:bg-gray-200"
+      >
+        닫기
+      </button>
     </div>
   );
 };
