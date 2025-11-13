@@ -1,4 +1,4 @@
-import CharacterLogo from '../../assets/Character.svg';
+import CharacterLogo from '../../assets/logo/Character.svg';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 const LoginSuccessPage = () => {

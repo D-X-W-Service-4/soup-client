@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useModalStore } from '../stores/modalStore';
 import { useAuthStore } from '../stores/authStore';
 import { useState } from 'react';
-import Logotype from '../assets/LogoType.svg';
+import Logotype from '../assets/logo/LogoType.svg';
 
 type sideBarProps = {
   isOpen: boolean;

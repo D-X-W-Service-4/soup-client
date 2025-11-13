@@ -222,7 +222,7 @@ export default function StudyPage() {
   const questionFormat = currentQuestion?.questionFormat;
 
   return (
-    <div className="relative flex h-screen w-full flex-col items-center justify-start bg-primary-bg">
+    <div className="relative flex h-screen w-full touch-none flex-col items-center justify-start bg-primary-bg select-none">
       <QuestionBar
         totalQuestions={TOTAL_QUESTIONS}
         current={current}
