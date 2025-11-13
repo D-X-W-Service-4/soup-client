@@ -8,6 +8,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/ko';
 import type { PlannerData } from '../../../types/planner';
 import { Icon } from '@iconify/react';
+import CharacterLogo from '../../../assets/logo/Character.svg';
 
 dayjs.locale('ko');
 
@@ -134,7 +135,7 @@ export default function Planner({
     return (
       <div className="flex h-full flex-col items-center justify-center gap-2.5 rounded-[20px] bg-white">
         <img
-          src="/src/assets/logo/Logo.png"
+          src={CharacterLogo}
           alt="로고"
           width={157}
           height={157}
