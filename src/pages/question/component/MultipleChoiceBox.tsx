@@ -19,7 +19,6 @@ export default function MultipleChoiceBox({
 
   useEffect(() => {
     const saved = answers[questionId];
-
     if (saved && saved.trim() !== '' && saved !== '[]') {
       try {
         const paths = JSON.parse(saved);

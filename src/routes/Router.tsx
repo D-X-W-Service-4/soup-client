@@ -1,4 +1,5 @@
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import NicknamePage from '../pages/onboarding/NicknamePage.tsx';
 import StudyInfoPage from '../pages/onboarding/StudyInfoPage.tsx';
 import WorkBookPage from '../pages/onboarding/WorkBookPage.tsx';
@@ -12,15 +13,55 @@ import HomePage from '../pages/home/page.tsx';
 import TestResultPage from '../pages/test/result/page.tsx';
 import TestHistoryPage from '../pages/test/hist/page.tsx';
 import ReviewPage from '../pages/review/page.tsx';
-import { useAuthStore } from '../stores/authStore.ts';
+import { useAuthStore } from '../stores/UseAuthorStore.ts';
 import CallbackPage from '../pages/login/CallbackPage.tsx';
+import axiosInstance from '../apis/axiosInstance';
 
 const RootRedirect = () => {
-  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-  return isLoggedIn ? (
-    <HomePage />
+  const accessToken = useAuthStore((state) => state.accessToken);
+  const clearToken = useAuthStore((state) => state.clearToken);
+  const [isValidating, setIsValidating] = useState(true);
+  const [isValid, setIsValid] = useState(false);
+
+  useEffect(() => {
+    const validateToken = async () => {
+      if (!accessToken) {
+        setIsValidating(false);
+        setIsValid(false);
+        return;
+      }
+
+      try {
+        // 토큰 유효성 검증을 위해 간단한 API 호출
+        await axiosInstance.get('/v1/users/me');
+        setIsValid(true);
+      } catch (error: any) {
+        // 토큰이 유효하지 않으면 제거
+        console.warn(
+          '저장된 토큰이 유효하지 않습니다. 로그인 페이지로 이동합니다.'
+        );
+        clearToken();
+        setIsValid(false);
+      } finally {
+        setIsValidating(false);
+      }
+    };
+
+    validateToken();
+  }, [accessToken, clearToken]);
+
+  if (isValidating) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        로딩 중...
+      </div>
+    );
+  }
+
+  return isValid ? (
+    <Navigate to="/home" replace />
   ) : (
-    <Navigate to="/onboarding/nickname" replace />
+    <Navigate to="/login" replace />
   );
 };
 

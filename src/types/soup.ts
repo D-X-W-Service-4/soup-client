@@ -3,6 +3,6 @@ export const SOUP = [
   'CORN',
   'MUSHROOM',
   'PUMPKIN',
-  'SWEETPOTATO',
+  'SWEET_POTATO',
 ] as const;
 export type SoupLevel = (typeof SOUP)[number];

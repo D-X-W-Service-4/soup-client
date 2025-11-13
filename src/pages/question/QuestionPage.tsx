@@ -1,6 +1,8 @@
+// src/pages/QuestionPage/QuestionPage.tsx
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../apis/axiosInstance.ts';
 import { useNavigate, useLocation } from 'react-router-dom';
+
 import QuestionBar from './component/QuestionBar.tsx';
 import HintBar from './component/HintBar.tsx';
 import WarningBox from './component/WarningBox.tsx';
@@ -10,171 +12,218 @@ import QuestionDisplay from './component/QuestionDisplay.tsx';
 import EssayAnswerBox from './component/EssayAnswerBox.tsx';
 import MultipleChoiceBox from './component/MultipleChoiceBox.tsx';
 import OptionList from './component/OptionList.tsx';
-import type { Option } from './component/OptionList.tsx';
 import HintModal from './component/HintModal.tsx';
-import { fetchQuestionById } from '../../apis/questionAPI.tsx';
-import type { QuestionData } from '../../apis/questionAPI.tsx';
-import { useAuthStore } from '../../stores/authStore.ts';
+
+import { useAnswerStore } from '../../stores/useAnswerStore.ts';
+import { uploadImageToS3_GET } from '../../utils/uploadToS3';
+
+declare global {
+  interface Window {
+    saveEssayAnswer?: (id: number) => Promise<void>;
+  }
+}
 
 const TOTAL_QUESTIONS = 2;
 
 export default function QuestionPage() {
   const [current, setCurrent] = useState(1);
-  const [question, setQuestion] = useState<QuestionData | null>(null);
+  const [questions, setQuestions] = useState<any[]>([]);
   const [solved, setSolved] = useState<number[]>([]);
   const [isHintModalOpen, setIsHintModalOpen] = useState(false);
-  const [testInfo, setTestInfo] = useState<{ timeLimit: number } | null>(null);
-  const navigate = useNavigate();
-  const setIsLoggedIn = useAuthStore((state) => state.setIsLoggedIn);
 
+  const [testInfo, setTestInfo] = useState<{
+    timeLimit: number;
+    totalQuestionCount: number;
+  } | null>(null);
+
+  const [levelTestId, setLevelTestId] = useState<number | null>(null);
+
+  const navigate = useNavigate();
   const location = useLocation();
-  const hideToolbar = location.state?.hideToolbar ?? false;
 
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [selectedOptions, setSelectedOptions] = useState<
-    Record<number, Option | null>
+    Record<number, string | null>
   >({});
   const [starred, setStarred] = useState<Record<number, boolean>>({});
 
+  const subjectUnitIds = location.state?.subjectUnitIds ?? [];
+  const hideToolbar = location.state?.hideToolbar ?? false;
+
+  const currentQuestion = questions[current - 1]?.question;
   const answerValue = answers[current] ?? '';
-  const selectedOption = selectedOptions[current] ?? null;
+  const isLast = current === (testInfo?.totalQuestionCount ?? TOTAL_QUESTIONS);
 
-  const isLast = current === TOTAL_QUESTIONS;
+  const hints = currentQuestion?.topic ? [currentQuestion.topic] : [];
 
-  const hints = [
-    '이 문제는 유리수 단원의 문제입니다. 화이팅!',
-    '두 번째 힌트입니다.',
-    '마지막 힌트!',
-  ];
+  const images = useAnswerStore((state) => state.images);
 
   useEffect(() => {
-    const loadTestInfo = async () => {
+    const createLevelTest = async () => {
       try {
-        const res = await axios.get(
-          'http://13.125.158.205:8080/api/leveltest/info' // API 연결시 리뷰 반영해서 수정예정
-        );
-        setTestInfo(res.data);
+        useAnswerStore.getState().clearAll();
+
+        const res = await axiosInstance.post('/v1/level-tests', {
+          isInitialTest: hideToolbar,
+          subjectUnitIds,
+        });
+
+        const data = res.data.data;
+        setLevelTestId(data.levelTestId);
+        setQuestions(data.levelTestQuestions || []);
+
+        const raw = data.timeLimit ?? 30;
+        const cnt = data.totalQuestionCount ?? TOTAL_QUESTIONS;
+
+        setTestInfo({
+          timeLimit: raw > 180 ? Math.floor(raw / 60) : raw,
+          totalQuestionCount: cnt,
+        });
       } catch (e) {
-        console.error('시험 정보 로드 실패:', e);
-        setTestInfo({ timeLimit: 30 });
+        console.error('레벨 테스트 생성 실패:', e);
+        setTestInfo({ timeLimit: 30, totalQuestionCount: TOTAL_QUESTIONS });
       }
     };
-    loadTestInfo();
-  }, []);
 
-  const handleTimeUp = () => {
-    alert('시간이 종료되어 자동 제출됩니다.');
-    handleSubmit();
-  };
+    createLevelTest();
+  }, [hideToolbar, subjectUnitIds]);
 
   useEffect(() => {
-    const loadQuestion = async () => {
-      try {
-        const q = await fetchQuestionById(current);
-        setQuestion(q);
-      } catch (e) {
-        console.error('문제 로드 중 오류:', e);
-        setQuestion(null);
-      }
-    };
-    loadQuestion();
-  }, [current]);
+    if (!testInfo) return;
+    const total = testInfo.totalQuestionCount;
+    const list: number[] = [];
 
-  useEffect(() => {
-    const newSolved: number[] = [];
-    for (let q = 1; q <= TOTAL_QUESTIONS; q++) {
-      const hasEssay = (answers[q]?.trim().length ?? 0) > 0;
-      const hasObjective = !!selectedOptions[q];
-      if (hasEssay || hasObjective) newSolved.push(q);
-    }
-    setSolved(newSolved);
-  }, [answers, selectedOptions]);
-
-  const handleSelect = (qNum: number) => {
-    if (qNum >= 1 && qNum <= TOTAL_QUESTIONS) setCurrent(qNum);
-  };
-
-  const handleOptionSelect = (option: Option | null) => {
-    setSelectedOptions((prev) => ({ ...prev, [current]: option }));
-  };
-
-  const handleToggleStar = () => {
-    setStarred((prev) => ({ ...prev, [current]: !prev[current] }));
-  };
-
-  const handleHintModal = () => setIsHintModalOpen((prev) => !prev);
-
-  const handleSubmit = () => {
-    const submissionData = [];
-
-    for (let qNum = 1; qNum <= TOTAL_QUESTIONS; qNum++) {
-      const essayAnswer = answers[qNum];
-      const selected = selectedOptions[qNum];
-
-      if (essayAnswer) {
-        submissionData.push({
-          questionId: qNum,
-          type: 'answer',
-          text: essayAnswer,
-        });
-      } else if (selected) {
-        submissionData.push({
-          questionId: qNum,
-          type: 'answer',
-          text: selected.text,
-        });
+    for (let i = 1; i <= total; i++) {
+      if ((answers[i]?.trim().length ?? 0) > 0 || selectedOptions[i]) {
+        list.push(i);
       }
     }
+    setSolved(list);
+  }, [answers, selectedOptions, testInfo]);
 
-    console.log('제출 데이터:', submissionData);
-    alert('모든 문제를 제출했습니다!');
+  const handleSelect = async (target: number) => {
+    if (!testInfo) return;
 
-    if (hideToolbar) {
-      setIsLoggedIn(true);
+    const total = testInfo.totalQuestionCount;
+    if (target < 1 || target > total) return;
+
+    if (
+      currentQuestion?.questionFormat === '단답형' &&
+      window.saveEssayAnswer
+    ) {
+      await window.saveEssayAnswer(current);
+    }
+
+    setCurrent(target);
+  };
+
+  const handleSubmit = async () => {
+    if (!testInfo || !levelTestId) return;
+
+    if (
+      currentQuestion?.questionFormat === '단답형' &&
+      window.saveEssayAnswer
+    ) {
+      await window.saveEssayAnswer(current);
+    }
+
+    const total = testInfo.totalQuestionCount;
+    const submission: any[] = [];
+
+    for (let q = 1; q <= total; q++) {
+      const essay = answers[q];
+      const option = selectedOptions[q];
+      const qData = questions[q - 1];
+
+      const questionId = qData?.question?.questionId;
+      const levelTestQuestionId = qData?.levelTestQuestionId;
+
+      if (!questionId) continue;
+
+      if (essay) {
+        let finalUrl = null;
+        const base64 = images[q];
+
+        if (base64) {
+          const fileName = `descriptions/leveltest_${levelTestId}_${levelTestQuestionId}.png`;
+          finalUrl = await uploadImageToS3_GET(base64, fileName);
+        }
+
+        submission.push({
+          questionId,
+          userAnswer: essay,
+          descriptiveImageUrl: finalUrl,
+        });
+
+        continue;
+      }
+
+      if (option) {
+        submission.push({
+          questionId,
+          userAnswer: `${option}`,
+          descriptiveImageUrl: null,
+        });
+      }
+    }
+
+    console.log('제출 데이터:', submission);
+
+    try {
+      await axiosInstance.post(`/v1/level-tests/${levelTestId}/grade`, {
+        answers: submission,
+      });
+
+      alert('제출 완료!');
       navigate('/home');
-    } else {
-      navigate('/result');
+    } catch (e) {
+      console.error('제출 실패:', e);
+      alert('제출 중 오류 발생');
     }
   };
 
-  const isAllSolved = solved.length === TOTAL_QUESTIONS;
-  return (
-    <div className="relative flex h-screen w-full flex-col items-center justify-start bg-primary-bg">
-      <QuestionBar
-        totalQuestions={TOTAL_QUESTIONS}
-        current={current}
-        solved={solved}
-        onSelect={handleSelect}
-        showTimer={true}
-        timeLimit={testInfo?.timeLimit ?? 30}
-        onTimeUp={handleTimeUp}
-      />
+  const isAllSolved =
+    solved.length === (testInfo?.totalQuestionCount ?? TOTAL_QUESTIONS);
 
-      <div className="relative flex h-[calc(100vh-80px)] w-full flex-1 flex-row items-start justify-start gap-5 p-10">
+  const imageUrl = currentQuestion?.filename
+    ? `${import.meta.env.VITE_S3_BASE_URL}${currentQuestion.filename}`
+    : null;
+
+  return (
+    <div className="relative flex h-screen w-full flex-col bg-primary-bg">
+      {testInfo && (
+        <QuestionBar
+          totalQuestions={testInfo.totalQuestionCount}
+          current={current}
+          solved={solved}
+          onSelect={handleSelect}
+          timeLimit={testInfo.timeLimit}
+          showTimer={true}
+          onTimeUp={handleSubmit}
+        />
+      )}
+
+      <div className="relative flex h-[calc(100vh-80px)] w-full flex-row gap-5 p-10">
         {!hideToolbar && (
-          <div className="absolute bottom-10 left-8 z-50">
+          <div className="absolute bottom-10 left-8 z-100">
             <HintBar
               hints={hints}
-              onOpenHintModal={handleHintModal}
+              onOpenHintModal={() => setIsHintModalOpen(true)}
               isHintModalOpen={isHintModalOpen}
               isStarred={!!starred[current]}
-              onToggleStar={handleToggleStar}
+              onToggleStar={() =>
+                setStarred((p) => ({ ...p, [current]: !p[current] }))
+              }
             />
           </div>
         )}
 
-        <div className="ml-20 flex h-full flex-1 flex-col items-center justify-start gap-6">
+        <div className="ml-20 flex flex-1 flex-col gap-6">
           <div className="w-full flex-[0.4]">
-            {question ? (
+            {currentQuestion ? (
               <QuestionDisplay
-                imageUrl={
-                  question.contents?.endsWith('.png') ? question.contents : null
-                }
-                textContent={
-                  !question.contents?.endsWith('.png')
-                    ? question.contents || ''
-                    : ''
-                }
+                imageUrl={imageUrl}
+                textContent={currentQuestion.text}
               />
             ) : (
               <div className="text-center text-lg text-gray-400">
@@ -183,8 +232,8 @@ export default function QuestionPage() {
             )}
           </div>
 
-          <div className="h-full w-full flex-1">
-            {question?.type === '단답형' ? (
+          <div className="w-full flex-1">
+            {currentQuestion?.questionFormat === '단답형' ? (
               <EssayAnswerBox questionId={current} />
             ) : (
               <MultipleChoiceBox questionId={current} />
@@ -203,37 +252,40 @@ export default function QuestionPage() {
             </div>
           )}
 
-          {question?.type === '객관식' && (
+          {currentQuestion?.questionFormat === '선택형' && (
             <OptionList
               options={[
-                { id: 1, text: '①  4' },
-                { id: 2, text: '②  6' },
-                { id: 3, text: '③  7' },
-                { id: 4, text: '④  8' },
-                { id: 5, text: '⑤  9' },
+                { id: 1, text: '' },
+                { id: 2, text: '' },
+                { id: 3, text: '' },
+                { id: 4, text: '' },
               ]}
-              selectedOption={selectedOption}
-              onSelect={handleOptionSelect}
+              selectedOptionId={
+                selectedOptions[current]
+                  ? Number(selectedOptions[current])
+                  : null
+              }
+              onSelect={(v) =>
+                setSelectedOptions((p) => ({ ...p, [current]: v }))
+              }
               isHintOpen={isHintModalOpen}
             />
           )}
 
           <div className="mt-auto flex w-full flex-col items-end gap-10">
-            {question?.type === '단답형' && (
+            {currentQuestion?.questionFormat === '단답형' && (
               <>
-                <WarningBox>
-                  원활한 채점을 위해 답안을 <br /> 정확히 작성해 주세요.
-                </WarningBox>
+                <WarningBox>정확하게 작성해주세요.</WarningBox>
                 <AnswerInput
                   value={answerValue}
-                  onAnswerChange={(val) =>
-                    setAnswers((prev) => ({ ...prev, [current]: val }))
+                  onAnswerChange={(v) =>
+                    setAnswers((p) => ({ ...p, [current]: v }))
                   }
                 />
               </>
             )}
 
-            <div className="flex w-full flex-row items-center gap-7">
+            <div className="flex w-full gap-7">
               <QuestionPageButton
                 direction="prev"
                 label="이전"

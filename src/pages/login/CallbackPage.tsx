@@ -19,6 +19,8 @@ export default function CallbackPage() {
       navigate('/onboarding/nickname', { replace: true });
     } else if (type === 'SUCCESS') {
       navigate('/home', { replace: true });
+    } else if (type === 'NEED_LEVEL_TEST') {
+      navigate('/onboarding/nickname', { replace: true });
     } else {
       navigate('/login', { replace: true });
     }

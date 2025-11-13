@@ -7,49 +7,24 @@ import Planner from './components/Planner.tsx';
 import PlannerFlameCard, {
   mockFlameData,
 } from './components/PlannerFlameCard.tsx';
-import type { SoupLevel } from '../../types/soup.ts';
 import type { plannerFlameItem } from '../../types/planner.ts';
-
-interface UserInfoResponse {
-  email: string;
-  nickname: string;
-  grade: string;
-  term: number;
-  solvedQuestionCount: number;
-  starredQuestionCount: number;
-  plannerAchievementRate: number;
-  flameRunDateCount: number;
-  soup: SoupLevel;
-}
-
-async function mockUserData(): Promise<UserInfoResponse> {
-  return {
-    email: 'test@example.com',
-    nickname: '황수민',
-    grade: 'M1',
-    term: 2,
-    solvedQuestionCount: 50,
-    starredQuestionCount: 10,
-    plannerAchievementRate: 0.5,
-    flameRunDateCount: 10,
-    soup: 'TOMATO',
-  };
-}
+import type { UserData } from '../../types/user.ts';
+import { getUser } from '../../apis/userAPI.ts';
 
 export default function HomePage() {
   const [isOpen, setIsOpen] = useState(true);
-  const [data, setData] = useState<UserInfoResponse | null>(null);
+  const [data, setData] = useState<UserData | null>(null);
   const [flames, setFlames] = useState<plannerFlameItem[]>([]);
   const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
       try {
-        const [user, flame] = await Promise.all([
-          mockUserData(),
+        const [userResponse, flame] = await Promise.all([
+          getUser(),
           mockFlameData(),
         ]);
-        setData(user);
+        setData(userResponse.data);
         setFlames(flame);
       } catch (err) {
         setErr(err instanceof Error ? err.message : String(err));
@@ -80,7 +55,7 @@ export default function HomePage() {
               />
               <RankingCard
                 soup={data.soup}
-                solvedQuestionCount={data.solvedQuestionCount}
+                consecutiveFlames={data.flameRunDateCount}
               />
               <RunDateCard flameRunDateCount={data.flameRunDateCount} />
             </div>
