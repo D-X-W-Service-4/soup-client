@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useModalStore } from '../stores/modalStore';
 import { useAuthStore } from '../stores/authStore';
 import { useState } from 'react';
+import Logotype from '../assets/LogoType.svg';
 
 type sideBarProps = {
   isOpen: boolean;
@@ -95,11 +96,7 @@ export default function SideBar({ isOpen = true, onToggle }: sideBarProps) {
           className="flex cursor-pointer justify-start px-2"
         >
           {isOpen ? (
-            <img
-              src="/src/assets/logo/Logotype.png"
-              alt="App Logo"
-              className="h-6 w-14"
-            />
+            <img src={Logotype} alt="App Logo" className="h-6 w-14" />
           ) : (
             <Icon
               icon="ic:round-keyboard-arrow-right"
