@@ -68,6 +68,15 @@ export default function HomePage() {
     }
   };
 
+  const handleUserInfoUpdate = async () => {
+    try {
+      const userResponse = await getUser();
+      setData(userResponse.data);
+    } catch (err) {
+      console.error('사용자 정보 갱신 실패:', err);
+    }
+  };
+
   const handleDateClick = async (date: string) => {
     try {
       console.log('날짜 클릭:', date);
@@ -131,6 +140,7 @@ export default function HomePage() {
               planner={planner}
               onPlannerCreated={fetchData}
               onFlameUpdate={handleFlameUpdate}
+              onUserInfoUpdate={handleUserInfoUpdate}
               selectedDate={selectedDate}
             />
           </div>

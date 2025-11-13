@@ -13,8 +13,8 @@ const LABEL_MAP: Record<BadgeVariant, string> = {
 };
 
 function getDifficultyFromNumber(difficulty: number): BadgeVariant {
-  if (difficulty <= 3) return 'easy';
-  if (difficulty <= 6) return 'medium';
+  if (difficulty === 1) return 'easy';
+  if (difficulty === 2) return 'medium';
   return 'hard';
 }
 

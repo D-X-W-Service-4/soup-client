@@ -15,6 +15,7 @@ interface PlannerProps {
   planner: PlannerData | null;
   onPlannerCreated: (newPlanner?: PlannerData) => void;
   onFlameUpdate?: () => void;
+  onUserInfoUpdate?: () => void;
   selectedDate?: string;
 }
 
@@ -22,6 +23,7 @@ export default function Planner({
   planner,
   onPlannerCreated,
   onFlameUpdate,
+  onUserInfoUpdate,
   selectedDate,
 }: PlannerProps) {
   const [isCreating, setIsCreating] = useState(false);
@@ -74,6 +76,10 @@ export default function Planner({
       await updatePlannerItemCheck(itemId, { checked: !currentChecked });
 
       console.log('플래너 항목 체크 업데이트 완료:', itemId, !currentChecked);
+
+      if (onUserInfoUpdate) {
+        onUserInfoUpdate();
+      }
 
       if (updatedPlanner) {
         const allChecked = updatedPlanner.items.every((item) => item.checked);
@@ -209,7 +215,7 @@ export default function Planner({
               <div className="flex items-center gap-1">
                 <Icon icon="basil:clock-outline" className="text-primary" />
                 <p className="mt-1 text-xs font-normal text-neutral-500">
-                  예상 소요 시간: {item.duration}시간
+                  예상 소요 시간: {item.duration}분
                 </p>
               </div>
             </div>

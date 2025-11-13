@@ -57,7 +57,7 @@ export default function UserInfoCard({
           <div className="h-12 w-px bg-secondary-bg" />
           <div className="flex flex-col items-center gap-1">
             <span className="text-2xl font-medium text-primary">
-              {plannerAchievementRate}%
+              {Math.round(plannerAchievementRate * 100)}%
             </span>
             <span className="text-xs font-normal text-secondary">
               일일 달성률
