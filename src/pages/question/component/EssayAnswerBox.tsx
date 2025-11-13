@@ -174,7 +174,12 @@ export default function EssayAnswerBox({ questionId }: EssayAnswerBoxProps) {
             eraserWidth={100}
             width="100%"
             height={`${canvasHeight}px`}
-            style={{ border: 'none', outline: 'none' }}
+            style={{
+              border: 'none',
+              outline: 'none',
+              touchAction: 'none',
+              userSelect: 'none',
+            }}
             canvasColor="transparent"
             className="absolute top-0 left-0"
             allowOnlyPointerType={'pen'}

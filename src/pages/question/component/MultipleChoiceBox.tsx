@@ -136,7 +136,12 @@ export default function MultipleChoiceBox({
               height="1500px"
               onStroke={handleAutoSave}
               allowOnlyPointerType={'pen'}
-              style={{ border: 'none', outline: 'none' }}
+              style={{
+                border: 'none',
+                outline: 'none',
+                touchAction: 'none',
+                userSelect: 'none',
+              }}
             />
           </div>
         </div>
