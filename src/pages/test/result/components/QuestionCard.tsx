@@ -15,7 +15,6 @@ export default function QuestionCard({
     ? 'lets-icons:check-ring'
     : 'lets-icons:close-ring';
   const statusColor = isCorrect ? 'text-lime-500' : 'text-danger';
-  const formattedDate = createdAt ? createdAt.split('T')[0] : '';
 
   return (
     <div className="flex items-center justify-between rounded-md bg-white px-6 py-5 outline outline-1 outline-offset-[-1px] outline-neutral-100">
@@ -37,19 +36,19 @@ export default function QuestionCard({
                 {testName}
               </span>
             )}
-            {tryCount && tryCount > 0 && (
-              <span className="text-xs font-normal text-neutral-500">
-                {tryCount}번 시도
-              </span>
-            )}
+            <span className="text-xs font-normal text-neutral-500">
+              {tryCount}번 시도
+            </span>
           </div>
         </div>
       </div>
       <div className="flex items-center gap-[14px]">
         <DifficultyBadge variant={difficulty} />
-        <span className="text-sm font-medium text-neutral-600">
-          {formattedDate}
-        </span>
+        {createdAt && (
+          <span className="text-sm font-medium text-neutral-600">
+            {createdAt}
+          </span>
+        )}
         <button
           type="button"
           onClick={() => {}}

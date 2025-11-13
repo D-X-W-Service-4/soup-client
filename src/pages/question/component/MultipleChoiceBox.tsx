@@ -19,7 +19,6 @@ export default function MultipleChoiceBox({
 
   useEffect(() => {
     const saved = answers[questionId];
-
     if (saved && saved.trim() !== '' && saved !== '[]') {
       try {
         const paths = JSON.parse(saved);
@@ -35,6 +34,8 @@ export default function MultipleChoiceBox({
     } else {
       canvasRef.current?.clearCanvas();
     }
+
+    // ✅ 객관식은 window.saveEssayAnswer 등록 ❌ (캡처 불필요)
   }, [questionId, answers]);
 
   const handleAutoSave = async () => {

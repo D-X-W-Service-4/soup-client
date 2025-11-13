@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 
 type OptionItemProps = {
   id: number;
-  text: string;
   isSelected: boolean;
   onSelect: (id: number | null) => void;
   isHintOpen?: boolean;
@@ -10,7 +9,6 @@ type OptionItemProps = {
 
 const OptionItem = ({
   id,
-  text,
   isSelected,
   onSelect,
   isHintOpen = false,
@@ -19,20 +17,17 @@ const OptionItem = ({
 
   useEffect(() => {
     const handleResize = () => {
-      const baseWidth = 1180; // 기준 화면 너비
+      const baseWidth = 1180;
       const screenWidth = window.innerWidth;
       const newScale = screenWidth / baseWidth;
       setScale(newScale > 1 ? 1 : newScale);
     };
-
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleClick = () => {
-    onSelect(isSelected ? null : id);
-  };
+  const handleClick = () => onSelect(isSelected ? null : id);
 
   return (
     <div
@@ -48,23 +43,31 @@ const OptionItem = ({
         height: `${scale * 56}px`,
       }}
     >
+      {/* 번호 원형 (가운데 정렬 고정) */}
       <div
         className={`flex items-center justify-center rounded-full
           ${isSelected ? 'bg-primary-bg' : 'bg-neutral-50'}`}
         style={{
           width: `${scale * 28}px`,
           height: `${scale * 28}px`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          textAlign: 'center',
         }}
       >
-        <div className="text-center text-base font-medium text-primary">
+        <span
+          className="font-medium text-primary"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: `${scale * 16}px`,
+            lineHeight: '1',
+          }}
+        >
           {id}
-        </div>
-      </div>
-      <div
-        className={`font-medium ${isSelected ? 'text-white' : 'text-black'}`}
-        style={{ fontSize: `${scale * 18}px`, lineHeight: `${scale * 28}px` }}
-      >
-        {text}
+        </span>
       </div>
     </div>
   );

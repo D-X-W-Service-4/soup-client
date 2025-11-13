@@ -8,11 +8,12 @@ export interface TestSummary {
 }
 
 export interface QuestionItem {
+  questionId: string;
   question: string;
   tryCount?: number;
   isCorrect: boolean;
   isStarred: boolean;
-  createdAt: string;
+  createdAt?: string;
   difficulty: Difficulty;
   testName?: string;
 }
