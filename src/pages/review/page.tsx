@@ -170,10 +170,15 @@ export default function ReviewPage() {
       return;
     }
 
-    // 선택된 문제들의 questionId 수집
-    const selectedQuestionIds = selectedQuestions.map(
-      (index) => filteredQuestions[index].questionId
-    );
+    // 선택된 문제들의 questionId 수집 (undefined 필터링)
+    const selectedQuestionIds = selectedQuestions
+      .map((index) => filteredQuestions[index].questionId)
+      .filter((id): id is string => id !== undefined);
+
+    if (selectedQuestionIds.length === 0) {
+      setErr('선택된 문제의 ID를 찾을 수 없습니다.');
+      return;
+    }
 
     setIsCreating(true);
     setErr(null);
