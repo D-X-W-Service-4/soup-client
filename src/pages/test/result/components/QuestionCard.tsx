@@ -1,7 +1,9 @@
 import { Icon } from '@iconify/react';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import type { QuestionItem } from '../../../../types/test.ts';
 import DifficultyBadge from './DifficultyBadge.tsx';
+import { createQuestionSet } from '../../../../apis/questionSetAPI.ts';
 
 export default function QuestionCard({
   questionId,
@@ -14,15 +16,32 @@ export default function QuestionCard({
   testName,
 }: QuestionItem) {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const statusIcon = isCorrect
     ? 'lets-icons:check-ring'
     : 'lets-icons:close-ring';
   const statusColor = isCorrect ? 'text-lime-500' : 'text-danger';
   const formattedDate = createdAt ? createdAt.split('T')[0] : '';
 
-  const handleRetry = () => {
-    if (questionId) {
-      navigate(`/question/study?questionIds=${questionId}`);
+  const handleRetry = async () => {
+    if (!questionId) return;
+
+    setIsLoading(true);
+    try {
+      const response = await createQuestionSet([questionId]);
+
+      navigate('/question/study', {
+        state: {
+          questionSetId: response.data.questionSetId,
+          questionSetItems: response.data.questionSetItems,
+          totalQuestionCount: response.data.totalQuestionCount,
+        },
+      });
+    } catch (error) {
+      console.error('문제 세트 생성 실패:', error);
+      alert('문제를 불러오는 중 오류가 발생했습니다.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -64,12 +83,13 @@ export default function QuestionCard({
         <button
           type="button"
           onClick={handleRetry}
+          disabled={isLoading}
           className="flex items-center gap-2 rounded-lg bg-neutral-300 px-3 py-2 text-xs font-medium text-white
-                 hover:bg-secondary active:bg-secondary-bg"
+                 hover:bg-secondary active:bg-secondary-bg disabled:cursor-not-allowed disabled:opacity-50"
           aria-label="다시 풀기"
         >
           <Icon icon="mingcute:play-fill" className="h-3.5 w-3.5" />
-          다시 풀기
+          {isLoading ? '로딩 중...' : '다시 풀기'}
         </button>
       </div>
     </div>
