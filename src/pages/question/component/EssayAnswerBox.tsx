@@ -13,6 +13,7 @@ interface EssayAnswerBoxProps {
 
 export default function EssayAnswerBox({ questionId }: EssayAnswerBoxProps) {
   const canvasRef = useRef<ReactSketchCanvasRef | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const { answers, setAnswer, setImage } = useAnswerStore();
   const [isErasing, setIsErasing] = useState(false);
 
@@ -73,6 +74,42 @@ export default function EssayAnswerBox({ questionId }: EssayAnswerBoxProps) {
     };
   }, [questionId, answers]);
 
+  // 애플펜슬만 허용
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handlePointerDown = (e: PointerEvent) => {
+      if (e.pointerType !== 'pen') {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+
+    const handlePointerMove = (e: PointerEvent) => {
+      if (e.pointerType !== 'pen') {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+
+    container.addEventListener('pointerdown', handlePointerDown, {
+      capture: true,
+    });
+    container.addEventListener('pointermove', handlePointerMove, {
+      capture: true,
+    });
+
+    return () => {
+      container.removeEventListener('pointerdown', handlePointerDown, {
+        capture: true,
+      });
+      container.removeEventListener('pointermove', handlePointerMove, {
+        capture: true,
+      });
+    };
+  }, []);
+
   const handleClear = async () => {
     const key = String(questionId);
     await canvasRef.current?.clearCanvas();
@@ -109,7 +146,10 @@ export default function EssayAnswerBox({ questionId }: EssayAnswerBoxProps) {
       </div>
 
       {/* 캔버스 영역 */}
-      <div className="relative min-h-0 flex-1 overflow-hidden rounded-md">
+      <div
+        ref={containerRef}
+        className="relative min-h-0 flex-1 overflow-hidden rounded-md"
+      >
         <div className="absolute inset-0 overflow-y-auto">
           {/* 줄 배경 */}
           <div
@@ -137,6 +177,7 @@ export default function EssayAnswerBox({ questionId }: EssayAnswerBoxProps) {
             style={{ border: 'none', outline: 'none' }}
             canvasColor="transparent"
             className="absolute top-0 left-0"
+            allowOnlyPointerType={'pen'}
           />
         </div>
       </div>

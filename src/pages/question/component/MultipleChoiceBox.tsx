@@ -14,6 +14,7 @@ export default function MultipleChoiceBox({
   questionId,
 }: MultipleChoiceBoxProps) {
   const canvasRef = useRef<ReactSketchCanvasRef | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const { answers, setAnswer } = useAnswerStore();
   const [isErasing, setIsErasing] = useState(false);
 
@@ -35,6 +36,42 @@ export default function MultipleChoiceBox({
       canvasRef.current?.clearCanvas();
     }
   }, [questionId, answers]);
+
+  // 애플펜슬만 허용
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handlePointerDown = (e: PointerEvent) => {
+      if (e.pointerType !== 'pen') {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+
+    const handlePointerMove = (e: PointerEvent) => {
+      if (e.pointerType !== 'pen') {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+
+    container.addEventListener('pointerdown', handlePointerDown, {
+      capture: true,
+    });
+    container.addEventListener('pointermove', handlePointerMove, {
+      capture: true,
+    });
+
+    return () => {
+      container.removeEventListener('pointerdown', handlePointerDown, {
+        capture: true,
+      });
+      container.removeEventListener('pointermove', handlePointerMove, {
+        capture: true,
+      });
+    };
+  }, []);
 
   const handleAutoSave = async () => {
     const paths = await canvasRef.current?.exportPaths();
@@ -82,7 +119,10 @@ export default function MultipleChoiceBox({
       </div>
 
       {/* 필기 영역 */}
-      <div className="relative min-h-0 flex-1 overflow-hidden rounded-md border border-white">
+      <div
+        ref={containerRef}
+        className="relative min-h-0 flex-1 overflow-hidden rounded-md border border-white"
+      >
         <div className="absolute inset-0 overflow-y-auto">
           <div className="relative h-[1500px] w-full bg-white">
             <ReactSketchCanvas
@@ -95,6 +135,7 @@ export default function MultipleChoiceBox({
               eraserWidth={100}
               height="1500px"
               onStroke={handleAutoSave}
+              allowOnlyPointerType={'pen'}
               style={{ border: 'none', outline: 'none' }}
             />
           </div>

@@ -67,7 +67,7 @@ export default function TestHistoryPage() {
         <main className="flex min-h-0 flex-1 flex-col gap-6">
           {data && (
             <>
-              <section className="flex flex-col items-start justify-start gap-8 rounded-[20px] bg-white p-10 shadow-base">
+              <section className="flex flex-col items-start justify-start gap-8 rounded-[20px] bg-white p-10">
                 <div className="flex items-center justify-start gap-2 px-2">
                   <Icon
                     icon="pepicons-pop:pen"
@@ -114,7 +114,7 @@ export default function TestHistoryPage() {
                 </div>
               </section>
 
-              <section className="flex h-full min-h-0 flex-1 flex-col overflow-hidden rounded-[20px] bg-white p-10 shadow-base">
+              <section className="flex h-full min-h-0 flex-1 flex-col overflow-hidden rounded-[20px] bg-white p-10">
                 <div className="flex min-h-0 w-full flex-1 flex-col gap-4 overflow-y-auto">
                   {filteredData.map((test, index) => {
                     return (

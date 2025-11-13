@@ -23,7 +23,7 @@ export default function UserInfoCard({
     : 0;
 
   return (
-    <div className="flex flex-col overflow-hidden rounded-[20px] shadow-base">
+    <div className="flex flex-col overflow-hidden rounded-[20px]">
       {/* 상단 유저 정보 영역 */}
       <div className="flex items-center justify-start gap-5 bg-primary-bg px-5 py-3">
         <img

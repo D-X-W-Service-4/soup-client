@@ -51,7 +51,7 @@ export default function RankingCard({
   const soupTextColor = SOUP_TEXT_COLOR[soup];
 
   return (
-    <div className="flex flex-col items-center justify-start gap-3 rounded-[20px] bg-white px-5 py-1 shadow-base">
+    <div className="flex flex-col items-center justify-start gap-3 rounded-[20px] bg-white px-5 py-1">
       <div className="flex flex-col items-center justify-center">
         <img src={BadgeSrc} alt={`${LabelKo} 수프`} className="h-48 w-48" />
         <div className="flex text-3xl font-semibold">

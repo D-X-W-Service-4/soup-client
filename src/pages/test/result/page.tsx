@@ -55,7 +55,7 @@ export default function TestResultPage() {
         <main className="flex min-h-0 flex-1 flex-col gap-6">
           {data && (
             <>
-              <section className="flex flex-col items-start justify-start gap-11 rounded-[20px] bg-white p-10 shadow-base">
+              <section className="flex flex-col items-start justify-start gap-11 rounded-[20px] bg-white p-10">
                 <div className="flex items-center justify-start gap-2 px-2">
                   <Icon
                     icon="pepicons-pop:pen"
@@ -87,7 +87,7 @@ export default function TestResultPage() {
                 </div>
               </section>
 
-              <section className="flex h-full min-h-0 flex-1 flex-col overflow-hidden rounded-[20px] bg-white p-10 shadow-base">
+              <section className="flex h-full min-h-0 flex-1 flex-col overflow-hidden rounded-[20px] bg-white p-10">
                 <div className="flex h-10 shrink-0 items-center justify-between self-stretch rounded-md bg-neutral-50 px-[3px]">
                   <button
                     type="button"

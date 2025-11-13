@@ -4,7 +4,7 @@ interface RunDateCardProps {
 
 export default function RunDateCard({ flameRunDateCount }: RunDateCardProps) {
   return (
-    <div className="relative min-h-[230px] overflow-hidden rounded-[20px] bg-gradient-to-br from-amber-600 to-amber-700 p-6 shadow-base">
+    <div className="relative min-h-[230px] overflow-hidden rounded-[20px] bg-gradient-to-br from-amber-600 to-amber-700 p-6">
       <div className="relative z-10 flex flex-col items-start gap-2">
         <span className="text-6xl font-bold text-white" aria-live="polite">
           {flameRunDateCount}일

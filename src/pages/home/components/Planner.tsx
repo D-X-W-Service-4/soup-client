@@ -132,7 +132,7 @@ export default function Planner({
     const isPast = selectedDate && dayjs(selectedDate).isBefore(today, 'day');
 
     return (
-      <div className="flex h-full flex-col items-center justify-center gap-2.5 rounded-[20px] bg-white shadow-base">
+      <div className="flex h-full flex-col items-center justify-center gap-2.5 rounded-[20px] bg-white">
         <img
           src="/src/assets/logo/Logo.png"
           alt="로고"
@@ -183,7 +183,7 @@ export default function Planner({
   }
 
   return (
-    <div className="flex h-full flex-col gap-5 overflow-y-auto rounded-[20px] bg-white px-6 py-7 shadow-base">
+    <div className="flex h-full flex-col gap-5 overflow-y-auto rounded-[20px] bg-white px-6 py-7">
       <div className="flex items-center justify-between">
         <span className="text-2xl font-semibold text-neutral-600">
           {dayjs(localPlanner.date).format('MM월 DD일 (ddd)')}

@@ -84,7 +84,7 @@ export default function SideBar({ isOpen = true, onToggle }: sideBarProps) {
 
   return (
     <aside
-      className={`flex flex-col items-center justify-start gap-16 rounded-[20px] bg-white px-3 py-9 shadow-base
+      className={`flex flex-col items-center justify-start gap-16 rounded-[20px] bg-white px-3 py-9
     transition-[width] duration-200 ${isOpen ? 'w-52' : 'w-16'}`}
     >
       <div className="flex w-full flex-col gap-16">
@@ -208,7 +208,7 @@ export default function SideBar({ isOpen = true, onToggle }: sideBarProps) {
                   className="
                     pointer-events-none absolute top-0 left-full z-30 ml-2 min-w-[12rem]
                     translate-x-1 rounded-xl border border-gray-200 bg-white p-2
-                    opacity-0 shadow-base transition-all duration-200
+                    opacity-0 transition-all duration-200
                     group-hover:pointer-events-auto group-hover:translate-x-0 group-hover:opacity-100
                     focus-within:pointer-events-auto focus-within:translate-x-0 focus-within:opacity-100
                   "

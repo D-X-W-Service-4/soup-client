@@ -41,7 +41,7 @@ export default function PlannerFlameCard({
   };
 
   return (
-    <div className="flex flex-col items-center rounded-[20px] bg-white px-9 py-3 shadow-base">
+    <div className="flex flex-col items-center rounded-[20px] bg-white px-9 py-3">
       <div className="flex w-full justify-between">
         {items.map(
           ({ date, day, flame, isPast, isToday, isFuture, isSelected }) => {
