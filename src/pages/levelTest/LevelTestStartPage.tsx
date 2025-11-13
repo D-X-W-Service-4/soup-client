@@ -22,7 +22,7 @@ const LevelTestStartPage = () => {
   const term = useUserStore((state) => state.term);
   const lastStudiedUnit = useUserStore((state) => state.lastStudiedUnit);
 
-  const totalQuestionCount = 20;
+  const totalQuestionCount = 10;
   const timeLimit = 30;
 
   const currentUnits = (): SubjectUnit[] => {
@@ -151,7 +151,7 @@ const LevelTestStartPage = () => {
               </div>
 
               <div
-                className="inline-flex cursor-pointer items-center justify-center gap-2.5 self-stretch rounded-lg bg-primary px-5 py-3 transition hover:bg-primary/90"
+                className={`inline-flex cursor-pointer items-center justify-center gap-2.5 self-stretch rounded-lg bg-primary px-5 py-3 transition hover:bg-primary/90 ${selectedUnits.length === 0 ? 'pointer-events-none cursor-not-allowed opacity-50' : ''}`}
                 onClick={() => {
                   const subjectUnitIdsToSend = displayUnits.map(
                     (unit) => unit.subjectUnitId
@@ -165,7 +165,9 @@ const LevelTestStartPage = () => {
                   });
                 }}
               >
-                <div className="justify-start text-base leading-6 font-medium text-white">
+                <div
+                  className={`justify-start text-base leading-6 font-medium text-white`}
+                >
                   수준 테스트 시작하기
                 </div>
               </div>

@@ -24,7 +24,15 @@ export default function EssayAnswerBox({ questionId }: EssayAnswerBoxProps) {
     const key = String(questionId);
 
     const paths = await canvasRef.current?.exportPaths();
-    setAnswer(key, JSON.stringify(paths || []));
+
+    // 답안이 없으면 저장하지 않음
+    if (!paths || paths.length === 0) {
+      setAnswer(key, '');
+      setImage(key, '');
+      return;
+    }
+
+    setAnswer(key, JSON.stringify(paths));
 
     const base64 = await canvasRef.current?.exportImage('png');
     if (base64) {

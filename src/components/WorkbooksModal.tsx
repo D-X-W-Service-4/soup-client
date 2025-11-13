@@ -7,18 +7,51 @@ interface WorkBooksModalProps {
   onSelectWorkbooks: (selected: { id: number; title: string }[]) => void;
 }
 
+// 문제집 목록 생성 함수
+const generateWorkbooks = () => {
+  const workbookNames = [
+    '체크체크',
+    '수력충전',
+    '쏀 연산',
+    '교과서',
+    '개념원리',
+    'RPM',
+    '개념 쏀',
+    '우공비',
+    '자이스토리',
+    '쏀수학',
+    '최상위 라이트',
+    '원리해설',
+    '최고수준',
+    '일품',
+    '최상위 수학',
+    '최고득점',
+    '에이급수학',
+    '블랙라벨',
+    '최강 TOT',
+  ];
+
+  const grades = ['1-1', '1-2', '2-1', '2-2', '3-1'];
+  const workbooks: { id: number; title: string }[] = [];
+  let id = 1;
+
+  workbookNames.forEach((name) => {
+    grades.forEach((grade) => {
+      workbooks.push({
+        id: id++,
+        title: `${name} 중등 수학 ${grade}`,
+      });
+    });
+  });
+
+  return workbooks;
+};
+
 const WorkbooksModal = ({
   onClose,
   onSelectWorkbooks,
 }: WorkBooksModalProps) => {
-  const [workbooks] = useState([
-    { id: 1, title: '쎈 중등 수학 1 - 1' },
-    { id: 2, title: '쎈 중등 수학 1 - 2' },
-    { id: 3, title: '블랙라벨 1' },
-    { id: 4, title: '블랙라벨 2' },
-    { id: 5, title: '쎈 고등 수학 1 - 2' },
-    { id: 6, title: '쎈 초등 수학 1 - 2' },
-  ]);
+  const [workbooks] = useState(generateWorkbooks());
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const toggleSelect = (id: number) => {
     setSelectedIds((prev) =>

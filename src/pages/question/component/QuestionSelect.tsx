@@ -77,14 +77,14 @@ export default function QuestionSelect({
             {pageQuestions.map((qNum) => {
               const state = getState(qNum);
               let bgClass = 'bg-neutral-50';
-              let textClass = 'text-red-400';
+              let textClass = 'text-secondary';
 
               if (state === 'current') {
                 bgClass = 'bg-primary';
                 textClass = 'text-white';
               } else if (state === 'solved') {
-                bgClass = 'bg-green-300';
-                textClass = 'text-white';
+                bgClass = 'bg-danger-bg';
+                textClass = 'text-primary';
               } else if (state === 'disabled') {
                 bgClass = 'bg-neutral-50';
                 textClass = 'text-neutral-300';

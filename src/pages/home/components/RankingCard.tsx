@@ -1,12 +1,16 @@
-import { SOUP } from '../../../types/soup.ts';
 import type { SoupLevel } from '../../../types/soup.ts';
+import tomatoBadge from '../../../assets/badge/tomato.png';
+import cornBadge from '../../../assets/badge/corn.png';
+import mushroomBadge from '../../../assets/badge/mushroom.png';
+import pumpkinBadge from '../../../assets/badge/pumpkin.png';
+import sweetPotatoBadge from '../../../assets/badge/sweetpotato.png';
 
 const BADGE: Record<SoupLevel, string> = {
-  TOMATO: 'src/assets/badge/tomato.png',
-  CORN: 'src/assets/badge/corn.png',
-  MUSHROOM: 'src/assets/badge/mushroom.png',
-  PUMPKIN: 'src/assets/badge/pumpkin.png',
-  SWEET_POTATO: 'src/assets/badge/sweetpotato.png',
+  TOMATO: tomatoBadge,
+  CORN: cornBadge,
+  MUSHROOM: mushroomBadge,
+  PUMPKIN: pumpkinBadge,
+  SWEET_POTATO: sweetPotatoBadge,
 };
 
 const SOUP_LABEL_KO: Record<SoupLevel, string> = {
@@ -31,28 +35,20 @@ interface RankingCardProps {
   perLevel?: number;
 }
 
-function nextSoup(current: SoupLevel, steps: number): SoupLevel {
-  const idx = SOUP.indexOf(current);
-  const nextIdx = Math.min(idx + Math.max(0, steps), SOUP.length - 1);
-  return SOUP[nextIdx];
-}
-
 export default function RankingCard({
   soup,
   consecutiveFlames,
-  perLevel = 10,
+  perLevel = 20,
 }: RankingCardProps) {
   const safePer = Math.max(1, perLevel);
   const total = Math.max(0, Math.floor(Number(consecutiveFlames) || 0));
-  const levelUps = Math.floor(total / safePer);
-  const displaySoup = nextSoup(soup, levelUps);
-  let within = total % safePer;
+  const within = total % safePer;
   const remain = safePer - within;
   const progressPct = Math.round((within / safePer) * 100);
 
-  const BadgeSrc = BADGE[displaySoup];
-  const LabelKo = SOUP_LABEL_KO[displaySoup];
-  const soupTextColor = SOUP_TEXT_COLOR[displaySoup];
+  const BadgeSrc = BADGE[soup];
+  const LabelKo = SOUP_LABEL_KO[soup];
+  const soupTextColor = SOUP_TEXT_COLOR[soup];
 
   return (
     <div className="flex flex-col items-center justify-start gap-3 rounded-[20px] bg-white px-5 py-1 shadow-base">

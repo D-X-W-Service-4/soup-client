@@ -48,6 +48,10 @@ axiosInstance.interceptors.response.use(
       console.error('네트워크 오류 - API 서버에 연결할 수 없습니다.');
       console.error('baseURL:', axiosInstance.defaults.baseURL);
       console.error('요청 URL:', error.config?.url);
+    } else if (error.response?.status === 404) {
+      console.debug('API 404:', error.config?.url);
+    } else if (error.response?.status === 500) {
+      console.warn('API 500 에러:', error.config?.url, error.response?.data);
     } else {
       console.error('API 요청 오류:', error);
     }

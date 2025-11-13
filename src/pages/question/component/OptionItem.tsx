@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 type OptionItemProps = {
   id: number;
   isSelected: boolean;
-  onSelect: (id: number | null) => void;
+  onSelect: (id: number) => void;
   isHintOpen?: boolean;
 };
 
@@ -27,7 +27,7 @@ const OptionItem = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleClick = () => onSelect(isSelected ? null : id);
+  const handleClick = () => onSelect(id);
 
   return (
     <div

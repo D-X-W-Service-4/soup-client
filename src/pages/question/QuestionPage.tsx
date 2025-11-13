@@ -16,6 +16,7 @@ import HintModal from './component/HintModal.tsx';
 
 import { useAnswerStore } from '../../stores/useAnswerStore.ts';
 import { uploadImageToS3_GET } from '../../utils/uploadToS3';
+import { toggleQuestionStar } from '../../apis/questionAPI.ts';
 
 declare global {
   interface Window {
@@ -23,7 +24,7 @@ declare global {
   }
 }
 
-const TOTAL_QUESTIONS = 2;
+const TOTAL_QUESTIONS = 10;
 
 export default function QuestionPage() {
   const [current, setCurrent] = useState(1);
@@ -43,9 +44,12 @@ export default function QuestionPage() {
 
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [selectedOptions, setSelectedOptions] = useState<
-    Record<number, string | null>
+    Record<number, string[]>
   >({});
   const [starred, setStarred] = useState<Record<number, boolean>>({});
+  const [isStarring, setIsStarring] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
 
   const subjectUnitIds = location.state?.subjectUnitIds ?? [];
   const hideToolbar = location.state?.hideToolbar ?? false;
@@ -94,7 +98,10 @@ export default function QuestionPage() {
     const list: number[] = [];
 
     for (let i = 1; i <= total; i++) {
-      if ((answers[i]?.trim().length ?? 0) > 0 || selectedOptions[i]) {
+      if (
+        (answers[i]?.trim().length ?? 0) > 0 ||
+        (selectedOptions[i]?.length ?? 0) > 0
+      ) {
         list.push(i);
       }
     }
@@ -102,74 +109,96 @@ export default function QuestionPage() {
   }, [answers, selectedOptions, testInfo]);
 
   const handleSelect = async (target: number) => {
-    if (!testInfo) return;
+    if (!testInfo || isNavigating) return;
 
     const total = testInfo.totalQuestionCount;
     if (target < 1 || target > total) return;
 
-    if (
-      currentQuestion?.questionFormat === '단답형' &&
-      window.saveEssayAnswer
-    ) {
-      await window.saveEssayAnswer(current);
-    }
+    setIsNavigating(true);
+    try {
+      if (
+        currentQuestion?.questionFormat === '단답형' &&
+        window.saveEssayAnswer
+      ) {
+        await window.saveEssayAnswer(current);
+      }
 
-    setCurrent(target);
+      setCurrent(target);
+    } finally {
+      setIsNavigating(false);
+    }
+  };
+
+  const handleToggleStar = async () => {
+    const questionId = currentQuestion?.questionId;
+    if (!questionId || isStarring) return;
+
+    setIsStarring(true);
+    try {
+      await toggleQuestionStar(questionId);
+      setStarred((p) => ({ ...p, [current]: !p[current] }));
+    } catch (error) {
+      console.error('별표 토글 실패:', error);
+      alert('별표 표시 중 오류가 발생했습니다.');
+    } finally {
+      setIsStarring(false);
+    }
   };
 
   const handleSubmit = async () => {
-    if (!testInfo || !levelTestId) return;
+    if (!testInfo || !levelTestId || isSubmitting) return;
 
-    if (
-      currentQuestion?.questionFormat === '단답형' &&
-      window.saveEssayAnswer
-    ) {
-      await window.saveEssayAnswer(current);
-    }
+    setIsSubmitting(true);
+    try {
+      if (
+        currentQuestion?.questionFormat === '단답형' &&
+        window.saveEssayAnswer
+      ) {
+        await window.saveEssayAnswer(current);
+      }
 
-    const total = testInfo.totalQuestionCount;
-    const submission: any[] = [];
+      const total = testInfo.totalQuestionCount;
+      const submission: any[] = [];
 
-    for (let q = 1; q <= total; q++) {
-      const essay = answers[q];
-      const option = selectedOptions[q];
-      const qData = questions[q - 1];
+      for (let q = 1; q <= total; q++) {
+        const essay = answers[q];
+        const option = selectedOptions[q];
+        const qData = questions[q - 1];
 
-      const questionId = qData?.question?.questionId;
-      const levelTestQuestionId = qData?.levelTestQuestionId;
+        const questionId = qData?.question?.questionId;
+        const levelTestQuestionId = qData?.levelTestQuestionId;
 
-      if (!questionId) continue;
+        if (!questionId) continue;
 
-      if (essay) {
-        let finalUrl = null;
-        const base64 = images[q];
+        if (essay) {
+          let finalUrl = null;
+          const base64 = images[q];
 
-        if (base64) {
-          const fileName = `descriptions/leveltest_${levelTestId}_${levelTestQuestionId}.png`;
-          finalUrl = await uploadImageToS3_GET(base64, fileName);
+          if (base64) {
+            const fileName = `descriptions/leveltest_${levelTestId}_${levelTestQuestionId}.png`;
+            finalUrl = await uploadImageToS3_GET(base64, fileName);
+          }
+
+          submission.push({
+            questionId,
+            userAnswer: essay,
+            descriptiveImageUrl: finalUrl,
+          });
+
+          continue;
         }
 
-        submission.push({
-          questionId,
-          userAnswer: essay,
-          descriptiveImageUrl: finalUrl,
-        });
-
-        continue;
+        if (option && option.length > 0) {
+          submission.push({
+            questionId,
+            userAnswer: option.join(', '),
+            descriptiveImageUrl: null,
+          });
+        }
       }
 
-      if (option) {
-        submission.push({
-          questionId,
-          userAnswer: `${option}`,
-          descriptiveImageUrl: null,
-        });
-      }
-    }
+      console.log('제출 데이터:', submission);
 
-    console.log('제출 데이터:', submission);
-
-    try {
       await axiosInstance.post(`/v1/level-tests/${levelTestId}/grade`, {
         answers: submission,
       });
@@ -179,6 +208,8 @@ export default function QuestionPage() {
     } catch (e) {
       console.error('제출 실패:', e);
       alert('제출 중 오류 발생');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -211,9 +242,7 @@ export default function QuestionPage() {
               onOpenHintModal={() => setIsHintModalOpen(true)}
               isHintModalOpen={isHintModalOpen}
               isStarred={!!starred[current]}
-              onToggleStar={() =>
-                setStarred((p) => ({ ...p, [current]: !p[current] }))
-              }
+              onToggleStar={handleToggleStar}
             />
           </div>
         )}
@@ -259,12 +288,9 @@ export default function QuestionPage() {
                 { id: 2, text: '' },
                 { id: 3, text: '' },
                 { id: 4, text: '' },
+                { id: 5, text: '' },
               ]}
-              selectedOptionId={
-                selectedOptions[current]
-                  ? Number(selectedOptions[current])
-                  : null
-              }
+              selectedOptionIds={selectedOptions[current]?.map(Number) ?? []}
               onSelect={(v) =>
                 setSelectedOptions((p) => ({ ...p, [current]: v }))
               }
@@ -275,7 +301,10 @@ export default function QuestionPage() {
           <div className="mt-auto flex w-full flex-col items-end gap-10">
             {currentQuestion?.questionFormat === '단답형' && (
               <>
-                <WarningBox>정확하게 작성해주세요.</WarningBox>
+                <WarningBox>
+                  풀이과정 없이 단답형 답안 채점만을 원할 시 풀이를 모두
+                  지워주세요.
+                </WarningBox>
                 <AnswerInput
                   value={answerValue}
                   onAnswerChange={(v) =>

@@ -3,24 +3,14 @@ import Progress from './components/Progress.tsx';
 import QuestionCard from './components/QuestionCard.tsx';
 import { useEffect, useState } from 'react';
 import { Icon } from '@iconify/react';
-import type { TestDetail } from '../../../types/test.ts';
 import { useParams } from 'react-router-dom';
-import { mockTestData } from '../../../mocks/testData.ts';
-import { timeStringToSeconds } from '../../../utils/time.ts';
-
-async function fetchTestResult(testId: number): Promise<TestDetail> {
-  // TODO: 실제 API 호출로 수정
-  const result = mockTestData.find((test) => test.id === testId);
-  if (!result) {
-    throw new Error(`테스트 결과를 찾을 수 없습니다. (ID: ${testId})`);
-  }
-  return result;
-}
+import { getLevelTestDetail } from '../../../apis/levelTestAPI';
+import type { LevelTestDetailDto } from '../../../types/levelTest';
 
 export default function TestResultPage() {
   const { testId } = useParams<{ testId: string }>();
   const [isOpen, setIsOpen] = useState(true);
-  const [data, setData] = useState<TestDetail | null>(null);
+  const [data, setData] = useState<LevelTestDetailDto | null>(null);
   const [filter, setFilter] = useState<'all' | 'incorrect'>('all');
   const [err, setErr] = useState<string | null>(null);
 
@@ -31,9 +21,11 @@ export default function TestResultPage() {
           setErr('테스트 ID가 없습니다.');
           return;
         }
-        const result = await fetchTestResult(Number(testId));
-        setData(result);
+        const response = await getLevelTestDetail(Number(testId));
+        setData(response.data);
+        console.log('레벨 테스트 상세 조회 완료:', response.data);
       } catch (err) {
+        console.error('레벨 테스트 상세 조회 실패:', err);
         setErr(err instanceof Error ? err.message : String(err));
       }
     })();
@@ -42,6 +34,18 @@ export default function TestResultPage() {
   if (err) {
     return <div className="p-6 text-warning">오류가 발생했습니다: {err}</div>;
   }
+
+  // 풀이 시간 계산 (분 단위)
+  const calculateTimeTaken = () => {
+    if (!data?.createdAt || !data?.updatedAt) return 0;
+    const created = new Date(data.createdAt);
+    const updated = new Date(data.updatedAt);
+    const diffMs = updated.getTime() - created.getTime();
+    const diffMinutes = Math.floor(diffMs / 1000 / 60);
+    return diffMinutes;
+  };
+
+  const timeTaken = data ? calculateTimeTaken() : 0;
 
   return (
     <div className="flex h-dvh w-full bg-primary-bg p-5">
@@ -57,7 +61,9 @@ export default function TestResultPage() {
                     icon="pepicons-pop:pen"
                     className="h-5 w-5 text-primary"
                   />
-                  <span className="text-xl font-semibold">{data.name}</span>
+                  <span className="text-xl font-semibold">
+                    수준테스트 {data.levelTestId}
+                  </span>
                 </div>
                 <div className="grid grid-cols-3 gap-10">
                   <Progress
@@ -68,24 +74,21 @@ export default function TestResultPage() {
                   />
                   <Progress
                     label="맞은 문제 수"
-                    value={`${data.correctAnswers}`}
-                    sub={`/${data.totalQuestions} 개`}
-                    progress={data.correctAnswers / data.totalQuestions}
+                    value={`${data.correctCount}`}
+                    sub={`/${data.totalQuestionCount} 개`}
+                    progress={data.correctCount / data.totalQuestionCount}
                   />
                   <Progress
                     label="풀이 시간"
-                    value={data.timeTaken}
-                    sub={`/${data.timeGiven} 분`}
-                    progress={
-                      timeStringToSeconds(data.timeTaken) /
-                      timeStringToSeconds(data.timeGiven)
-                    }
+                    value={`${timeTaken}`}
+                    sub={`/30 분`}
+                    progress={timeTaken / 30}
                   />
                 </div>
               </section>
 
-              <section className="flex h-full min-h-0 flex-1 flex-col items-center justify-start gap-8 rounded-[20px] bg-white p-10 shadow-base">
-                <div className="flex h-10 items-center justify-between self-stretch rounded-md bg-neutral-50 px-[3px]">
+              <section className="flex h-full min-h-0 flex-1 flex-col overflow-hidden rounded-[20px] bg-white p-10 shadow-base">
+                <div className="flex h-10 shrink-0 items-center justify-between self-stretch rounded-md bg-neutral-50 px-[3px]">
                   <button
                     type="button"
                     onClick={() => setFilter('all')}
@@ -115,20 +118,27 @@ export default function TestResultPage() {
                     </div>
                   </button>
                 </div>
-                <div className="flex flex-col gap-4 self-stretch overflow-y-auto">
-                  {data.questions
+                <div className="mt-8 flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto">
+                  {data.levelTestQuestions
                     .filter((q) =>
                       filter === 'incorrect' ? !q.isCorrect : true
                     )
                     .map((q, index) => (
                       <QuestionCard
                         key={index}
-                        question={q.question}
-                        tryCount={q.tryCount}
+                        questionId={q.question.questionId}
+                        question={q.question.text}
                         isCorrect={q.isCorrect}
-                        isStarred={q.isStarred}
-                        createdAt={q.createdAt}
-                        difficulty={q.difficulty}
+                        isStarred={false}
+                        createdAt={data.createdAt}
+                        difficulty={
+                          q.question.difficulty === 1
+                            ? 'easy'
+                            : q.question.difficulty === 2
+                              ? 'medium'
+                              : 'hard'
+                        }
+                        testName={q.question.subjectUnit.name}
                       />
                     ))}
                 </div>

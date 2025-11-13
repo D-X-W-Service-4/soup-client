@@ -12,17 +12,26 @@ const LABEL_MAP: Record<BadgeVariant, string> = {
   hard: '어려움',
 };
 
+function getDifficultyFromNumber(difficulty: number): BadgeVariant {
+  if (difficulty === 1) return 'easy';
+  if (difficulty === 2) return 'medium';
+  return 'hard';
+}
+
 export default function DifficultyBadge({
   variant,
 }: {
-  variant: BadgeVariant;
+  variant: BadgeVariant | number;
 }) {
+  const badgeVariant =
+    typeof variant === 'number' ? getDifficultyFromNumber(variant) : variant;
+
   return (
     <span
-      className={`inline-flex items-center justify-center rounded-[10px] px-2.5 py-1 text-xs font-semibold ${COLOR_MAP[variant]}`}
-      aria-label={`난이도: ${LABEL_MAP[variant]}`}
+      className={`inline-flex items-center justify-center rounded-[10px] px-2.5 py-1 text-xs font-semibold ${COLOR_MAP[badgeVariant]}`}
+      aria-label={`난이도: ${LABEL_MAP[badgeVariant]}`}
     >
-      {LABEL_MAP[variant]}
+      {LABEL_MAP[badgeVariant]}
     </span>
   );
 }

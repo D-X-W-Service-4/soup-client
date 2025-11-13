@@ -1,4 +1,4 @@
-export type Difficulty = 'easy' | 'medium' | 'hard';
+export type Difficulty = 'easy' | 'medium' | 'hard' | number;
 
 export interface TestSummary {
   id: number;
@@ -8,11 +8,12 @@ export interface TestSummary {
 }
 
 export interface QuestionItem {
+  questionId?: string;
   question: string;
-  tryCount: number;
+  tryCount?: number;
   isCorrect: boolean;
   isStarred: boolean;
-  createdAt: string;
+  createdAt?: string;
   difficulty: Difficulty;
   testName?: string;
 }

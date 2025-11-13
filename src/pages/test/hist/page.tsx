@@ -2,44 +2,27 @@ import SideBar from '../../../components/SideBar.tsx';
 import TestCard from './components/TestCard.tsx';
 import { useEffect, useState, useRef } from 'react';
 import { Icon } from '@iconify/react';
-import { mockTestData } from '../../../mocks/testData.ts';
-import type { TestDetail } from '../../../types/test.ts';
-
-interface TestHistory {
-  id: number;
-  testName: string;
-  createdAt: string;
-  score: number;
-  totalQuestions: number;
-  correctAnswers: number;
-  timeTaken: string;
-  timeGiven: string;
-}
-
-async function fetchTestHistory(): Promise<TestHistory[]> {
-  return mockTestData.map((test: TestDetail) => ({
-    id: test.id,
-    testName: test.name,
-    createdAt: test.createdAt,
-    score: test.score,
-    totalQuestions: test.totalQuestions,
-    correctAnswers: test.correctAnswers,
-    timeTaken: test.timeTaken,
-    timeGiven: test.timeGiven,
-  }));
-}
+import { getLevelTests } from '../../../apis/levelTestAPI';
+import type { LevelTestSummaryDto } from '../../../types/levelTest';
 
 export default function TestHistoryPage() {
   const [isOpen, setIsOpen] = useState(true);
-  const [data, setData] = useState<TestHistory[]>([]);
+  const [data, setData] = useState<LevelTestSummaryDto[]>([]);
   const [selectedFilter, setSelectedFilter] = useState<string>('전체');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     async function loadHistory() {
-      const history = await fetchTestHistory();
-      setData(history);
+      try {
+        const response = await getLevelTests();
+        setData(response.data.levelTests);
+        console.log('레벨 테스트 목록 조회 완료:', response.data.levelTests);
+      } catch (error) {
+        console.error('레벨 테스트 목록 조회 실패:', error);
+        setErr(error instanceof Error ? error.message : String(error));
+      }
     }
     loadHistory();
   }, []);
@@ -61,11 +44,20 @@ export default function TestHistoryPage() {
     };
   }, [isDropdownOpen]);
 
-  const filterOptions = ['전체', ...data.map((test) => test.testName)];
+  const filterOptions = [
+    '전체',
+    ...data.map((test) => `수준테스트 ${test.levelTestId}`),
+  ];
   const filteredData =
     selectedFilter === '전체'
       ? data
-      : data.filter((test) => test.testName === selectedFilter);
+      : data.filter(
+          (test) => `수준테스트 ${test.levelTestId}` === selectedFilter
+        );
+
+  if (err) {
+    return <div className="p-6 text-warning">오류가 발생했습니다: {err}</div>;
+  }
 
   return (
     <div className="flex h-dvh w-full bg-primary-bg p-5">
@@ -122,21 +114,38 @@ export default function TestHistoryPage() {
                 </div>
               </section>
 
-              <section className="flex h-full min-h-0 flex-1 flex-col items-center justify-start gap-8 rounded-[20px] bg-white p-10 shadow-base">
-                <div className="flex w-full flex-col gap-4">
-                  {filteredData.map((test, index) => (
-                    <TestCard
-                      key={index}
-                      testId={test.id}
-                      name={test.testName}
-                      createdAt={test.createdAt}
-                      score={test.score}
-                      totalQuestions={test.totalQuestions}
-                      correctAnswers={test.correctAnswers}
-                      timeTaken={test.timeTaken}
-                      timeGiven={test.timeGiven}
-                    />
-                  ))}
+              <section className="flex h-full min-h-0 flex-1 flex-col overflow-hidden rounded-[20px] bg-white p-10 shadow-base">
+                <div className="flex min-h-0 w-full flex-1 flex-col gap-4 overflow-y-auto">
+                  {filteredData.map((test, index) => {
+                    // 풀이 시간 계산 (test에 createdAt과 finishedAt이 있다고 가정)
+                    const calculateTimeTaken = () => {
+                      if (!test.createdAt || !test.finishedAt) return 0;
+                      const created = new Date(test.createdAt);
+                      const finished = new Date(test.finishedAt);
+                      const diffMs = finished.getTime() - created.getTime();
+                      const diffMinutes = Math.floor(diffMs / 1000 / 60);
+                      return diffMinutes;
+                    };
+
+                    const timeTakenMinutes = calculateTimeTaken();
+                    // MM:SS 형식으로 변환 (예: 15분 -> "15:00")
+                    const timeTaken = `${timeTakenMinutes}:00`;
+                    const timeGiven = '30:00';
+
+                    return (
+                      <TestCard
+                        key={index}
+                        testId={test.levelTestId}
+                        name={`수준테스트 ${test.levelTestId}`}
+                        createdAt={test.finishedAt}
+                        score={test.score}
+                        totalQuestions={test.totalQuestionCount}
+                        correctAnswers={test.correctCount}
+                        timeTaken={timeTaken}
+                        timeGiven={timeGiven}
+                      />
+                    );
+                  })}
                 </div>
               </section>
             </>

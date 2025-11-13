@@ -8,7 +8,7 @@ export interface LevelTestQuestionDto {
   question: QuestionDto;
   isCorrect: boolean;
   userAnswer: string;
-  descriptiveImagePath: string;
+  descriptiveImageUrl: string;
   isTimeout: boolean;
   essayTypeScore: number;
   essayTypeScoreText: string;
@@ -23,6 +23,7 @@ export interface LevelTestSummaryDto {
   score: number;
   resultSoup: SoupLevel;
   finishedAt: string;
+  createdAt?: string;
 }
 
 // 레벨 테스트 상세 정보
