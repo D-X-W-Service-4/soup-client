@@ -275,7 +275,9 @@ export default function QuestionPage() {
           <div className="mt-auto flex w-full flex-col items-end gap-10">
             {currentQuestion?.questionFormat === '단답형' && (
               <>
-                <WarningBox>정확하게 작성해주세요.</WarningBox>
+                <WarningBox>
+                  원활한 채점을 위해 답안을 정확히 작성해 주세요.
+                </WarningBox>
                 <AnswerInput
                   value={answerValue}
                   onAnswerChange={(v) =>
