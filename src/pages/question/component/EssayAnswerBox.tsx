@@ -1,3 +1,4 @@
+// src/pages/QuestionPage/component/EssayAnswerBox.tsx
 import { useRef, useEffect, useState } from 'react';
 import { ReactSketchCanvas } from 'react-sketch-canvas';
 import type { ReactSketchCanvasRef } from 'react-sketch-canvas';
@@ -18,29 +19,30 @@ export default function EssayAnswerBox({ questionId }: EssayAnswerBoxProps) {
   const lineHeight = 35;
   const totalRows = 100;
 
+  // 현재 문제 캔버스 저장 (paths + 이미지)
   const handleSave = async () => {
     const key = String(questionId);
-    const paths = await canvasRef.current?.exportPaths();
-    if (paths?.length) {
-      setAnswer(key, JSON.stringify(paths));
 
-      // 캔버스를 이미지로 변환
-      const base64 = await canvasRef.current?.exportImage('png');
-      if (base64) {
-        setImage(key, base64);
-        console.log(`${key}번 문제 이미지 저장 완료`);
-      }
+    // paths 저장 (복원용)
+    const paths = await canvasRef.current?.exportPaths();
+    setAnswer(key, JSON.stringify(paths || []));
+
+    // 이미지 캡처 (제출용)
+    const base64 = await canvasRef.current?.exportImage('png');
+    if (base64) {
+      setImage(key, base64);
+      console.log(`📸 ${key}번 이미지 저장됨`);
     }
   };
 
   useEffect(() => {
-    // saveEssayAnswer 전역 등록
+    //  전역 저장 함수 등록 (문제 이동 시 호출)
     window.saveEssayAnswer = async (id: number) => {
       if (id !== questionId) return;
       await handleSave();
     };
 
-    // 저장된 답안 복원
+    //  저장된 paths로 캔버스 복원
     const restore = async () => {
       const key = String(questionId);
       const saved = answers[key];
@@ -55,7 +57,8 @@ export default function EssayAnswerBox({ questionId }: EssayAnswerBoxProps) {
           } else {
             canvasRef.current.clearCanvas();
           }
-        } catch {
+        } catch (e) {
+          console.error('경로 복원 실패:', e);
           canvasRef.current.clearCanvas();
         }
       } else {
@@ -65,7 +68,6 @@ export default function EssayAnswerBox({ questionId }: EssayAnswerBoxProps) {
 
     restore();
 
-    // cleanup
     return () => {
       delete window.saveEssayAnswer;
     };
@@ -108,6 +110,7 @@ export default function EssayAnswerBox({ questionId }: EssayAnswerBoxProps) {
 
       {/* 캔버스 */}
       <div className="relative flex-1 overflow-auto rounded-md border border-gray-100 bg-white">
+        {/* 줄 배경 */}
         <div
           className="absolute inset-0 z-0"
           style={{

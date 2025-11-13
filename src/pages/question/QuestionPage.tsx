@@ -1,3 +1,4 @@
+// src/pages/QuestionPage/QuestionPage.tsx
 import { useState, useEffect } from 'react';
 import axiosInstance from '../../apis/axiosInstance.ts';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -11,17 +12,19 @@ import EssayAnswerBox from './component/EssayAnswerBox.tsx';
 import MultipleChoiceBox from './component/MultipleChoiceBox.tsx';
 import OptionList from './component/OptionList.tsx';
 import HintModal from './component/HintModal.tsx';
+import { useAnswerStore } from '../../stores/useAnswerStore.ts';
 
 declare global {
   interface Window {
     saveEssayAnswer?: (id: number) => Promise<void>;
   }
 }
+
 const TOTAL_QUESTIONS = 2;
 
 export default function QuestionPage() {
   const [current, setCurrent] = useState(1);
-  const [questions, setQuestions] = useState<any[]>([]); // 전체 문제 목록
+  const [questions, setQuestions] = useState<any[]>([]);
   const [solved, setSolved] = useState<number[]>([]);
   const [isHintModalOpen, setIsHintModalOpen] = useState(false);
   const [testInfo, setTestInfo] = useState<{
@@ -33,7 +36,9 @@ export default function QuestionPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // 텍스트 답안은 로컬 state로 관리
   const [answers, setAnswers] = useState<Record<number, string>>({});
+  // 객관식 선택 (1,2,3,4)
   const [selectedOptions, setSelectedOptions] = useState<
     Record<number, string | null>
   >({});
@@ -43,7 +48,6 @@ export default function QuestionPage() {
   const hideToolbar = location.state?.hideToolbar ?? false;
 
   const answerValue = answers[current] ?? '';
-
   const isLast = current === (testInfo?.totalQuestionCount ?? TOTAL_QUESTIONS);
 
   const hints = [
@@ -52,9 +56,16 @@ export default function QuestionPage() {
     '마지막 힌트!',
   ];
 
+  // 캡처된 이미지들 (단답형 Canvas)
+  const images = useAnswerStore((state) => state.images);
+
+  // 테스트 생성 시, 이전 캔버스/이미지 전부 초기화
   useEffect(() => {
     const createLevelTest = async () => {
       try {
+        // 새로운 테스트 시작마다 캔버스/이미지 초기화
+        useAnswerStore.getState().clearAll();
+
         const res = await axiosInstance.post('/v1/level-tests', {
           isInitialTest: hideToolbar,
           subjectUnitIds,
@@ -85,6 +96,7 @@ export default function QuestionPage() {
     createLevelTest();
   }, [hideToolbar, subjectUnitIds]);
 
+  //  풀이 여부 체크 (텍스트 or 객관식)
   useEffect(() => {
     const newSolved: number[] = [];
     const totalCount = testInfo?.totalQuestionCount ?? TOTAL_QUESTIONS;
@@ -98,24 +110,24 @@ export default function QuestionPage() {
     setSolved(newSolved);
   }, [answers, selectedOptions, testInfo]);
 
+  // 문제 이동 시, 단답형이면 캔버스 저장 후 이동
   const handleSelect = async (qNum: number) => {
     const totalCount = testInfo?.totalQuestionCount ?? TOTAL_QUESTIONS;
     if (qNum < 1 || qNum > totalCount) return;
 
-    console.log(` handleSelect(${qNum}) 호출됨, 현재: ${current}`);
+    const currentQuestionType =
+      questions[current - 1]?.question?.questionFormat;
+    console.log(`handleSelect(${qNum}) 호출됨, 현재: ${current}`);
 
-    for (let i = 0; i < 2; i++) {
-      if (window.saveEssayAnswer) {
-        console.log(` saveEssayAnswer 호출 (재시도 ${i})`);
+    if (currentQuestionType === '단답형' && window.saveEssayAnswer) {
+      try {
+        console.log('단답형 답안 저장 중...');
         await window.saveEssayAnswer(current);
-        break;
-      } else {
-        console.warn(` window.saveEssayAnswer 없음 (재시도 ${i})`);
-        await new Promise((res) => setTimeout(res, 100));
+      } catch (err) {
+        console.warn('saveEssayAnswer 실행 중 오류:', err);
       }
     }
 
-    // 다음 문제로 이동
     setCurrent(qNum);
   };
 
@@ -130,6 +142,7 @@ export default function QuestionPage() {
     handleSubmit();
   };
 
+  //  제출 로직
   const handleSubmit = async () => {
     if (!levelTestId) {
       alert('레벨 테스트 ID가 없습니다. 다시 시도해주세요.');
@@ -138,30 +151,43 @@ export default function QuestionPage() {
 
     if (!testInfo) return;
 
+    // 마지막 문제가 단답형이면, 제출 전에 한 번 더 캡처 저장
+    const currentQuestionType =
+      questions[current - 1]?.question?.questionFormat;
+    if (currentQuestionType === '단답형' && window.saveEssayAnswer) {
+      try {
+        console.log('제출 전 마지막 단답형 캡처 저장');
+        await window.saveEssayAnswer(current);
+      } catch (err) {
+        console.warn(' 마지막 saveEssayAnswer 실행 중 오류:', err);
+      }
+    }
+
     const totalCount = testInfo.totalQuestionCount ?? TOTAL_QUESTIONS;
     const submissionData: any[] = [];
 
     for (let qNum = 1; qNum <= totalCount; qNum++) {
-      const essayAnswer = answers[qNum];
-      const selected = selectedOptions[qNum];
+      const essayAnswer = answers[qNum]; // 텍스트 입력
+      const selected = selectedOptions[qNum]; //  객관식 선택 (1~4)
       const levelTestQuestion = questions[qNum - 1];
       const questionId = levelTestQuestion?.question?.questionId;
 
       if (!levelTestQuestion || !questionId) continue;
 
       if (essayAnswer) {
-        // useAnswerStore에서 이미지 base64를 불러와 S3 업로드했다고 가정
-        const descriptiveImageUrl = levelTestQuestion?.userImageUrl ?? null;
+        //  단답형: 텍스트 + 캡처 이미지(base64)
+        const imageBase64 = images[qNum] ?? null;
 
         submissionData.push({
           questionId,
           userAnswer: essayAnswer,
-          descriptiveImageUrl,
+          descriptiveImageUrl: imageBase64, // 캡처 이미지 (AI 채점용)
         });
       } else if (selected) {
+        //  객관식: "1번" / "2번" 형태로 전송
         submissionData.push({
           questionId,
-          userAnswer: `${selected}번`, // Swagger 형식 맞춤
+          userAnswer: `${selected}번`,
           descriptiveImageUrl: null,
         });
       }
@@ -260,7 +286,6 @@ export default function QuestionPage() {
           )}
 
           {/* 객관식 보기 */}
-          {/* 객관식 보기 */}
           {currentQuestion?.questionFormat === '선택형' && (
             <OptionList
               options={[
@@ -284,7 +309,7 @@ export default function QuestionPage() {
             />
           )}
 
-          {/* 제출 버튼 */}
+          {/* 제출 버튼 / 입력 영역 */}
           <div className="mt-auto flex w-full flex-col items-end gap-10">
             {currentQuestion?.questionFormat === '단답형' && (
               <>
