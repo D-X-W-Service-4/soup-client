@@ -5,7 +5,7 @@ const LoginSuccessPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="inline-flex h-[834px] w-[1194px] flex-col items-center justify-between bg-primary-bg px-96 py-36">
+    <div className="flex h-screen w-full flex-col items-center justify-between bg-primary-bg px-8 py-12 md:px-16 md:py-24">
       <div className="flex w-72 flex-col items-center justify-start gap-4">
         <motion.h1
           className="justify-start text-center text-5xl leading-[48px] font-semibold text-black"
