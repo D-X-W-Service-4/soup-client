@@ -1,3 +1,5 @@
+import SoupLogo from '../../../assets/logo/SoupLogo.svg';
+
 interface UserInfoCardProps {
   email?: string | null;
   nickname?: string | null;
@@ -26,11 +28,7 @@ export default function UserInfoCard({
     <div className="flex flex-col overflow-hidden rounded-[20px]">
       {/* 상단 유저 정보 영역 */}
       <div className="flex items-center justify-start gap-5 bg-primary-bg px-5 py-3">
-        <img
-          src="/src/assets/logo/SoupLogo.png"
-          alt="수프 로고"
-          className="h-14 w-14"
-        />
+        <img src={SoupLogo} alt="수프 로고" className="h-14 w-14" />
         <div className="flex flex-col items-start justify-start gap-1">
           <span className="text-2xl font-semibold text-secondary">
             {nickname || '이름 없음'}

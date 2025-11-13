@@ -112,7 +112,7 @@ export default function HomePage() {
 
         <main className="flex h-full flex-1 gap-5">
           {data && (
-            <div className="flex h-full min-w-[304px] flex-col justify-between">
+            <div className="flex h-full w-full flex-col justify-between md:w-1/3">
               <UserInfoCard
                 email={data.email}
                 nickname={data.nickname}
@@ -130,7 +130,7 @@ export default function HomePage() {
             </div>
           )}
 
-          <div className="flex h-full min-w-[602px] flex-col gap-5">
+          <div className="flex h-full w-full flex-col gap-5 md:w-2/3">
             <PlannerFlameCard
               flames={flames}
               onDateClick={handleDateClick}

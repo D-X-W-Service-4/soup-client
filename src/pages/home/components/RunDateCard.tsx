@@ -1,3 +1,5 @@
+import FlameLogo from '../../../assets/logo/FlameLogo.svg';
+
 interface RunDateCardProps {
   flameRunDateCount: number;
 }
@@ -12,7 +14,7 @@ export default function RunDateCard({ flameRunDateCount }: RunDateCardProps) {
         <span className="text-xl font-medium text-white">연속 계획 달성!</span>
       </div>
       <img
-        src="/src/assets/logo/FlameLogo.png"
+        src={FlameLogo}
         alt="FlameLogo"
         width={140}
         height={110}
