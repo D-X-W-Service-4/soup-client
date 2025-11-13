@@ -115,11 +115,18 @@ export default function TestResultPage() {
                       <QuestionCard
                         key={index}
                         questionId={q.question.questionId}
-                        question={q.question.subjectUnit.name}
+                        question={q.question.text}
                         isCorrect={q.isCorrect}
                         isStarred={false}
                         createdAt={data.createdAt}
-                        difficulty={q.question.difficulty}
+                        difficulty={
+                          q.question.difficulty === 1
+                            ? 'easy'
+                            : q.question.difficulty === 2
+                              ? 'medium'
+                              : 'hard'
+                        }
+                        testName={q.question.subjectUnit.name}
                       />
                     ))}
                 </div>

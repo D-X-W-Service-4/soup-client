@@ -80,11 +80,11 @@ export default function QuestionSelect({
               let textClass = 'text-secondary';
 
               if (state === 'current') {
-                bgClass = 'bg-primary-bg';
-                textClass = 'text-primary';
-              } else if (state === 'solved') {
                 bgClass = 'bg-primary';
                 textClass = 'text-white';
+              } else if (state === 'solved') {
+                bgClass = 'bg-danger-bg';
+                textClass = 'text-primary';
               } else if (state === 'disabled') {
                 bgClass = 'bg-neutral-50';
                 textClass = 'text-neutral-300';

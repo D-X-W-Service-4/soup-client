@@ -12,6 +12,7 @@ import MultipleChoiceBox from './component/MultipleChoiceBox.tsx';
 import OptionList from './component/OptionList.tsx';
 import HintModal from './component/HintModal.tsx';
 import { useAnswerStore } from '../../stores/useAnswerStore.ts';
+import { toggleQuestionStar } from '../../apis/questionAPI.ts';
 
 declare global {
   interface Window {
@@ -31,9 +32,12 @@ export default function StudyPage() {
 
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [selectedOptions, setSelectedOptions] = useState<
-    Record<number, string | null>
+    Record<number, string[]>
   >({});
   const [starred, setStarred] = useState<Record<number, boolean>>({});
+  const [isStarring, setIsStarring] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
 
   const images = useAnswerStore((state) => state.images);
 
@@ -41,11 +45,9 @@ export default function StudyPage() {
   const answerValue = answers[current] ?? '';
   const isLast = current === TOTAL_QUESTIONS;
 
-  const hints = [
-    '이 문제는 유리수 단원의 문제입니다. 화이팅!',
-    '두 번째 힌트입니다.',
-    '마지막 힌트!',
-  ];
+  const currentQuestionItem = questions[current - 1];
+  const currentQuestion = currentQuestionItem?.question;
+  const hints = currentQuestion?.topic ? [currentQuestion.topic] : [];
 
   // ⭐️ (수정) ReviewPage에서 넘겨준 location.state를 받아 state 설정
   useEffect(() => {
@@ -79,7 +81,7 @@ export default function StudyPage() {
 
     for (let q = 1; q <= TOTAL_QUESTIONS; q++) {
       const hasEssay = (answers[q]?.trim().length ?? 0) > 0;
-      const hasObjective = !!selectedOptions[q];
+      const hasObjective = (selectedOptions[q]?.length ?? 0) > 0;
       if (hasEssay || hasObjective) newSolved.push(q);
     }
 
@@ -88,82 +90,102 @@ export default function StudyPage() {
 
   // 문제 이동 (QuestionPage와 동일)
   const handleSelect = async (qNum: number) => {
-    if (qNum < 1 || qNum > TOTAL_QUESTIONS) return;
+    if (qNum < 1 || qNum > TOTAL_QUESTIONS || isNavigating) return;
 
-    const currentQuestionType =
-      questions[current - 1]?.question?.questionFormat;
+    setIsNavigating(true);
+    try {
+      const currentQuestionType =
+        questions[current - 1]?.question?.questionFormat;
 
-    if (currentQuestionType === '단답형' && window.saveEssayAnswer) {
-      try {
-        await window.saveEssayAnswer(current);
-      } catch (err) {
-        console.warn('saveEssayAnswer 실행 중 오류:', err);
+      if (currentQuestionType === '단답형' && window.saveEssayAnswer) {
+        try {
+          await window.saveEssayAnswer(current);
+        } catch (err) {
+          console.warn('saveEssayAnswer 실행 중 오류:', err);
+        }
       }
-    }
 
-    setCurrent(qNum);
+      setCurrent(qNum);
+    } finally {
+      setIsNavigating(false);
+    }
   };
 
-  const handleToggleStar = () => {
-    setStarred((prev) => ({ ...prev, [current]: !prev[current] }));
+  const handleToggleStar = async () => {
+    const questionId = currentQuestion?.questionId;
+    if (!questionId || isStarring) return;
+
+    setIsStarring(true);
+    try {
+      await toggleQuestionStar(questionId);
+      setStarred((prev) => ({ ...prev, [current]: !prev[current] }));
+    } catch (error) {
+      console.error('별표 토글 실패:', error);
+      alert('별표 표시 중 오류가 발생했습니다.');
+    } finally {
+      setIsStarring(false);
+    }
   };
 
   const handleHintModal = () => setIsHintModalOpen((prev) => !prev);
 
   // 제출 로직 (QuestionPage와 동일, ID와 API 주소만 다름)
   const handleSubmit = async () => {
-    if (!questionSetId) {
-      alert('문제 세트 ID가 없습니다. 다시 시도해주세요.');
+    if (!questionSetId || isSubmitting) {
+      if (!questionSetId) {
+        alert('문제 세트 ID가 없습니다. 다시 시도해주세요.');
+      }
       return;
     }
 
-    const currentQuestionType =
-      questions[current - 1]?.question?.questionFormat;
-    if (currentQuestionType === '단답형' && window.saveEssayAnswer) {
-      try {
-        console.log('제출 전 마지막 단답형 캡처 저장');
-        await window.saveEssayAnswer(current);
-      } catch (err) {
-        console.warn(' 마지막 saveEssayAnswer 실행 중 오류:', err);
-      }
-    }
-
-    const totalCount = TOTAL_QUESTIONS;
-    const submissionData: any[] = [];
-
-    for (let qNum = 1; qNum <= totalCount; qNum++) {
-      const essayAnswer = answers[qNum];
-      const selected = selectedOptions[qNum];
-      const questionItem = questions[qNum - 1];
-      const questionId = questionItem?.question?.questionId;
-
-      if (!questionItem || !questionId) continue;
-
-      if (essayAnswer) {
-        const imageBase64 = images[qNum] ?? null;
-        submissionData.push({
-          questionId,
-          userAnswer: essayAnswer,
-          descriptiveImageUrl: imageBase64,
-        });
-      } else if (selected) {
-        submissionData.push({
-          questionId,
-          userAnswer: `${selected}번`,
-          descriptiveImageUrl: null,
-        });
-      }
-    }
-
-    console.log('제출 데이터:', submissionData);
-
-    if (submissionData.length === 0) {
-      console.warn('제출 데이터 없음');
-      alert('답안을 입력해주세요.');
-      return;
-    }
-
+    setIsSubmitting(true);
     try {
+      const currentQuestionType =
+        questions[current - 1]?.question?.questionFormat;
+      if (currentQuestionType === '단답형' && window.saveEssayAnswer) {
+        try {
+          console.log('제출 전 마지막 단답형 캡처 저장');
+          await window.saveEssayAnswer(current);
+        } catch (err) {
+          console.warn(' 마지막 saveEssayAnswer 실행 중 오류:', err);
+        }
+      }
+
+      const totalCount = TOTAL_QUESTIONS;
+      const submissionData: any[] = [];
+
+      for (let qNum = 1; qNum <= totalCount; qNum++) {
+        const essayAnswer = answers[qNum];
+        const selected = selectedOptions[qNum];
+        const questionItem = questions[qNum - 1];
+        const questionId = questionItem?.question?.questionId;
+
+        if (!questionItem || !questionId) continue;
+
+        if (essayAnswer) {
+          const imageBase64 = images[qNum] ?? null;
+          submissionData.push({
+            questionId,
+            userAnswer: essayAnswer,
+            descriptiveImageUrl: imageBase64,
+          });
+        } else if (selected && selected.length > 0) {
+          submissionData.push({
+            questionId,
+            userAnswer: selected.join(', '),
+            descriptiveImageUrl: null,
+          });
+        }
+      }
+
+      console.log('제출 데이터:', submissionData);
+
+      if (submissionData.length === 0) {
+        console.warn('제출 데이터 없음');
+        alert('답안을 입력해주세요.');
+        return;
+      }
+
       await axiosInstance.post(`/v1/question-sets/${questionSetId}/grade`, {
         answers: submissionData,
       });
@@ -173,13 +195,12 @@ export default function StudyPage() {
     } catch (e) {
       console.error('채점 요청 실패:', e);
       alert('답안 제출 중 오류가 발생했습니다. 다시 시도해주세요.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const isAllSolved = solved.length === TOTAL_QUESTIONS;
-
-  const currentQuestionItem = questions[current - 1];
-  const currentQuestion = currentQuestionItem?.question;
 
   const imageUrl = currentQuestion?.filename
     ? `${import.meta.env.VITE_S3_BASE_URL}${currentQuestion.filename}`
@@ -210,7 +231,6 @@ export default function StudyPage() {
 
         <div className="ml-20 flex h-full flex-1 flex-col items-center justify-start gap-6">
           <div className="w-full flex-[0.4]">
-            {/* ⭐️ (수정) isLoading 제거, currentQuestion이 있는지 바로 확인 */}
             {currentQuestion ? (
               <QuestionDisplay imageUrl={imageUrl} textContent={textContent} />
             ) : (
@@ -242,18 +262,14 @@ export default function StudyPage() {
 
           {questionFormat === '선택형' && (
             <OptionList
-              // (API에서 받은 보기 목록(currentQuestion.options)으로 교체 필요)
               options={[
                 { id: 1, text: '' },
                 { id: 2, text: '' },
                 { id: 3, text: '' },
                 { id: 4, text: '' },
+                { id: 5, text: '' },
               ]}
-              selectedOptionId={
-                selectedOptions[current]
-                  ? Number(selectedOptions[current])
-                  : null
-              }
+              selectedOptionIds={selectedOptions[current]?.map(Number) ?? []}
               onSelect={(value) => {
                 setSelectedOptions((prev) => ({
                   ...prev,

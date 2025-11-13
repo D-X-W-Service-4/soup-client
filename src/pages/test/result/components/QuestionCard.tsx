@@ -4,19 +4,25 @@ import { useState } from 'react';
 import type { QuestionItem } from '../../../../types/test.ts';
 import DifficultyBadge from './DifficultyBadge.tsx';
 import { createQuestionSet } from '../../../../apis/questionSetAPI.ts';
+import { toggleQuestionStar } from '../../../../apis/questionAPI.ts';
+
+interface QuestionCardProps extends QuestionItem {
+  onStarToggle?: (questionId: string) => void;
+}
 
 export default function QuestionCard({
   questionId,
-  question,
   tryCount,
   isCorrect,
   isStarred,
   createdAt,
   difficulty,
   testName,
-}: QuestionItem) {
+  onStarToggle,
+}: QuestionCardProps) {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [starred, setStarred] = useState(isStarred);
   const statusIcon = isCorrect
     ? 'lets-icons:check-ring'
     : 'lets-icons:close-ring';
@@ -45,24 +51,41 @@ export default function QuestionCard({
     }
   };
 
+  const handleStarToggle = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!questionId) return;
+
+    try {
+      await toggleQuestionStar(questionId);
+      setStarred(!starred);
+      if (onStarToggle) {
+        onStarToggle(questionId);
+      }
+    } catch (error) {
+      console.error('별표 토글 실패:', error);
+      alert('별표 표시 중 오류가 발생했습니다.');
+    }
+  };
+
   return (
     <div className="flex items-center justify-between rounded-md bg-white px-6 py-5 outline outline-1 outline-offset-[-1px] outline-neutral-100">
       <div className="flex items-center justify-start gap-5">
         <Icon icon={statusIcon} className={`h-5 w-5 ${statusColor}`} />
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-3">
-            <span className="text-base font-semibold">{question}</span>
-            {isStarred && (
-              <Icon
-                icon="material-symbols:star-rounded"
-                className="h-6 w-6 text-yellow-200"
-              />
-            )}
+            <span className="text-base font-semibold">
+              {testName || questionId}
+            </span>
+            <Icon
+              icon="material-symbols:star-rounded"
+              className={`h-6 w-6 cursor-pointer ${starred ? 'text-yellow-200' : 'text-neutral-300'}`}
+              onClick={handleStarToggle}
+            />
           </div>
           <div className="flex items-center gap-2">
-            {testName && (
+            {questionId && (
               <span className="text-xs font-medium text-secondary">
-                {testName}
+                {questionId}
               </span>
             )}
             {tryCount !== undefined && tryCount > 0 && (

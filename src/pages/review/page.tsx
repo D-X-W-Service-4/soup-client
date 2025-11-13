@@ -30,16 +30,24 @@ const SEMESTER_OPTIONS = [
   { label: '2학기', value: '2' },
 ];
 
-// API 응답을 QuestionItem으로 변환
 function convertToQuestionItem(userQuestion: UserQuestionDto): QuestionItem {
+  let difficulty: 'easy' | 'medium' | 'hard' = 'medium';
+  if (userQuestion.question.difficulty === 1) {
+    difficulty = 'easy';
+  } else if (userQuestion.question.difficulty === 2) {
+    difficulty = 'medium';
+  } else if (userQuestion.question.difficulty === 3) {
+    difficulty = 'hard';
+  }
+
   return {
     questionId: userQuestion.question.questionId,
-    question: userQuestion.question.questionId, // API에서 question 내용이 없으면 questionId를 사용
+    question: userQuestion.question.text,
     tryCount: userQuestion.tryCount,
     isCorrect: !userQuestion.answeredWrongBefore,
     isStarred: userQuestion.isStarred,
-    difficulty: 'medium', // API 응답에 difficulty가 없으면 기본값
-    testName: undefined,
+    difficulty,
+    testName: userQuestion.question.subjectUnit.name,
   };
 }
 

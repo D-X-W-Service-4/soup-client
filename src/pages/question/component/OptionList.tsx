@@ -7,31 +7,33 @@ export type Option = {
 
 type OptionListProps = {
   options: Option[];
-  selectedOptionId: number | null;
-  onSelect: (value: string | null) => void;
+  selectedOptionIds: number[];
+  onSelect: (value: string[]) => void;
   isHintOpen?: boolean;
 };
 
 const OptionList = ({
   options,
-  selectedOptionId,
+  selectedOptionIds,
   onSelect,
   isHintOpen = false,
 }: OptionListProps) => {
+  const handleToggle = (id: number) => {
+    const currentIds = selectedOptionIds || [];
+    const newIds = currentIds.includes(id)
+      ? currentIds.filter((selectedId) => selectedId !== id)
+      : [...currentIds, id];
+    onSelect(newIds.map(String));
+  };
+
   return (
     <div className="flex flex-col gap-7">
       {options.map((option) => (
         <OptionItem
           key={option.id}
           id={option.id}
-          isSelected={selectedOptionId === option.id}
-          onSelect={(id) => {
-            if (id === null) {
-              onSelect(null);
-            } else {
-              onSelect(String(id));
-            }
-          }}
+          isSelected={selectedOptionIds?.includes(option.id) ?? false}
+          onSelect={handleToggle}
           isHintOpen={isHintOpen}
         />
       ))}
