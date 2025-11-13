@@ -8,12 +8,13 @@ export interface TestSummary {
 }
 
 export interface QuestionItem {
+  questionId: string; // ◀︎ [필수] API 연동을 위해
   question: string;
   tryCount: number;
   isCorrect: boolean;
   isStarred: boolean;
-  createdAt: string;
-  difficulty: Difficulty;
+  createdAt?: string; // ◀︎ [필수] ? (Optional)로 변경
+  difficulty: Difficulty; // ◀︎ 'easy' | 'medium' | 'hard'
   testName?: string;
 }
 

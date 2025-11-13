@@ -44,9 +44,11 @@ export default function QuestionCard({
       </div>
       <div className="flex items-center gap-[14px]">
         <DifficultyBadge variant={difficulty} />
-        <span className="text-sm font-medium text-neutral-600">
-          {createdAt}
-        </span>
+        {createdAt && (
+          <span className="text-sm font-medium text-neutral-600">
+            {createdAt}
+          </span>
+        )}
         <button
           type="button"
           onClick={() => {}}
