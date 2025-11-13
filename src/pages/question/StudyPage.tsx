@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../../apis/axiosInstance.ts';
+import { useNavigate, useLocation } from 'react-router-dom';
 import QuestionBar from './component/QuestionBar.tsx';
 import HintBar from './component/HintBar.tsx';
 import WarningBox from './component/WarningBox.tsx';
@@ -9,28 +10,36 @@ import QuestionDisplay from './component/QuestionDisplay.tsx';
 import EssayAnswerBox from './component/EssayAnswerBox.tsx';
 import MultipleChoiceBox from './component/MultipleChoiceBox.tsx';
 import OptionList from './component/OptionList.tsx';
-import type { Option } from './component/OptionList.tsx';
 import HintModal from './component/HintModal.tsx';
-import { fetchQuestionById } from '../../apis/questionAPI.tsx';
-import type { QuestionData } from '../../apis/questionAPI.tsx';
+import { useAnswerStore } from '../../stores/useAnswerStore.ts';
 
-const TOTAL_QUESTIONS = 2; // mockQuestions 개수
+declare global {
+  interface Window {
+    saveEssayAnswer?: (id: number) => Promise<void>;
+  }
+}
 
 export default function StudyPage() {
   const [current, setCurrent] = useState(1);
-  const [question, setQuestion] = useState<QuestionData | null>(null);
+  const [questions, setQuestions] = useState<any[]>([]);
   const [solved, setSolved] = useState<number[]>([]);
   const [isHintModalOpen, setIsHintModalOpen] = useState(false);
+  const [questionSetId, setQuestionSetId] = useState<number | null>(null);
+
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [selectedOptions, setSelectedOptions] = useState<
-    Record<number, Option | null>
+    Record<number, string | null>
   >({});
   const [starred, setStarred] = useState<Record<number, boolean>>({});
 
+  const images = useAnswerStore((state) => state.images);
+
+  const TOTAL_QUESTIONS = questions.length;
   const answerValue = answers[current] ?? '';
-  const selectedOption = selectedOptions[current] ?? null;
+  const isLast = current === TOTAL_QUESTIONS;
 
   const hints = [
     '이 문제는 유리수 단원의 문제입니다. 화이팅!',
@@ -38,37 +47,61 @@ export default function StudyPage() {
     '마지막 힌트!',
   ];
 
-  // 문제 불러오기
+  // ⭐️ (수정) ReviewPage에서 넘겨준 location.state를 받아 state 설정
   useEffect(() => {
-    const loadQuestion = async () => {
-      try {
-        const q = await fetchQuestionById(current);
-        setQuestion(q);
-      } catch (e) {
-        console.error('문제 로드 중 오류:', e);
-        setQuestion(null);
-      }
+    // 1. location.state에서 데이터 추출 (ReviewPage가 보낸 형식)
+    const state = location.state as {
+      questionSetId: number;
+      questionSetItems: any[]; // any[]로 받음
     };
-    loadQuestion();
-  }, [current]);
 
-  // 풀이 여부 확인
+    const stateId = state?.questionSetId;
+    const stateItems = state?.questionSetItems;
+
+    if (!stateId || !stateItems || stateItems.length === 0) {
+      alert('잘못된 접근입니다. 문제 선택 페이지로 이동합니다.');
+      navigate('/'); // (메인이나 문제 선택 페이지로)
+      return;
+    }
+
+    // 2. 캔버스 초기화 (QuestionPage와 동일)
+    useAnswerStore.getState().clearAll();
+
+    // 3. state 설정
+    setQuestionSetId(stateId);
+    setQuestions(stateItems);
+  }, [location.state, navigate]); // location.state가 바뀔 일은 없지만, 명시적 의존성
+
+  // 풀이 여부 체크 (QuestionPage와 동일)
   useEffect(() => {
+    if (TOTAL_QUESTIONS === 0) return;
     const newSolved: number[] = [];
+
     for (let q = 1; q <= TOTAL_QUESTIONS; q++) {
       const hasEssay = (answers[q]?.trim().length ?? 0) > 0;
       const hasObjective = !!selectedOptions[q];
       if (hasEssay || hasObjective) newSolved.push(q);
     }
+
     setSolved(newSolved);
-  }, [answers, selectedOptions]);
+  }, [answers, selectedOptions, TOTAL_QUESTIONS]);
 
-  const handleSelect = (qNum: number) => {
-    if (qNum >= 1 && qNum <= TOTAL_QUESTIONS) setCurrent(qNum);
-  };
+  // 문제 이동 (QuestionPage와 동일)
+  const handleSelect = async (qNum: number) => {
+    if (qNum < 1 || qNum > TOTAL_QUESTIONS) return;
 
-  const handleOptionSelect = (option: Option | null) => {
-    setSelectedOptions((prev) => ({ ...prev, [current]: option }));
+    const currentQuestionType =
+      questions[current - 1]?.question?.questionFormat;
+
+    if (currentQuestionType === '단답형' && window.saveEssayAnswer) {
+      try {
+        await window.saveEssayAnswer(current);
+      } catch (err) {
+        console.warn('saveEssayAnswer 실행 중 오류:', err);
+      }
+    }
+
+    setCurrent(qNum);
   };
 
   const handleToggleStar = () => {
@@ -77,17 +110,85 @@ export default function StudyPage() {
 
   const handleHintModal = () => setIsHintModalOpen((prev) => !prev);
 
-  // 학습모드에서는 제출 없음 → 다음 문제로만 이동
-  const handleFinish = () => {
-    alert('학습을 모두 완료했습니다!');
-    navigate('/result');
+  // 제출 로직 (QuestionPage와 동일, ID와 API 주소만 다름)
+  const handleSubmit = async () => {
+    if (!questionSetId) {
+      alert('문제 세트 ID가 없습니다. 다시 시도해주세요.');
+      return;
+    }
+
+    const currentQuestionType =
+      questions[current - 1]?.question?.questionFormat;
+    if (currentQuestionType === '단답형' && window.saveEssayAnswer) {
+      try {
+        console.log('제출 전 마지막 단답형 캡처 저장');
+        await window.saveEssayAnswer(current);
+      } catch (err) {
+        console.warn(' 마지막 saveEssayAnswer 실행 중 오류:', err);
+      }
+    }
+
+    const totalCount = TOTAL_QUESTIONS;
+    const submissionData: any[] = [];
+
+    for (let qNum = 1; qNum <= totalCount; qNum++) {
+      const essayAnswer = answers[qNum];
+      const selected = selectedOptions[qNum];
+      const questionItem = questions[qNum - 1];
+      const questionId = questionItem?.question?.questionId;
+
+      if (!questionItem || !questionId) continue;
+
+      if (essayAnswer) {
+        const imageBase64 = images[qNum] ?? null;
+        submissionData.push({
+          questionId,
+          userAnswer: essayAnswer,
+          descriptiveImageUrl: imageBase64,
+        });
+      } else if (selected) {
+        submissionData.push({
+          questionId,
+          userAnswer: `${selected}번`,
+          descriptiveImageUrl: null,
+        });
+      }
+    }
+
+    console.log('제출 데이터:', submissionData);
+
+    if (submissionData.length === 0) {
+      console.warn('제출 데이터 없음');
+      alert('답안을 입력해주세요.');
+      return;
+    }
+
+    try {
+      await axiosInstance.post(`/v1/question-sets/${questionSetId}/grade`, {
+        answers: submissionData,
+      });
+
+      alert('학습을 모두 완료했습니다! 채점 결과를 확인합니다.');
+      navigate('/result', { state: { questionSetId: questionSetId } });
+    } catch (e) {
+      console.error('채점 요청 실패:', e);
+      alert('답안 제출 중 오류가 발생했습니다. 다시 시도해주세요.');
+    }
   };
 
   const isAllSolved = solved.length === TOTAL_QUESTIONS;
 
+  const currentQuestionItem = questions[current - 1];
+  const currentQuestion = currentQuestionItem?.question;
+
+  const imageUrl = currentQuestion?.filename
+    ? `${import.meta.env.VITE_S3_BASE_URL}${currentQuestion.filename}`
+    : null;
+  const textContent = currentQuestion?.text ?? '';
+  const questionFormat = currentQuestion?.questionFormat;
+
   return (
     <div className="relative flex h-screen w-full flex-col items-center justify-start bg-primary-bg">
-      {/* 타이머 제거된 상단 바 */}
       <QuestionBar
         totalQuestions={TOTAL_QUESTIONS}
         current={current}
@@ -96,9 +197,7 @@ export default function StudyPage() {
         showTimer={false}
       />
 
-      {/* 메인 영역 */}
       <div className="relative flex h-[calc(100vh-80px)] w-full flex-1 flex-row items-start justify-start gap-5 p-10">
-        {/* 힌트 바 */}
         <div className="absolute bottom-10 left-8 z-50">
           <HintBar
             hints={hints}
@@ -109,21 +208,11 @@ export default function StudyPage() {
           />
         </div>
 
-        {/* 문제 및 풀이 영역 */}
         <div className="ml-20 flex h-full flex-1 flex-col items-center justify-start gap-6">
-          {/* 문제 표시 */}
           <div className="w-full flex-[0.4]">
-            {question ? (
-              <QuestionDisplay
-                imageUrl={
-                  question.contents?.endsWith('.png') ? question.contents : null
-                }
-                textContent={
-                  !question.contents?.endsWith('.png')
-                    ? question.contents || ''
-                    : ''
-                }
-              />
+            {/* ⭐️ (수정) isLoading 제거, currentQuestion이 있는지 바로 확인 */}
+            {currentQuestion ? (
+              <QuestionDisplay imageUrl={imageUrl} textContent={textContent} />
             ) : (
               <div className="text-center text-lg text-gray-400">
                 문제를 불러오는 중...
@@ -131,9 +220,8 @@ export default function StudyPage() {
             )}
           </div>
 
-          {/* 풀이 영역 */}
           <div className="h-full w-full flex-1">
-            {question?.type === '단답형' ? (
+            {questionFormat === '단답형' ? (
               <EssayAnswerBox questionId={current} />
             ) : (
               <MultipleChoiceBox questionId={current} />
@@ -141,9 +229,7 @@ export default function StudyPage() {
           </div>
         </div>
 
-        {/* 우측 보기 + 버튼 */}
         <div className="relative ml-5 flex h-full flex-col items-center gap-5">
-          {/* 힌트 모달 */}
           {isHintModalOpen && (
             <div className="pointer-events-auto absolute top-0 left-0 z-[9999]">
               <HintModal
@@ -154,33 +240,32 @@ export default function StudyPage() {
             </div>
           )}
 
-          {/* 객관식 보기 */}
-          {question?.type === '객관식' && (
+          {questionFormat === '선택형' && (
             <OptionList
+              // (API에서 받은 보기 목록(currentQuestion.options)으로 교체 필요)
               options={[
-                { id: 1, text: '①  4' },
-                { id: 2, text: '②  6' },
-                { id: 3, text: '③  7' },
-                { id: 4, text: '④  8' },
-                { id: 5, text: '⑤  9' },
+                { id: 1, text: '' },
+                { id: 2, text: '' },
+                { id: 3, text: '' },
+                { id: 4, text: '' },
               ]}
-              selectedOption={selectedOption}
-              onSelect={handleOptionSelect}
+              selectedOptionId={
+                selectedOptions[current]
+                  ? Number(selectedOptions[current])
+                  : null
+              }
+              onSelect={(value) => {
+                setSelectedOptions((prev) => ({
+                  ...prev,
+                  [current]: value,
+                }));
+              }}
               isHintOpen={isHintModalOpen}
             />
           )}
-          {/*
-          <OptionList
-            options={question.options || []}
-            selectedOption={selectedOptions[current] ?? null}
-            onSelect={handleOptionSelect}
-            isHintOpen={isHintModalOpen}
-          />
-          */}
 
-          {/* 하단 버튼 */}
           <div className="mt-auto flex w-full flex-col items-end gap-10">
-            {question?.type === '단답형' && (
+            {questionFormat === '단답형' && (
               <>
                 <WarningBox>
                   학습을 위해 답안을 <br /> 자유롭게 작성해 보세요.
@@ -202,22 +287,16 @@ export default function StudyPage() {
                 onClick={() => handleSelect(current - 1)}
                 disabled={current === 1}
               />
-              {current === TOTAL_QUESTIONS ? (
-                <QuestionPageButton
-                  direction="next"
-                  label="완료"
-                  variant="primary"
-                  onClick={handleFinish}
-                  disabled={!isAllSolved}
-                />
-              ) : (
-                <QuestionPageButton
-                  direction="next"
-                  label="다음"
-                  variant="primary"
-                  onClick={() => handleSelect(current + 1)}
-                />
-              )}
+
+              <QuestionPageButton
+                direction="next"
+                label={isLast ? '완료' : '다음'}
+                variant="primary"
+                onClick={
+                  isLast ? handleSubmit : () => handleSelect(current + 1)
+                }
+                disabled={isLast && !isAllSolved}
+              />
             </div>
           </div>
         </div>
