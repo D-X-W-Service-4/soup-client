@@ -35,6 +35,18 @@ export default function TestResultPage() {
     return <div className="p-6 text-warning">오류가 발생했습니다: {err}</div>;
   }
 
+  // 풀이 시간 계산 (분 단위)
+  const calculateTimeTaken = () => {
+    if (!data?.createdAt || !data?.updatedAt) return 0;
+    const created = new Date(data.createdAt);
+    const updated = new Date(data.updatedAt);
+    const diffMs = updated.getTime() - created.getTime();
+    const diffMinutes = Math.floor(diffMs / 1000 / 60);
+    return diffMinutes;
+  };
+
+  const timeTaken = data ? calculateTimeTaken() : 0;
+
   return (
     <div className="flex h-dvh w-full bg-primary-bg p-5">
       <div className="flex h-full w-full gap-6">
@@ -68,9 +80,11 @@ export default function TestResultPage() {
                   />
                   <Progress
                     label="풀이 시간"
-                    value={`${data.timeLimit}`}
+                    value={`${timeTaken}`}
                     sub={`/${data.timeLimit} 분`}
-                    progress={1}
+                    progress={
+                      data.timeLimit > 0 ? timeTaken / data.timeLimit : 0
+                    }
                   />
                 </div>
               </section>
