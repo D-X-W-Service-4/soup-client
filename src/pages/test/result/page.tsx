@@ -81,10 +81,8 @@ export default function TestResultPage() {
                   <Progress
                     label="풀이 시간"
                     value={`${timeTaken}`}
-                    sub={`/${data.timeLimit} 분`}
-                    progress={
-                      data.timeLimit > 0 ? timeTaken / data.timeLimit : 0
-                    }
+                    sub={`/30 분`}
+                    progress={timeTaken / 30}
                   />
                 </div>
               </section>

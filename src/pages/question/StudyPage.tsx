@@ -13,6 +13,7 @@ import OptionList from './component/OptionList.tsx';
 import HintModal from './component/HintModal.tsx';
 import { useAnswerStore } from '../../stores/useAnswerStore.ts';
 import { toggleQuestionStar } from '../../apis/questionAPI.ts';
+import { uploadImageToS3_GET } from '../../utils/uploadToS3';
 
 declare global {
   interface Window {
@@ -155,21 +156,33 @@ export default function StudyPage() {
       const submissionData: any[] = [];
 
       for (let qNum = 1; qNum <= totalCount; qNum++) {
-        const essayAnswer = answers[qNum];
+        const essay = answers[qNum];
         const selected = selectedOptions[qNum];
         const questionItem = questions[qNum - 1];
         const questionId = questionItem?.question?.questionId;
+        const questionSetItemId = questionItem?.questionSetItemId;
 
         if (!questionItem || !questionId) continue;
 
-        if (essayAnswer) {
-          const imageBase64 = images[qNum] ?? null;
+        if (essay) {
+          let finalUrl = null;
+          const base64 = images[qNum];
+
+          if (base64) {
+            const fileName = `descriptions/questionset_${questionSetId}_${questionSetItemId}.png`;
+            finalUrl = await uploadImageToS3_GET(base64, fileName);
+          }
+
           submissionData.push({
             questionId,
-            userAnswer: essayAnswer,
-            descriptiveImageUrl: imageBase64,
+            userAnswer: essay,
+            descriptiveImageUrl: finalUrl,
           });
-        } else if (selected && selected.length > 0) {
+
+          continue;
+        }
+
+        if (selected && selected.length > 0) {
           submissionData.push({
             questionId,
             userAnswer: selected.join(', '),
@@ -190,8 +203,8 @@ export default function StudyPage() {
         answers: submissionData,
       });
 
-      alert('학습을 모두 완료했습니다! 채점 결과를 확인합니다.');
-      navigate('/result', { state: { questionSetId: questionSetId } });
+      alert('제출 완료!');
+      navigate('/home');
     } catch (e) {
       console.error('채점 요청 실패:', e);
       alert('답안 제출 중 오류가 발생했습니다. 다시 시도해주세요.');

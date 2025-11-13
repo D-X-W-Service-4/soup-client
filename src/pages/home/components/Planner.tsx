@@ -77,10 +77,6 @@ export default function Planner({
 
       console.log('플래너 항목 체크 업데이트 완료:', itemId, !currentChecked);
 
-      if (onUserInfoUpdate) {
-        onUserInfoUpdate();
-      }
-
       if (updatedPlanner) {
         const allChecked = updatedPlanner.items.every((item) => item.checked);
 
@@ -96,8 +92,17 @@ export default function Planner({
             if (onFlameUpdate) {
               onFlameUpdate();
             }
+            // flame 업데이트 후 사용자 정보 갱신
+            if (onUserInfoUpdate) {
+              onUserInfoUpdate();
+            }
           } catch (error) {
             console.error('flame 업데이트 실패:', error);
+          }
+        } else {
+          // flame 업데이트가 아닌 경우에도 사용자 정보 갱신
+          if (onUserInfoUpdate) {
+            onUserInfoUpdate();
           }
         }
       }

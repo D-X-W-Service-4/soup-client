@@ -23,6 +23,7 @@ export interface LevelTestSummaryDto {
   score: number;
   resultSoup: SoupLevel;
   finishedAt: string;
+  createdAt?: string;
 }
 
 // 레벨 테스트 상세 정보

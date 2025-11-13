@@ -1,5 +1,4 @@
 import { Icon } from '@iconify/react';
-import { timeStringToSeconds } from '../../../../utils/time.ts';
 import { useNavigate } from 'react-router-dom';
 
 const clampPct = (n: number) => Math.max(0, Math.min(100, Math.round(n)));
@@ -11,8 +10,7 @@ interface TestCardProps {
   score: number;
   totalQuestions: number;
   correctAnswers: number;
-  timeTaken: string;
-  timeGiven: string;
+  isGraded?: boolean;
 }
 
 export default function TestCard({
@@ -22,8 +20,7 @@ export default function TestCard({
   score,
   totalQuestions,
   correctAnswers,
-  timeTaken,
-  timeGiven,
+  isGraded = true,
 }: TestCardProps) {
   const navigate = useNavigate();
 
@@ -32,15 +29,12 @@ export default function TestCard({
     totalQuestions ? (correctAnswers / totalQuestions) * 100 : 0
   );
 
-  const taken = timeStringToSeconds(timeTaken);
-  const given = timeStringToSeconds(timeGiven);
-  const timePct = clampPct(given ? (taken / given) * 100 : 0);
   const formattedDate = createdAt ? createdAt.split('T')[0] : '';
 
   return (
     <div
       onClick={() => navigate(`/test/result/${testId}`)}
-      className="flex cursor-pointer items-center justify-between gap-8 rounded-[10px] bg-white p-5 outline outline-1 outline-offset-[-1px] outline-neutral-100 hover:bg-neutral-50"
+      className="flex cursor-pointer items-center justify-between gap-8 rounded-[10px] bg-white px-5 py-7 outline outline-1 outline-offset-[-1px] outline-neutral-100 hover:bg-neutral-50"
     >
       <div className="flex items-center justify-center gap-3">
         <button
@@ -61,60 +55,50 @@ export default function TestCard({
         </div>
       </div>
 
-      <div className="grid grid-rows-3 gap-2">
-        <div className="flex items-center justify-end gap-5">
-          <span className="text-xs font-normal text-neutral-400">점수</span>
-          <div
-            className="relative h-4 w-60 overflow-hidden rounded-[10px] bg-gray-100"
-            role="progressbar"
-            aria-label="점수"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={scorePct}
-          >
+      {isGraded ? (
+        <div className="grid grid-rows-2 gap-2">
+          <div className="flex items-center justify-end gap-5">
+            <span className="text-xs font-normal text-neutral-400">점수</span>
             <div
-              className="h-full bg-primary transition-[width]"
-              style={{ width: `${scorePct}%` }}
-            />
+              className="relative h-4 w-60 overflow-hidden rounded-[10px] bg-gray-100"
+              role="progressbar"
+              aria-label="점수"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={scorePct}
+            >
+              <div
+                className="h-full bg-primary transition-[width]"
+                style={{ width: `${scorePct}%` }}
+              />
+            </div>
+          </div>
+          <div className="flex items-center gap-5">
+            <span className="text-xs font-normal text-neutral-400">
+              맞은 문제 수
+            </span>
+            <div
+              className="relative h-4 w-60 overflow-hidden rounded-[10px] bg-gray-100"
+              role="progressbar"
+              aria-label="맞은 문제 수"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={correctPct}
+            >
+              <div
+                className="h-full bg-primary transition-[width]"
+                style={{ width: `${correctPct}%` }}
+              />
+            </div>
           </div>
         </div>
-        <div className="flex items-center gap-5">
-          <span className="text-xs font-normal text-neutral-400">
-            맞은 문제 수
+      ) : (
+        <div className="flex items-center justify-center">
+          <span className="text-sm font-medium text-neutral-500">
+            AI가 채점중입니다...
           </span>
-          <div
-            className="relative h-4 w-60 overflow-hidden rounded-[10px] bg-gray-100"
-            role="progressbar"
-            aria-label="맞은 문제 수"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={correctPct}
-          >
-            <div
-              className="h-full bg-primary transition-[width]"
-              style={{ width: `${correctPct}%` }}
-            />
-          </div>
         </div>
-        <div className="flex items-center justify-end gap-5">
-          <span className="text-xs font-normal text-neutral-400">
-            풀이 시간
-          </span>
-          <div
-            className="relative h-4 w-60 overflow-hidden rounded-[10px] bg-gray-100"
-            role="progressbar"
-            aria-label="풀이 시간"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={timePct}
-          >
-            <div
-              className="h-full bg-primary transition-[width]"
-              style={{ width: `${timePct}%` }}
-            />
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   );
 }

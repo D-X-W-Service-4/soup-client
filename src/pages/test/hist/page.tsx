@@ -116,19 +116,36 @@ export default function TestHistoryPage() {
 
               <section className="flex h-full min-h-0 flex-1 flex-col overflow-hidden rounded-[20px] bg-white p-10 shadow-base">
                 <div className="flex min-h-0 w-full flex-1 flex-col gap-4 overflow-y-auto">
-                  {filteredData.map((test, index) => (
-                    <TestCard
-                      key={index}
-                      testId={test.levelTestId}
-                      name={`수준테스트 ${test.levelTestId}`}
-                      createdAt={test.finishedAt}
-                      score={test.score}
-                      totalQuestions={test.totalQuestionCount}
-                      correctAnswers={test.correctCount}
-                      timeTaken="0"
-                      timeGiven={`${test.timeLimit}`}
-                    />
-                  ))}
+                  {filteredData.map((test, index) => {
+                    // 풀이 시간 계산 (test에 createdAt과 finishedAt이 있다고 가정)
+                    const calculateTimeTaken = () => {
+                      if (!test.createdAt || !test.finishedAt) return 0;
+                      const created = new Date(test.createdAt);
+                      const finished = new Date(test.finishedAt);
+                      const diffMs = finished.getTime() - created.getTime();
+                      const diffMinutes = Math.floor(diffMs / 1000 / 60);
+                      return diffMinutes;
+                    };
+
+                    const timeTakenMinutes = calculateTimeTaken();
+                    // MM:SS 형식으로 변환 (예: 15분 -> "15:00")
+                    const timeTaken = `${timeTakenMinutes}:00`;
+                    const timeGiven = '30:00';
+
+                    return (
+                      <TestCard
+                        key={index}
+                        testId={test.levelTestId}
+                        name={`수준테스트 ${test.levelTestId}`}
+                        createdAt={test.finishedAt}
+                        score={test.score}
+                        totalQuestions={test.totalQuestionCount}
+                        correctAnswers={test.correctCount}
+                        timeTaken={timeTaken}
+                        timeGiven={timeGiven}
+                      />
+                    );
+                  })}
                 </div>
               </section>
             </>

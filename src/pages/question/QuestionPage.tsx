@@ -302,7 +302,8 @@ export default function QuestionPage() {
             {currentQuestion?.questionFormat === '단답형' && (
               <>
                 <WarningBox>
-                  원활한 채점을 위해 답안을 정확히 작성해 주세요.
+                  풀이과정 없이 단답형 답안 채점만을 원할 시 풀이를 모두
+                  지워주세요.
                 </WarningBox>
                 <AnswerInput
                   value={answerValue}
