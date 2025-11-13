@@ -8,7 +8,7 @@ export interface TestSummary {
 }
 
 export interface QuestionItem {
-  questionId: string;
+  questionId?: string;
   question: string;
   tryCount?: number;
   isCorrect: boolean;

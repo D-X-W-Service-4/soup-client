@@ -184,7 +184,7 @@ export default function ReviewPage() {
       const questionSetId = response.data.questionSetId;
 
       // 문제 풀이 페이지로 이동 (questionSetId 전달)
-      navigate('/question/test', {
+      navigate('/question/study', {
         state: {
           questionSetId,
           questionSetItems: response.data.questionSetItems,

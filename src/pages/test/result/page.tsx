@@ -114,6 +114,7 @@ export default function TestResultPage() {
                     .map((q, index) => (
                       <QuestionCard
                         key={index}
+                        questionId={q.question.questionId}
                         question={q.question.subjectUnit.name}
                         isCorrect={q.isCorrect}
                         isStarred={false}
