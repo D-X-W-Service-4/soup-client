@@ -298,7 +298,7 @@ export default function ReviewPage() {
                 </div>
               ) : filteredQuestions.length === 0 ? (
                 <div className="flex items-center justify-center py-10 text-secondary">
-                  조회된 문제가 없습니다.
+                  풀었던 문제가 없습니다.
                 </div>
               ) : (
                 filteredQuestions.map((q, index) => (
