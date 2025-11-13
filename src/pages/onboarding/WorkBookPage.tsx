@@ -51,7 +51,7 @@ const WorkBookPage = () => {
       const res = await signUp(payload);
       console.log('회원가입 성공:', res);
 
-      alert('온보딩이 완료되었습니다!');
+      alert('학습정보 입력이 완료되었습니다.');
       navigate('/onboarding/success');
     } catch (err: any) {
       console.error('회원가입 실패:', err.response?.data || err.message);

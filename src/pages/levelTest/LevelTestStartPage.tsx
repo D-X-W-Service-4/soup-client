@@ -151,7 +151,7 @@ const LevelTestStartPage = () => {
               </div>
 
               <div
-                className={`inline-flex cursor-pointer items-center justify-center gap-2.5 self-stretch rounded-lg bg-primary px-5 py-3 transition hover:bg-primary/90 ${selectedUnits.length === 0 ? 'pointer-events-none cursor-not-allowed opacity-50' : ''}`}
+                className={`inline-flex cursor-pointer items-center justify-center gap-2.5 self-stretch rounded-lg bg-primary px-5 py-3 transition hover:bg-primary/90 ${selectedUnits.length != 0 || subjectUnits.length != 0 ? '' : 'pointer-events-none cursor-not-allowed opacity-50'}`}
                 onClick={() => {
                   const subjectUnitIdsToSend = displayUnits.map(
                     (unit) => unit.subjectUnitId
