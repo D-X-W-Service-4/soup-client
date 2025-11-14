@@ -62,7 +62,7 @@ const StudyInfoPage = () => {
   }, [grade]);
 
   return (
-    <div className="inline-flex h-208.5 w-298.5 flex-col items-center justify-start gap-14 bg-primary-bg px-48 pt-4 pb-44">
+    <div className="inline-flex h-full w-full flex-col items-center justify-start gap-14 bg-primary-bg px-48 pt-4 pb-44">
       <div className="flex w-[908px] flex-col items-center justify-start gap-16">
         <div className="flex w-full items-center justify-start gap-1">
           <div className="h-1 w-72 rounded-sm bg-primary"></div>

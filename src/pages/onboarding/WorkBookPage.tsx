@@ -60,7 +60,7 @@ const WorkBookPage = () => {
   };
 
   return (
-    <div className="inline-flex h-[834px] w-[1194px] flex-col items-center justify-start gap-12 bg-primary-bg px-36 py-4">
+    <div className="inline-flex h-full w-full flex-col items-center justify-start gap-12 bg-primary-bg px-36 py-4">
       {/* 상단 진행바 */}
       <div className="flex flex-col items-center justify-start gap-16">
         <div className="flex w-full items-center justify-start gap-1">
