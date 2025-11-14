@@ -22,7 +22,7 @@ const LevelTestStartPage = () => {
   const term = useUserStore((state) => state.term);
   const lastStudiedUnit = useUserStore((state) => state.lastStudiedUnit);
 
-  const totalQuestionCount = 10;
+  const totalQuestionCount = 4;
   const timeLimit = 30;
 
   const currentUnits = (): SubjectUnit[] => {
