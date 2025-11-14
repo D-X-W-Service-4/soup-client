@@ -135,7 +135,6 @@ export default function MultipleChoiceBox({
               eraserWidth={100}
               height="1500px"
               onStroke={handleAutoSave}
-              allowOnlyPointerType={'pen'}
               style={{
                 border: 'none',
                 outline: 'none',
