@@ -182,6 +182,7 @@ export default function EssayAnswerBox({ questionId }: EssayAnswerBoxProps) {
             }}
             canvasColor="transparent"
             className="absolute top-0 left-0"
+            allowOnlyPointerType={'pen'}
           />
         </div>
       </div>

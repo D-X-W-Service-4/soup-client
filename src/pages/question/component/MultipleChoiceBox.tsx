@@ -138,8 +138,6 @@ export default function MultipleChoiceBox({
               style={{
                 border: 'none',
                 outline: 'none',
-                touchAction: 'none',
-                userSelect: 'none',
               }}
             />
           </div>
