@@ -10,7 +10,6 @@ import AnswerInput from './component/InputBox.tsx';
 import QuestionPageButton from './component/QuestionPageButton.tsx';
 import QuestionDisplay from './component/QuestionDisplay.tsx';
 import EssayAnswerBox from './component/EssayAnswerBox.tsx';
-import MultipleChoiceBox from './component/MultipleChoiceBox.tsx';
 import OptionList from './component/OptionList.tsx';
 import HintModal from './component/HintModal.tsx';
 
@@ -265,7 +264,7 @@ export default function QuestionPage() {
             {currentQuestion?.questionFormat === '단답형' ? (
               <EssayAnswerBox questionId={current} />
             ) : (
-              <MultipleChoiceBox questionId={current} />
+              <EssayAnswerBox questionId={current} />
             )}
           </div>
         </div>
