@@ -221,7 +221,7 @@ export default function QuestionPage() {
     : null;
 
   return (
-    <div className="relative flex h-screen w-full touch-none flex-col bg-primary-bg select-none">
+    <div className="relative flex h-screen w-full flex-col bg-primary-bg">
       {testInfo && (
         <QuestionBar
           totalQuestions={testInfo.totalQuestionCount}
