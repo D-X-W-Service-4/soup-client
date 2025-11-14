@@ -188,7 +188,11 @@ export default function QuestionPage() {
           continue;
         }
 
-        if (option && option.length > 0) {
+        if (
+          qData.question.questionFormat === '선택형' &&
+          option &&
+          option.length > 0
+        ) {
           submission.push({
             questionId,
             userAnswer: option.join(', '),
